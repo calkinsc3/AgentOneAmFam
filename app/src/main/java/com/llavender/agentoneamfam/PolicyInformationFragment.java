@@ -1,18 +1,27 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Fragment;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -28,7 +37,10 @@ public class PolicyInformationFragment extends Fragment {
     EditText city;
     Spinner stateSpinner;
     EditText zip;
+    ListView photoView;
     ParseObject policy;
+    LinearLayout address2;
+    ObjectArrayAdapter adapter;
 
     public PolicyInformationFragment() {
         // Required empty public constructor
@@ -48,7 +60,9 @@ public class PolicyInformationFragment extends Fragment {
         city = (EditText)view.findViewById(R.id.city);
         stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
+        photoView = (ListView)view.findViewById(R.id.photoList);
         policy = Singleton.getCurrentPolicy();
+        address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
         String[] states = getResources().getStringArray(R.array.states);
 
         client.append(policy.getString("ClientID"));
@@ -62,10 +76,130 @@ public class PolicyInformationFragment extends Fragment {
 
         stateSpinner.setSelection(Arrays.asList(states).indexOf(policy.getString("State")));
 
+        ParseQuery imageQuery = new ParseQuery("Upload");
+        imageQuery.whereEqualTo("PolicyID", Singleton.getCurrentPolicy().getObjectId());
+
+        try {
+            Singleton.setImages((ArrayList<ParseObject>) imageQuery.find());
+        } catch(com.parse.ParseException e) {
+            Log.d("imageQuery: ", e.toString());
+        }
+        adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getImages());
+        photoView.setAdapter(adapter);
+
+        checkOrientationSetLayoutOrientation();
+
 
 
         return view;
     }
 
+    public void checkOrientationSetLayoutOrientation(){
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            address2.setOrientation(LinearLayout.VERTICAL);
+            city.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
+            zip.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
+        }
+    }
+
+    public class ObjectArrayAdapter extends ArrayAdapter<ParseObject> {
+
+        //declare Array List of items we create
+        private ArrayList<ParseObject> images;
+
+
+        /**
+         * Constructor overrides constructor for array adapter
+         * The only variable we care about is the ArrayList<PlatformVersion> objects
+         * it is the list of the objects we want to display
+         *
+         * @param context The current context.
+         * @param resource The resource ID for a layout file containing a layout to use when
+         *                           instantiating views.
+         * @param images The objects to represent in the ListView.
+         */
+        public ObjectArrayAdapter(Context context, int resource, ArrayList<ParseObject> images) {
+            super(context, resource, images);
+            this.images = images;
+        }
+
+        /**
+         * Creates a custom view for our list View and populates the data
+         *
+         * @param position position in the ListView
+         * @param convertView View to change to
+         * @param parent the calling class
+         * @return view the inflated view
+         */
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            final ViewHolder vHolder;
+
+            /**
+             * Checking to see if the view is null. If it is we must inflate the view
+             * "inflate" means to render/show the view
+             */
+
+            if (view == null) {
+                vHolder = new ViewHolder();
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.photo_display_item, null);
+                vHolder.commentsText = (MultiAutoCompleteTextView) view.findViewById(R.id.CommentsText);
+                vHolder.imageToUpload = (ImageView) view.findViewById(R.id.imageToUpload);
+
+                view.setTag(vHolder);
+
+            } else {
+                vHolder = (ViewHolder)convertView.getTag();
+            }
+
+            vHolder.index = position;
+
+            /**
+             * Remember the variable position is sent in as an argument to this method.
+             * The variable simply refers to the position of the current object on the list\
+             * The ArrayAdapter iterate through the list we sent it
+             */
+            String url = images.get(position).getParseFile("Media").getUrl();
+
+            if (url != null) {
+                // obtain a reference to the widgets in the defined layout
+                if (vHolder.imageToUpload != null) {
+                    Picasso.with(getContext()).load(url).fit().centerInside().into(vHolder.imageToUpload);
+                }
+                if (vHolder.commentsText != null) {
+                    vHolder.commentsText.setText(images.get(vHolder.index).getString("Comment"));
+                }
+            }
+
+//            vHolder.commentsText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable s) {
+//                    Holder.putInCommentsList(s.toString(), vHolder.index);
+//                }
+//            });
+
+
+
+            // view must be returned to our current activity
+            return view;
+        }
+
+        private class ViewHolder {
+            MultiAutoCompleteTextView commentsText;
+            ImageView imageToUpload;
+            int index;
+        }
+    }
 
 }

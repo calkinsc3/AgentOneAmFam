@@ -14,6 +14,7 @@ public class Singleton {
     private static ArrayList<ParseUser> listOfClients;
     private static ParseObject currentClient;
     private static ParseObject currentPolicy;
+    private static ArrayList<ParseObject> images;
 
     protected Singleton() {
 
@@ -51,5 +52,13 @@ public class Singleton {
 
     public static void setCurrentPolicy(ParseObject currentPolicy) {
         Singleton.currentPolicy = currentPolicy;
+    }
+
+    public static ArrayList<ParseObject> getImages() {
+        return images;
+    }
+
+    public static void setImages(ArrayList<ParseObject> images) {
+        Singleton.images = images;
     }
 }
