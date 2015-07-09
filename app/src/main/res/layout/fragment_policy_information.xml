@@ -165,19 +165,23 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
 
                 <TextView
                     android:id="@+id/textView8"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Text" />
+                    android:text="Uploads" />
 
                 <ImageButton
                     android:id="@+id/imageButton2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="false" />
+                    android:layout_alignParentEnd="true"
+                    android:src="@android:drawable/ic_input_add"
+                    android:background="#00ffffff" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -188,9 +192,9 @@
                     android:id="@+id/photoList"
                     android:layout_width="match_parent"
                     android:layout_height="fill_parent"
-                    android:layout_alignParentBottom="false"
                     android:layout_alignParentEnd="false"
-                    android:layout_alignParentStart="false" />
+                    android:layout_alignParentStart="false"
+                    android:layout_alignParentBottom="true" />
             </RelativeLayout>
 
         </LinearLayout>
