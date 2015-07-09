@@ -2,6 +2,7 @@ package com.llavender.agentoneamfam;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -101,14 +102,28 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
 
+                final int CLIENTS = 0;
+                final int CLAIMS = 1;
+                final int SCHEDULE = 2;
+                final int SETTINGS = 3;
+                final int UPLOADS = 4;
+
                 switch (position) {
-                    case 0:
+                    case CLIENTS:
                         Tools.replaceFragment(new ClientListFragment(), getFragmentManager(), true);
                         break;
-                    case 1:
+                    case CLAIMS:
                         Tools.replaceFragment(new Claims(), getFragmentManager(), true);
                         break;
-                    case 4:
+                    case SCHEDULE:
+                        //move to schdulefrage
+                        Tools.replaceFragment(new MeetingListFragment(), getFragmentManager(), true);
+                        MeetingListFragment.mode = MeetingListFragment.APPOINTMENTS;
+                        break;
+                    case SETTINGS:
+                        Tools.replaceFragment(new Settings(), getFragmentManager(), true);
+                        break;
+                    case UPLOADS:
                         Tools.replaceFragment(new MyUploads(), getFragmentManager(), true);
                         break;
                     default:
