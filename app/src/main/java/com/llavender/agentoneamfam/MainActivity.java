@@ -102,11 +102,13 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
 
+                //leave this crap here levi!!!!
                 final int CLIENTS = 0;
                 final int CLAIMS = 1;
                 final int SCHEDULE = 2;
                 final int SETTINGS = 3;
                 final int UPLOADS = 4;
+
 
                 switch (position) {
                     case CLIENTS:
