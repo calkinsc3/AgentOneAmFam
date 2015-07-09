@@ -101,7 +101,7 @@ public class ClaimInfo extends Fragment {
                 if (Claims.selectedClaim != null) {
                     obj = Singleton.getClaims().get(Claims.selectedClaim.index);
                 } else {
-                    obj = new ParseObject("Claim");
+                    obj = new ParseObject("Claim"); 
                 }
 
                 obj.put("Damages", Double.parseDouble(damages.substring(1, damages.length())));
