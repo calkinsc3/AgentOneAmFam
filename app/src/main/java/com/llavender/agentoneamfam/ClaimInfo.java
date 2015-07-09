@@ -65,13 +65,8 @@ public class ClaimInfo extends Fragment {
             selectedClaim = null;
         }
 
-
-
         return inflater.inflate(R.layout.fragment_claim_info, container, false);
-
     }
-
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
@@ -86,20 +81,14 @@ public class ClaimInfo extends Fragment {
         clients = ParseUser.getQuery();
         policies = ParseQuery.getQuery("Policy");
 
-        setSpinners();
-//        spinnerListeners();
+        setSpinners(save_button);
+        spinnerListeners(save_button);
 
         if(selectedClaim != null){
             damages_entry.setText("$" + selectedClaim.getNumber("Damages").toString());
             comments_entry.setText(selectedClaim.getString("Comment"));
             showMyUploads();
         }
-
-
-
-
-
-
 
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,13 +98,13 @@ public class ClaimInfo extends Fragment {
                 String damages = damages_entry.getText().toString();
                 String comments = comments_entry.getText().toString();
 
-                if(Claims.selectedClaim != null) {
+                if (Claims.selectedClaim != null) {
                     obj = Singleton.getClaims().get(Claims.selectedClaim.index);
                 } else {
                     obj = new ParseObject("Claim");
                 }
 
-                obj.put("Damages", Double.parseDouble(damages.substring(1,damages.length())));
+                obj.put("Damages", Double.parseDouble(damages.substring(1, damages.length())));
                 obj.put("Comment", comments);
                 obj.put("PolicyID", policyList.get(policyNames.indexOf(policySpinnerText)).getObjectId());
                 obj.put("UploadIDs", new ArrayList<>());
@@ -135,13 +124,10 @@ public class ClaimInfo extends Fragment {
                         }
                     }
                 });
-
-
-
             }
         });
-
     }
+
     private void showMyUploads(){
         Fragment newFragment = new MyUploads();
         Bundle bundle = new Bundle();
@@ -160,7 +146,6 @@ public class ClaimInfo extends Fragment {
                 }
             }
 
-
             bundle.putStringArrayList("UploadIDs", uploadIds);
             bundle.putString("claimPolicyID", selectedClaim.getString("PolicyID"));
         }
@@ -170,7 +155,7 @@ public class ClaimInfo extends Fragment {
         ft.add(R.id.bottom_container, newFragment).commit();
     }
 
-    private void setSpinners() {
+    private void setSpinners(ImageButton save_button) {
         try {
             clients.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
 
@@ -255,11 +240,17 @@ public class ClaimInfo extends Fragment {
             policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             policySpinner.setAdapter(policySpinnerAdapter);
 
-            spinnerListeners();
+            if (policyNames.isEmpty()) {
+                save_button.setVisibility(View.GONE);
+                Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                save_button.setVisibility(View.VISIBLE);
+            }
         }
     }
 
-    private void spinnerListeners() {
+    private void spinnerListeners(final ImageButton save_button) {
         clientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -281,6 +272,14 @@ public class ClaimInfo extends Fragment {
                         android.R.layout.simple_spinner_item, policyNames);
                 policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 policySpinner.setAdapter(policySpinnerAdapter);
+
+                if (policyNames.isEmpty()) {
+                    save_button.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    save_button.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
