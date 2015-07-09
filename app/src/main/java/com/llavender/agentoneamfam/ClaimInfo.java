@@ -32,7 +32,6 @@ import java.util.List;
  */
 public class ClaimInfo extends Fragment {
 
-    private int selectedClaimIndex;
     public static ParseObject selectedClaim;
 
     ParseQuery<ParseUser> clients;
@@ -77,9 +76,6 @@ public class ClaimInfo extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
-
-
-
         final EditText damages_entry = (EditText) view.findViewById(R.id.damages_entry);
         final EditText comments_entry = (EditText) view.findViewById(R.id.comments_entry);
         final ImageButton save_button = (ImageButton) view.findViewById(R.id.save_button);
@@ -91,7 +87,7 @@ public class ClaimInfo extends Fragment {
         policies = ParseQuery.getQuery("Policy");
 
         setSpinners();
-        spinnerListeners();
+//        spinnerListeners();
 
         if(selectedClaim != null){
             damages_entry.setText("$" + selectedClaim.getNumber("Damages").toString());
@@ -205,6 +201,8 @@ public class ClaimInfo extends Fragment {
             clientSpinner.setClickable(false);
             policySpinner.setClickable(false);
 
+            Toast.makeText(getActivity(), "" + clientSpinner.isClickable(),Toast.LENGTH_LONG);
+
             policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_spinner_item, policyNames);
             policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -256,6 +254,8 @@ public class ClaimInfo extends Fragment {
                     android.R.layout.simple_spinner_item, policyNames);
             policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             policySpinner.setAdapter(policySpinnerAdapter);
+
+            spinnerListeners();
         }
     }
 

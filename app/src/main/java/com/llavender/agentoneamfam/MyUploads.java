@@ -193,15 +193,11 @@ public class MyUploads extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null) {
-
                                     Toast.makeText(getActivity(), "Photo Updated!", Toast.LENGTH_SHORT).show();
                                     refreshLocalData(getActivity());
-
                                 } else {
-
                                     Toast.makeText(getActivity(), "Update Cancelled.", Toast.LENGTH_LONG).show();
                                     e.printStackTrace();
-
                                 }
                             }
                         });
@@ -230,12 +226,9 @@ public class MyUploads extends Fragment {
                         for (int i = 0; i < clipData.getItemCount(); i++) {
                             imageByte.add(Tools.readBytes(getActivity(), clipData.getItemAt(i).getUri()));
                         }
-
                     } else {
                         imageByte.add(Tools.readBytes(getActivity(), data.getData()));
                     }
-
-
 
                     //BUILD LIST OF NEW PARSE OBJECTS
                     List<ParseObject> toSave = new ArrayList<>();
@@ -251,7 +244,6 @@ public class MyUploads extends Fragment {
                         obj.put("PolicyID", claimPolicyID);
                         obj.put("UserID", ParseUser.getCurrentUser().getObjectId());
                         obj.put("Media", image);
-
 
                         obj.saveInBackground(new SaveCallback() {
                             @Override
@@ -275,23 +267,18 @@ public class MyUploads extends Fragment {
                                             } else {
                                                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
-
-
                                         }
                                     });
 
                                 } else {
                                     Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-
                             }
                         });
 
                         toSave.add(obj);
                         uploadIDs.add(obj.getObjectId());
                     }
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

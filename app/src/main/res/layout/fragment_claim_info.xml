@@ -32,7 +32,7 @@
                 android:id="@+id/client_spinner"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                />
+                android:clickable="false"/>
 
             <TextView
                 android:layout_width="fill_parent"
@@ -44,7 +44,8 @@
             <Spinner
                 android:id="@+id/policy_spinner"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:clickable="false"/>
 
             <TextView
                 android:layout_width="fill_parent"
