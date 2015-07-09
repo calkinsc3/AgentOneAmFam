@@ -123,7 +123,7 @@ public class MeetingListFragment extends Fragment {
 
         final ListView listView = (ListView) view.findViewById(R.id.policies_list_view);
 
-        //Generate ListView
+        //Generate ListVie
         MeetingListFragment.view = view;
         context = getActivity();
         updateList();
