@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,14 +57,14 @@ public class MyUploads extends Fragment {
         args = getArguments();
         if(this.getArguments() == null){
             uploadIDs = null;
-            claimPolicyID = null;
+
         }
         else{
 
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
         }
-
+        claimPolicyID = args.getString("claimPolicyID");
     }
 
     @Override
@@ -72,7 +73,6 @@ public class MyUploads extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_uploads, container, false);
     }
-
 
     /**
      * Handles initial listview population and Listeners for save/delete/change image
@@ -128,32 +128,33 @@ public class MyUploads extends Fragment {
         });
     }
 
-
     public static void saveComments(final Context context){
         ParseObject photo;
 
-        //only updates comments
-        for (int i = 0; i < Singleton.getComments().size(); i++) {
+        if(Singleton.getComments() != null) {
+            //only updates comments
+            for (int i = 0; i < Singleton.getComments().size(); i++) {
 
-            photo = Singleton.getUploads().get(i);
+                photo = Singleton.getUploads().get(i);
 
-            photo.put("Comment", Singleton.getComments().get(i));
-        }
-
-        ParseObject.saveAllInBackground(Singleton.getUploads(), new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-
-                    Toast.makeText(context, "Comments Saved.", Toast.LENGTH_SHORT).show();
-
-                } else {
-
-                    Toast.makeText(context, "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
-
-                }
+                photo.put("Comment", Singleton.getComments().get(i));
             }
-        });
+
+            ParseObject.saveAllInBackground(Singleton.getUploads(), new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+
+                        Toast.makeText(context, "Comments Saved.", Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(context, "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            });
+        }
 
     }
     /**
@@ -251,12 +252,13 @@ public class MyUploads extends Fragment {
                         obj.put("UserID", ParseUser.getCurrentUser().getObjectId());
                         obj.put("Media", image);
 
+
                         obj.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null) {
                                     final String objectID = obj.getObjectId();
-
+                                        Toast.makeText(getActivity(), objectID, Toast.LENGTH_LONG).show();
                                     uploadIDs.add(objectID);
 
                                     JSONArray jsonArray = new JSONArray(uploadIDs);
@@ -303,8 +305,6 @@ public class MyUploads extends Fragment {
 
     }
 
-
-
     /**
      * Calls parse.com and retrieves all photos upload for the current user (Agent).
      * Copies the uploads into a local datastore.
@@ -312,7 +312,7 @@ public class MyUploads extends Fragment {
     public static void refreshLocalData(Context context) {
 
         String userID = ParseUser.getCurrentUser().getObjectId();
-        ParseQuery<ParseObject> mainQuery;
+        ParseQuery<ParseObject> mainQuery = null;
 
         if(uploadIDs != null && args != null){
             //get list from arguments
@@ -324,12 +324,13 @@ public class MyUploads extends Fragment {
 
             }
 
-            mainQuery = ParseQuery.or(queries);
+            if(!queries.isEmpty()) {
+                mainQuery = ParseQuery.or(queries);
+            }
 
         }
         else if(uploadIDs == null && args != null){
-            mainQuery = ParseQuery.getQuery("Upload")
-                    .whereEqualTo("UserID", "a;dklsfj;asdjf;a");
+            mainQuery = null;
         }
         else{
 
@@ -338,45 +339,48 @@ public class MyUploads extends Fragment {
 
         }
 
-        //only get files that have media uploaded
-        mainQuery.whereExists("Media");
+        if(mainQuery != null) {
+            //only get files that have media uploaded
+            mainQuery.whereExists("Media");
 
 
+            try {
+                Singleton.setUploads(mainQuery.find());
+                Log.i("getUploads", "" + Singleton.getUploads().size());
 
-        try {
-            Singleton.setUploads(mainQuery.find());
+                if (!Singleton.getUploads().isEmpty()) {
+                    Singleton.setImages(new ArrayList<>());
+                    Singleton.setComments(new ArrayList<String>());
 
-            if (!Singleton.getUploads().isEmpty()) {
-                Singleton.setImages(new ArrayList<>());
-                Singleton.setComments(new ArrayList<String>());
+                    for (int i = 0; i < Singleton.getUploads().size(); i++) {
 
-                for (int i = 0; i < Singleton.getUploads().size(); i++) {
+                        ParseObject object = Singleton.getUploads().get(i);
+                        ParseFile parseFile = object.getParseFile("Media");
 
-                    ParseObject object = Singleton.getUploads().get(i);
-                    ParseFile parseFile = object.getParseFile("Media");
+                        Object obj = parseFile.getUrl();
+                        String comm = object.getString("Comment");
 
-                    Object obj =parseFile.getUrl();
-                    String comm = object.getString("Comment");
+                        Singleton.getComments().add(comm);
+                        Singleton.getImages().add(obj);
 
-                    Singleton.getComments().add(comm);
-                    Singleton.getImages().add(obj);
+                    }
 
+                    Log.i("comments", "" + Singleton.getComments().size());
+
+                    Singleton.getComments().size();
+                    updateListView(context);
+                } else {
+
+                    Toast.makeText(context, "No Uploads Found", Toast.LENGTH_LONG).show();
                 }
 
-                Singleton.getComments().size();
-                updateListView(context);
-            } else {
+            } catch (ParseException e) {
 
-                Toast.makeText(context, "No Uploads Found", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Parse.com My Uploads retrieval failed", Toast.LENGTH_LONG).show();
+
+                e.printStackTrace();
             }
-
-        } catch (ParseException e) {
-
-            Toast.makeText(context, "Parse.com My Uploads retrieval failed", Toast.LENGTH_LONG).show();
-
-            e.printStackTrace();
         }
-
     }
 
     /**

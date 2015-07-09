@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,32 +72,7 @@ public class ClaimInfo extends Fragment {
 
     }
 
-    private void showMyUploads(){
-        Fragment newFragment = new MyUploads();
-        Bundle bundle = new Bundle();
-        ArrayList<String> uploadIds = new ArrayList<>();
 
-        if(selectedClaim != null) {
-            JSONArray jsonArray = selectedClaim.getJSONArray("UploadIDs");
-            //convert jsonArray to arraylist
-            for (int i = 0; i < jsonArray.length(); i++) {
-
-                try {
-                    uploadIds.add(jsonArray.getString(i));
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "Uploads not retrieved:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-
-            bundle.putStringArrayList("UploadIDs", uploadIds);
-            bundle.putString("claimPolicyID", selectedClaim.getString("PolicyID"));
-        }
-
-        newFragment.setArguments(bundle);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.bottom_container, newFragment).commit();
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
@@ -120,23 +93,36 @@ public class ClaimInfo extends Fragment {
         setSpinners();
         spinnerListeners();
 
+        if(selectedClaim != null){
+            damages_entry.setText("$" + selectedClaim.getNumber("Damages").toString());
+            comments_entry.setText(selectedClaim.getString("Comment"));
+            showMyUploads();
+        }
 
 
-        showMyUploads();
+
+
 
 
 
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final ParseObject obj;
 
                 String damages = damages_entry.getText().toString();
                 String comments = comments_entry.getText().toString();
 
-                ParseObject obj = Singleton.getClaims().get(Claims.selectedClaim.index);
+                if(Claims.selectedClaim != null) {
+                    obj = Singleton.getClaims().get(Claims.selectedClaim.index);
+                } else {
+                    obj = new ParseObject("Claim");
+                }
 
-                obj.put("Damages", Double.parseDouble(damages));
+                obj.put("Damages", Double.parseDouble(damages.substring(1,damages.length())));
                 obj.put("Comment", comments);
+                obj.put("PolicyID", policyList.get(policyNames.indexOf(policySpinnerText)).getObjectId());
+                obj.put("UploadIDs", new ArrayList<>());
 
                 obj.saveInBackground(new SaveCallback() {
                     @Override
@@ -144,18 +130,48 @@ public class ClaimInfo extends Fragment {
 
                         if (e == null) {
                             Toast.makeText(getActivity(), "Claim Saved.", Toast.LENGTH_SHORT).show();
+                            selectedClaim = obj;
+                            showMyUploads();
+                            //save comment changes
+                            MyUploads.saveComments(getActivity());
                         } else {
                             Toast.makeText(getActivity(), "Claim NOT saved:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
 
-                //save comment changes
-                MyUploads.saveComments(getActivity());
+
 
             }
         });
 
+    }
+    private void showMyUploads(){
+        Fragment newFragment = new MyUploads();
+        Bundle bundle = new Bundle();
+        ArrayList<String> uploadIds = new ArrayList<>();
+
+        if(selectedClaim != null) {
+            JSONArray jsonArray = selectedClaim.getJSONArray("UploadIDs");
+            //convert jsonArray to arraylist
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+
+                try {
+                    uploadIds.add(jsonArray.getString(i));
+                } catch (JSONException e) {
+                    Toast.makeText(getActivity(), "Uploads not retrieved:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+            bundle.putStringArrayList("UploadIDs", uploadIds);
+            bundle.putString("claimPolicyID", selectedClaim.getString("PolicyID"));
+        }
+
+        newFragment.setArguments(bundle);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.bottom_container, newFragment).commit();
     }
 
     private void setSpinners() {

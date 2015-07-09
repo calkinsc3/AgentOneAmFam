@@ -28,19 +28,6 @@ import javax.mail.internet.InternetAddress;
  */
 public class Tools {
 
-
-    public static boolean isValidEmailAddress(String email) {
-        boolean result = true;
-        try {
-            InternetAddress emailAddr = new InternetAddress(email);
-            emailAddr.validate();
-        } catch (AddressException ex) {
-            result = false;
-        }
-        return result;
-    }
-
-
     public static void replaceFragment(Fragment fragment, FragmentManager fManager, boolean addToBackStack) {
 
         FragmentTransaction fTransaction = fManager.beginTransaction();
@@ -50,18 +37,6 @@ public class Tools {
         fTransaction.commit();
 
         //refresh options menu
-    }
-
-    public static void logout(Context context) {
-
-        SharedPreferences.Editor editor = context.getSharedPreferences(Singleton.PREFERENCES, 0).edit();
-        editor.remove("OfficeUserID");
-        editor.remove("OfficeStayLoggedIn");
-        editor.apply();
-
-        ParseUser.logOut();
-        ((Activity) context).finish();
-
     }
 
     public static void updateDateEntry(EditText editText, Calendar calendar) {
