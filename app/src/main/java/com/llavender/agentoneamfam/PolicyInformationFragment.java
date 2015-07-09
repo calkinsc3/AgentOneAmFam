@@ -111,6 +111,7 @@ public class PolicyInformationFragment extends Fragment {
                 newPolicy.put("Description", description.getText().toString());
                 newPolicy.put("Accepted", accepted.isChecked());
                 newPolicy.put("Cost", Double.parseDouble(cost.getText().toString()));
+                Log.d(" ", "");
 
                 newPolicy.saveInBackground();
             }
