@@ -240,7 +240,6 @@ public class EditAppointment extends Fragment {
                         },
                         endDateCalendar.get(Calendar.HOUR),
                         endDateCalendar.get(Calendar.MINUTE), false).show();
-
             }
         });
 
