@@ -51,8 +51,6 @@ public class EditAppointment extends Fragment {
     }
 
 
-
-
     public static final String[] EVENT_PROJECTION = new String[] {
             CalendarContract.Calendars._ID,                           // 0
             CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
@@ -65,11 +63,6 @@ public class EditAppointment extends Fragment {
     private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
     private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
     private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
-
-
-
-
-
 
 
     @Override
