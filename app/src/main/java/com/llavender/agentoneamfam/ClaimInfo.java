@@ -71,8 +71,6 @@ public class ClaimInfo extends Fragment {
 
     }
 
-
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
@@ -94,12 +92,6 @@ public class ClaimInfo extends Fragment {
             comments_entry.setText(selectedClaim.getString("Comment"));
             showMyUploads();
         }
-
-
-
-
-
-
 
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
