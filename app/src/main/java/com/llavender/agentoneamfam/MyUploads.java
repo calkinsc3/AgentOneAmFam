@@ -64,7 +64,6 @@ public class MyUploads extends Fragment {
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
         }
-        claimPolicyID = args.getString("claimPolicyID");
     }
 
     @Override
@@ -89,12 +88,10 @@ public class MyUploads extends Fragment {
         //set fab icon, set title, show fab
         //only set visible if on the claims screen
         if (args != null) {
-
             add_button.setVisibility(View.VISIBLE);
         } else {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(android.R.drawable.ic_menu_save);
-
         }
 
         header.setText("My Uploads");

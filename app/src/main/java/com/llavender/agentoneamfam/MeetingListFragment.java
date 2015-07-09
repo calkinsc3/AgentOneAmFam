@@ -70,37 +70,29 @@ public class MeetingListFragment extends Fragment {
         //query.whereEqualTo("AgentID" ,  prefs.getString("OfficeUserID", null));
 
         if (query != null) {
-
             query.findInBackground(new FindCallback<ParseObject>() {
 
                 @Override
                 public void done(List<ParseObject> list, ParseException e) {
-
                     progressDialog.dismiss();
 
                     if (e == null && !list.isEmpty()) {
-
                         listView.setAdapter(new CustomAdapter(context, list, mode));
 
                     } else if (e == null) {
                         switch (mode) {
-
                             case POLICIES:
                                 Toast.makeText(context, "No Policies Found.", Toast.LENGTH_SHORT).show();
                                 break;
-
                             case APPOINTMENTS:
                                 Toast.makeText(context, "No Appointments Found.", Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     } else {
-
                         Toast.makeText(context, "Error from parse:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
                 }
             });
-
         }
     }
 
@@ -109,7 +101,6 @@ public class MeetingListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -131,24 +122,16 @@ public class MeetingListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
                 CustomAdapter.ViewHolder vh = (CustomAdapter.ViewHolder) view.getTag();
 
                 switch (mode) {
-
                     case APPOINTMENTS:
                         selectedAppointment = vh.parseObject;
                         Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
                         break;
-
                 }
-
-
             }
         });
-
-
     }
 
     @Override
