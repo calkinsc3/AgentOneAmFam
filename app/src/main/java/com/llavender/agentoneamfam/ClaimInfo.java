@@ -65,10 +65,7 @@ public class ClaimInfo extends Fragment {
             selectedClaim = null;
         }
 
-
-
         return inflater.inflate(R.layout.fragment_claim_info, container, false);
-
     }
 
     @Override
@@ -85,7 +82,7 @@ public class ClaimInfo extends Fragment {
         policies = ParseQuery.getQuery("Policy");
 
         setSpinners();
-//        spinnerListeners();
+        spinnerListeners();
 
         if(selectedClaim != null){
             damages_entry.setText("$" + selectedClaim.getNumber("Damages").toString());
@@ -127,13 +124,10 @@ public class ClaimInfo extends Fragment {
                         }
                     }
                 });
-
-
-
             }
         });
-
     }
+
     private void showMyUploads(){
         Fragment newFragment = new MyUploads();
         Bundle bundle = new Bundle();
@@ -151,7 +145,6 @@ public class ClaimInfo extends Fragment {
                     Toast.makeText(getActivity(), "Uploads not retrieved:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
-
 
             bundle.putStringArrayList("UploadIDs", uploadIds);
             bundle.putString("claimPolicyID", selectedClaim.getString("PolicyID"));
@@ -246,8 +239,6 @@ public class ClaimInfo extends Fragment {
                     android.R.layout.simple_spinner_item, policyNames);
             policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             policySpinner.setAdapter(policySpinnerAdapter);
-
-            spinnerListeners();
         }
     }
 
