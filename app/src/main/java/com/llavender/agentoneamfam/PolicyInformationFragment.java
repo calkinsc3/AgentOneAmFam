@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ public class PolicyInformationFragment extends Fragment {
     EditText city;
     Spinner stateSpinner;
     EditText zip;
+    CheckBox accepted;
+    ImageButton saveButton;
     ListView photoView;
     ParseObject policy;
     LinearLayout address2;
@@ -61,7 +66,9 @@ public class PolicyInformationFragment extends Fragment {
         stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
         photoView = (ListView)view.findViewById(R.id.photoList);
+        saveButton =(ImageButton)view.findViewById(R.id.save_button);
         policy = Singleton.getCurrentPolicy();
+        accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
         String[] states = getResources().getStringArray(R.array.states);
 
@@ -71,6 +78,7 @@ public class PolicyInformationFragment extends Fragment {
         address.setText(policy.getString("Address"));
         city.setText(policy.getString("City"));
         zip.setText(String.valueOf(policy.getNumber("Zip")));
+        accepted.setChecked(policy.getBoolean("Accepted"));
 
         stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, states));
 
@@ -84,12 +92,29 @@ public class PolicyInformationFragment extends Fragment {
         } catch(com.parse.ParseException e) {
             Log.d("imageQuery: ", e.toString());
         }
+
         adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getMediaFiles());
         photoView.setAdapter(adapter);
 
         checkOrientationSetLayoutOrientation();
 
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseObject newPolicy = new ParseObject("Policy");
+                newPolicy.put("AgentID", ParseUser.getCurrentUser().getObjectId());
+                newPolicy.put("ClientID", Singleton.getCurrentClient().getObjectId());
+                newPolicy.put("Address", address.getText().toString());
+                newPolicy.put("City", city.getText().toString());
+                newPolicy.put("State", stateSpinner.getSelectedItem().toString());
+                newPolicy.put("Zip", zip.getText().toString());
+                newPolicy.put("Description", description.getText().toString());
+                newPolicy.put("Accepted", accepted.isChecked());
+                newPolicy.put("Cost", Double.parseDouble(cost.getText().toString()));
 
+                newPolicy.saveInBackground();
+            }
+        });
 
         return view;
     }
