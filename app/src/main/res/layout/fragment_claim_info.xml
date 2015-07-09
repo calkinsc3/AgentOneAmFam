@@ -1,0 +1,85 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.jaz020.oneamfamoffice.ClaimInfo">
+
+    <ImageButton
+        android:id="@+id/save_button"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_menu_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <ScrollView
+        android:layout_below="@id/save_button"
+        android:id="@+id/info_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/client_title"
+                android:text="Client:"
+                />
+
+            <Spinner
+                android:id="@+id/client_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/policy_title"
+                android:text="Policy:"
+                />
+
+            <Spinner
+                android:id="@+id/policy_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/damages_title"
+                android:text="Damages:"
+                />
+
+            <EditText
+                android:id="@+id/damages_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Comments_title"
+                android:text="Comment:"
+                />
+
+            <EditText
+                android:id="@+id/comments_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/info_scroll"
+        android:layout_margin="10dp"
+        />
+
+</RelativeLayout>

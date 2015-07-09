@@ -101,18 +101,19 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
 
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-
                 switch (position) {
                     case 0:
-                        ft.replace(R.id.fragment_container, new ClientListFragment());
+                        Tools.replaceFragment(new ClientListFragment(), getFragmentManager(), true);
                         break;
-//                    case 1:
-//                        ft.replace(R.id.fragment_container, new )
+                    case 1:
+                        Tools.replaceFragment(new Claims(), getFragmentManager(), true);
+                        break;
+                    case 4:
+                        Tools.replaceFragment(new MyUploads(), getFragmentManager(), true);
+                        break;
                     default:
                         Log.d("Error", "Reached default in drawer");
                 }
-                ft.addToBackStack(null).commit();
             }
         });
     }

@@ -77,4 +77,103 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+
+        <string name="hello_world">Hello world!</string>
+        <string name="policies">Policies</string>
+        <string name="appointments">Appointments</string>
+        <string name="login">Login</string>
+        <string name="username">Username</string>
+        <string name="password">Password</string>
+        <string name="policy_num_title">Policy Number:</string>
+        <string name="policy_type_title">Type of Policy:</string>
+        <string name="client_id_title">Client ID:</string>
+        <string name="address_title">Address:</string>
+        <string name="add">Add</string>
+        <string name="meeting_title">Meeting:</string>
+        <string name="attendees_title">Attendees:</string>
+        <string name="location_title">Location:</string>
+        <string name="start_time_title">Start Time:</string>
+        <string name="end_time_title">End Time:</string>
+        <string name="end_date_title">End Date:</string>
+        <string name="start_date_title">Start Date:</string>
+        <string name="comments_title">Comments:</string>
+        <string name="username_title">Username:</string>
+        <string name="password_title">Password:</string>
+        <string name="name_title">Name:</string>
+        <string name="email_title">Email:</string>
+        <string name="phone_number_title">Phone Number:</string>
+        <string name="logout">Logout</string>
+        <string name="title_activity_login">Login</string>
+        <string name="checkbox_1">Stay Logged In</string>
+        <string name="checkbox_2">Remember Username</string>
+        <string name="city">City</string>
+        <string name="email_support">Email Support</string>
+        <string name="name">Name</string>
+        <string name="email">Email</string>
+        <string name="address">Address</string>
+        <string name="zipcode">Zipcode</string>
+        <string name="phone_number">Phone Number</string>
+        <string name="comments">Comments</string>
+        <string name="save_changes">Save Changes</string>
+        <string name="create_client">Create Client</string>
+        <string name="password_title_2">Password (Again):</string>
+
+
+        <string-array name="all_abbreviations">
+            <item>Select a State&#8230;</item>
+            <item>AL</item>
+            <item>AK</item>
+            <item>AZ</item>
+            <item>AR</item>
+            <item>CA</item>
+            <item>CO</item>
+            <item>CT</item>
+            <item>DE</item>
+            <item>FL</item>
+            <item>GA</item>
+            <item>HI</item>
+            <item>ID</item>
+            <item>IL</item>
+            <item>IN</item>
+            <item>IA</item>
+            <item>KS</item>
+            <item>KY</item>
+            <item>LA</item>
+            <item>ME</item>
+            <item>MD</item>
+            <item>MA</item>
+            <item>MI</item>
+            <item>MN</item>
+            <item>MS</item>
+            <item>MO</item>
+            <item>MT</item>
+            <item>NE</item>
+            <item>NV</item>
+            <item>NH</item>
+            <item>NJ</item>
+            <item>NM</item>
+            <item>NY</item>
+            <item>NC</item>
+            <item>ND</item>
+            <item>OH</item>
+            <item>OK</item>
+            <item>OR</item>
+            <item>PA</item>
+            <item>RI</item>
+            <item>SC</item>
+            <item>SD</item>
+            <item>TN</item>
+            <item>TX</item>
+            <item>UT</item>
+            <item>VT</item>
+            <item>VA</item>
+            <item>WA</item>
+            <item>WV</item>
+            <item>WI</item>
+            <item>WY</item>
+
+        </string-array>
+
+
 </resources>

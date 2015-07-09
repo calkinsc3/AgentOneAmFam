@@ -80,11 +80,11 @@ public class PolicyInformationFragment extends Fragment {
         imageQuery.whereEqualTo("PolicyID", Singleton.getCurrentPolicy().getObjectId());
 
         try {
-            Singleton.setImages((ArrayList<ParseObject>) imageQuery.find());
+            Singleton.setMediaFiles((ArrayList<ParseObject>) imageQuery.find());
         } catch(com.parse.ParseException e) {
             Log.d("imageQuery: ", e.toString());
         }
-        adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getImages());
+        adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getMediaFiles());
         photoView.setAdapter(adapter);
 
         checkOrientationSetLayoutOrientation();
