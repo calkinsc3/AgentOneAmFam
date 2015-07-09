@@ -1,0 +1,136 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.jaz020.oneamfamoffice.EditAppointment">
+
+    <ImageButton
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_menu_save" />
+
+    <TextView
+        android:id="@+id/meeting_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/meeting_title"
+        android:layout_toStartOf="@id/save_button"
+
+        />
+
+    <EditText
+        android:id="@+id/meeting_entry"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:layout_toStartOf="@id/save_button"
+        android:layout_below="@id/meeting_title"
+        />
+
+    <ScrollView
+        android:layout_below="@id/save_button"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+
+            <TextView
+                android:id="@+id/attendees_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/attendees_title" />
+
+            <EditText
+                android:id="@+id/attendees_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/location_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/location_title" />
+
+            <EditText
+                android:id="@+id/location_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/comments_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/comments_title" />
+
+            <EditText
+                android:id="@+id/comments_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/start_time_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/start_time_title" />
+
+
+            <EditText
+                android:id="@+id/start_time_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="datetime" />
+
+            <TextView
+                android:id="@+id/start_date_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/start_date_title" />
+
+
+            <EditText
+                android:id="@+id/start_date_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="datetime" />
+
+            <TextView
+                android:id="@+id/end_time_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/end_time_title" />
+
+            <EditText
+                android:id="@+id/end_time_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="datetime" />
+
+            <TextView
+                android:id="@+id/end_date_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/end_date_title" />
+
+
+            <EditText
+                android:id="@+id/end_date_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date" />
+
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
