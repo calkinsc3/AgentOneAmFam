@@ -1,6 +1,7 @@
 package com.llavender.agentoneamfam;
 
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -8,10 +9,12 @@ import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,27 +24,34 @@ import android.widget.ImageButton;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Edits an appointment and adds the appointment to google calender.
  */
 public class EditAppointment extends Fragment {
-
 
     public EditAppointment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,9 +59,6 @@ public class EditAppointment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_appointment, container, false);
     }
-
-
-
 
     public static final String[] EVENT_PROJECTION = new String[] {
             CalendarContract.Calendars._ID,                           // 0
@@ -66,42 +73,47 @@ public class EditAppointment extends Fragment {
     private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
     private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
 
-
-
-
-
-
+    // Variables for edit invitees alert dialog.
+    private EditText attendees_entry;
+    AlertDialog.Builder builder;
+    static List<Integer> mSelectedUsers;
+    static String[] attendeesList;
+    static boolean[] checkedUserIDs;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         final EditText meeting_entry = (EditText) view.findViewById(R.id.meeting_entry);
-        final EditText attendees_entry = (EditText) view.findViewById(R.id.attendees_entry);
         final EditText location_entry = (EditText) view.findViewById(R.id.location_entry);
         final EditText start_time_entry = (EditText) view.findViewById(R.id.start_time_entry);
         final EditText start_date_entry = (EditText) view.findViewById(R.id.start_date_entry);
         final EditText end_time_entry = (EditText) view.findViewById(R.id.end_time_entry);
         final EditText end_date_entry = (EditText) view.findViewById(R.id.end_date_entry);
         final EditText comments_entry = (EditText) view.findViewById(R.id.comments_entry);
+        attendees_entry = (EditText) view.findViewById(R.id.attendees_entry);
 
         ImageButton save_button = (ImageButton) view.findViewById(R.id.save_button);
 
         final Calendar startDateCalendar = Calendar.getInstance();
         final Calendar endDateCalendar = Calendar.getInstance();
 
-        //users calendar
+        mSelectedUsers = new ArrayList<>();
+        attendeesList = new String[0];
+        checkedUserIDs = new boolean[0];
+        builder = new AlertDialog.Builder(getActivity());
+        String attendees = "";
+
+        // Users calendar
         final String[] calendarInfo = getCalendar(getActivity());
-
-
 
         if (MeetingListFragment.selectedAppointment != null) {
 
-            //load info
+            // Load info
             meeting_entry.setText(MeetingListFragment.selectedAppointment.getString("Title"));
             location_entry.setText(MeetingListFragment.selectedAppointment.getString("Location"));
             comments_entry.setText(MeetingListFragment.selectedAppointment.getString("Comment"));
 
-            //load start and end date
+            // Load start and end date
             Date startDate = MeetingListFragment.selectedAppointment.getDate("StartDate");
             Date endDate = MeetingListFragment.selectedAppointment.getDate("EndDate");
 
@@ -113,13 +125,26 @@ public class EditAppointment extends Fragment {
             Tools.updateDateEntry(start_date_entry, startDateCalendar);
             Tools.updateDateEntry(end_date_entry, endDateCalendar);
 
-            //Load participants
-            JSONArray invited = MeetingListFragment.selectedAppointment.getJSONArray("InvitedIDs");
+            //Load invitees
+            try {
+                JSONArray jArray = MeetingListFragment.selectedAppointment.getJSONArray("InvitedIDs");
+                attendeesList = new String[jArray.length()];
 
-            if(invited != null) attendees_entry.setText(invited.toString());
+                for (int i = 0; i < jArray.length(); i++) {
+                    attendeesList[i] = jArray.getString(i);
 
+                    if (i == 0)
+                        attendees += jArray.getString(i);
+                    else
+                        attendees += (", " + jArray.getString(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            attendees_entry.setText(attendees);
         }
 
+        editInvitees();
 
         start_date_entry.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,8 +163,8 @@ public class EditAppointment extends Fragment {
                                 Tools.updateDateEntry(start_date_entry, startDateCalendar);
 
                             }
-                        }
-                        , startDateCalendar.get(Calendar.YEAR),
+                        },
+                        startDateCalendar.get(Calendar.YEAR),
                         startDateCalendar.get(Calendar.MONTH),
                         startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -173,10 +198,8 @@ public class EditAppointment extends Fragment {
             @Override
             public void onClick(View v) {
 
-
                 new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
-
 
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -184,9 +207,9 @@ public class EditAppointment extends Fragment {
                                 startDateCalendar.set(Calendar.HOUR, selectedHour);
                                 startDateCalendar.set(Calendar.MINUTE, selectedMinute);
                                 Tools.updateTimeEntry(start_time_entry, startDateCalendar);
-
                             }
                         },
+
                         startDateCalendar.get(Calendar.HOUR),
                         startDateCalendar.get(Calendar.MINUTE), false).show();
 
@@ -197,10 +220,8 @@ public class EditAppointment extends Fragment {
             @Override
             public void onClick(View v) {
 
-
                 new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
-
 
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -213,7 +234,6 @@ public class EditAppointment extends Fragment {
                         },
                         endDateCalendar.get(Calendar.HOUR),
                         endDateCalendar.get(Calendar.MINUTE), false).show();
-
             }
         });
 
@@ -230,21 +250,21 @@ public class EditAppointment extends Fragment {
                     appointmentToSave = new ParseObject("Meeting");
                 }
 
+                // Save input from user to parse database.
                 String title = meeting_entry.getText().toString();
-                String invitedIDS = attendees_entry.getText().toString();
+                JSONArray invitedIDS = new JSONArray((Arrays.asList(attendeesList)));
                 String location = location_entry.getText().toString();
                 Date startDate = startDateCalendar.getTime();
                 Date endDate = endDateCalendar.getTime();
                 String comments = comments_entry.getText().toString();
 
-
                 appointmentToSave.put("Title", title);
-               //TODO
-               // appointmentToSave.put("InvitedIDs", invitedIDS);
+                appointmentToSave.put("InvitedIDs", invitedIDS);
                 appointmentToSave.put("Location", location);
                 appointmentToSave.put("StartDate", startDate);
                 appointmentToSave.put("EndDate", endDate);
                 appointmentToSave.put("Comment", comments);
+                // TODO ??
                 appointmentToSave.put("Accepted", true);
 
                 appointmentToSave.saveInBackground(new SaveCallback() {
@@ -259,13 +279,11 @@ public class EditAppointment extends Fragment {
                         } else {
                             Toast.makeText(getActivity(), "Appointment NOT Saved to Parse.", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
-
                         }
                     }
                 });
 
-
-                /**
+                 /**
                  * SAVE TO GOOGLE CALENDAR
                  */
                 long calID = Long.parseLong(calendarInfo[PROJECTION_ID_INDEX]);
@@ -283,27 +301,26 @@ public class EditAppointment extends Fragment {
                 // get the event ID that is the last element in the Uri
                 long eventID = Long.parseLong(uri.getLastPathSegment());
 
-
-                if(eventID != -1){
-
+                if(eventID != -1) {
                     Toast.makeText(getActivity(), "Appointment saved to google Calendar", Toast.LENGTH_SHORT).show();
                 }
-                else{
-
+                else {
                     Toast.makeText(getActivity(), "Appointment not saved to google Calendar", Toast.LENGTH_SHORT).show();
                 }
-
-
-
-
             }
         });
     }
 
+    /**
+     *
+     *
+     * @param context The current activity.
+     * @return
+     */
     public static String[] getCalendar(Context context){
 
         // Run query
-        Cursor cur = null;
+        Cursor cur;
         ContentResolver cr = context.getContentResolver();
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
@@ -322,19 +339,151 @@ public class EditAppointment extends Fragment {
         String ownerName = null;
 
         while (cur.moveToNext()) {
-
             // Get the field values
             calID = cur.getLong(PROJECTION_ID_INDEX);
             displayName = cur.getString(PROJECTION_DISPLAY_NAME_INDEX);
             accountName = cur.getString(PROJECTION_ACCOUNT_NAME_INDEX);
             ownerName = cur.getString(PROJECTION_OWNER_ACCOUNT_INDEX);
-
         }
 
         return new String[] {String.valueOf(calID), displayName, accountName, ownerName};
-
     }
 
+    /**
+     * Edit invitees editText on click listener.
+     */
+    private void editInvitees() {
+        attendees_entry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getPossibleAttendees();
+            }
+        });
+    }
 
+    /**
+     * Gets ids of all the possible users that can be invited (Agents and Clients).
+     */
+    private void getPossibleAttendees() {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereNotEqualTo("accountType", "Office");
 
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(final List<ParseUser> possibleAttendees, ParseException e) {
+                if (e == null && possibleAttendees.size() != 0) {
+                    String[] userIDs = new String[possibleAttendees.size()];
+                    checkedUserIDs = new boolean[possibleAttendees.size()];
+
+                    for (int i = 0; i < possibleAttendees.size(); i++) {
+                        // Add object ids for all possible attendees to a concurrent string array.
+                        String objID = possibleAttendees.get(i).getObjectId();
+                        userIDs[i] = objID;
+
+                        // Checks if a user is already added to the list of invitees and adds them
+                        // to a list to have them already checked when alert dialog pops up.
+                        if (attendeesList != null && Arrays.asList(attendeesList).contains(objID)) {
+                            mSelectedUsers.add(i);
+                            checkedUserIDs[i] = true;
+                        }
+                    }
+
+                    showPopupDialog(possibleAttendees, userIDs);
+
+                } else if (possibleAttendees.size() == 0) {
+                    builder.setTitle("Select Attendees");
+                    builder.setMessage("No users found");
+
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {}
+                    });
+                } else {
+                    //Something went wrong.
+                    Log.e("ERROR", e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * Shows the alert dialog for all the possible attendees.
+     *
+     * @param possibleAttendees List of all the users that can be invited to attend the meeting.
+     * @param userIDs Object ids of all the users that can be invited to attend the meeting.
+     */
+    private void showPopupDialog(final List<ParseUser> possibleAttendees, String[] userIDs) {
+        builder.setTitle("Select Attendees");
+
+        // Alert dialog with multi-select.
+        builder.setMultiChoiceItems(userIDs, checkedUserIDs,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item, boolean isChecked) {
+                        if (isChecked && !mSelectedUsers.contains(item)) {
+                            // A new user is invited.
+                            mSelectedUsers.add(item);
+                            checkedUserIDs[item] = true;
+                        } else if (mSelectedUsers.contains(item)) {
+                            if (mSelectedUsers.size() == 1) {
+                                // All the possible invitees are unselected.
+                                mSelectedUsers = new ArrayList<>();
+                            } else {
+                                // A previous invitee was unselected.
+                                mSelectedUsers.remove(Integer.valueOf(item));
+                                checkedUserIDs[item] = false;
+                            }
+                        }
+
+                        // Removes the selection of multiple users from the list to display in the
+                        // attendees_entry edit text.
+                        mSelectedUsers = removeDuplicates(mSelectedUsers);
+                    }
+                });
+
+        builder.setPositiveButton("Invite", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                attendeesList = new String[mSelectedUsers.size()];
+                String attendees = "";
+
+                // Build the string to display the selected invitees in the
+                // attendees_entry edit text.
+                for (int i = 0; i < mSelectedUsers.size(); i++) {
+                    String objID = possibleAttendees.get(mSelectedUsers.get(i)).getObjectId();
+                    attendeesList[i] = objID;
+
+                    if (i == 0)
+                        attendees += objID;
+                    else
+                        attendees += (", " + objID);
+                }
+
+                attendees_entry.setText(attendees);
+                mSelectedUsers = new ArrayList<>();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                mSelectedUsers = new ArrayList<>();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    /**
+     * Removes all the duplicate items from a list.
+     *
+     * @param oldList List from which to remove the duplicate items from.
+     * @return List one occurrence of each item.
+     */
+    private List<Integer> removeDuplicates(List<Integer> oldList) {
+        Set<Integer> newList = new HashSet<>();
+        newList.addAll(oldList);
+
+        return new ArrayList<>(newList);
+    }
 }
