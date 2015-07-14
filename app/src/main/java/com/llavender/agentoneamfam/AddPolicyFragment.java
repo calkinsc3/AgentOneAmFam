@@ -67,6 +67,8 @@ public class AddPolicyFragment extends Fragment {
 
         checkOrientationSetLayoutOrientation();
 
+
+
         return view;
     }
 
