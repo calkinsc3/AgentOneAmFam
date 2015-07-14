@@ -35,6 +35,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 
 /**
@@ -173,6 +174,7 @@ public class PolicyInformationFragment extends Fragment {
         if (resultCode == getActivity().RESULT_OK) {
             ClipData clipData = data.getClipData();
             Uri targetUri;
+            images.clear();
 
             if (clipData != null) {
                 for (int i = 0; clipData.getItemCount() > i; i++) {
@@ -203,6 +205,7 @@ public class PolicyInformationFragment extends Fragment {
                     upload.put("PolicyID", Singleton.getCurrentPolicy().getObjectId());
                     upload.put("UserID", ParseUser.getCurrentUser().getObjectId());
                     upload.put("Media", image);
+                    upload.put("Comment", "");
 
 
 
@@ -222,9 +225,14 @@ public class PolicyInformationFragment extends Fragment {
                         } else {
                             Singleton.setMediaFiles(images);
                         }
+                        HashSet<ParseObject> hashMedia = new HashSet<>(Singleton.getMediaFiles());
+                        ArrayList<ParseObject> media = new ArrayList<>(hashMedia);
 
-                        mediaAdapter.notifyDataSetChanged();
-                        images.clear();
+                        ObjectArrayAdapter secondaryAdapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, media);
+                        photoView.setAdapter(secondaryAdapter);
+
+//                        mediaAdapter.notifyDataSetChanged();
+//                        images.clear();
                     } else {
                         Log.d("Save Error: ", e.toString());
                     }
