@@ -11,14 +11,14 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
+                android:id="@+id/client_title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/client_title"
                 android:text="Client:" />
 
             <Spinner
@@ -28,9 +28,9 @@
                 android:clickable="false"/>
 
             <TextView
+                android:id="@+id/policy_title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/policy_title"
                 android:text="Policy:" />
 
             <Spinner
@@ -40,9 +40,9 @@
                 android:clickable="false"/>
 
             <TextView
+                android:id="@+id/damages_title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/damages_title"
                 android:text="Damages:" />
 
             <EditText
@@ -51,9 +51,9 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/Comments_title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/Comments_title"
                 android:text="Comment:" />
 
             <EditText

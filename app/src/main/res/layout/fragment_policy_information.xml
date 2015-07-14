@@ -7,7 +7,7 @@
     <!-- Remove image button once save button is added to action bar. -->
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -20,7 +20,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/imageButton"
+        android:layout_below="@+id/saveButton"
         android:layout_centerVertical="true">
 
         <LinearLayout
@@ -178,12 +178,12 @@
                     android:text="Uploads" />
 
                 <ImageButton
-                    android:id="@+id/imageButton2"
+                    android:id="@+id/addUpload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:src="@android:drawable/ic_input_add"
-                    android:background="#00ffffff" />
+                    android:background="#00ffffff"
+                    android:src="@android:drawable/ic_input_add" />
 
             </RelativeLayout>
 
@@ -195,9 +195,9 @@
                     android:id="@+id/photoList"
                     android:layout_width="match_parent"
                     android:layout_height="fill_parent"
+                    android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="false"
-                    android:layout_alignParentStart="false"
-                    android:layout_alignParentBottom="true" />
+                    android:layout_alignParentStart="false" />
 
             </RelativeLayout>
 

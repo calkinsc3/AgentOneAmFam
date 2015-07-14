@@ -8,7 +8,6 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
@@ -51,6 +50,37 @@ import java.util.TimeZone;
  */
 public class EditAppointment extends Fragment {
 
+    /**
+     * Public fields required for Google Calendar
+     */
+    public static final String[] EVENT_PROJECTION = new String[] {
+            CalendarContract.Calendars._ID,                           // 0
+            CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+            CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
+    };
+    // The indices for the projection array above.
+    private static final int PROJECTION_ID_INDEX = 0;
+    private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
+    private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
+    private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
+    static List<Integer> mSelectedUsers;
+    static String[] attendeesList;
+    static boolean[] checkedUserIDs;
+    AlertDialog.Builder builder;
+    EditText meeting_entry;
+    EditText location_entry;
+    EditText start_time_entry;
+    EditText start_date_entry;
+    EditText end_time_entry;
+    EditText end_date_entry;
+    EditText comments_entry;
+    Calendar startDateCalendar;
+    Calendar endDateCalendar;
+    //the current users calendarInfo
+    String[] calendarInfo;
+    // Variables for edit invitees alert dialog.
+    private EditText attendees_entry;
     public EditAppointment() {
         // Required empty public constructor
     }
@@ -63,44 +93,6 @@ public class EditAppointment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_appointment, container, false);
     }
-
-    /**
-     * Public fields required for Google Calendar
-     */
-    public static final String[] EVENT_PROJECTION = new String[] {
-            CalendarContract.Calendars._ID,                           // 0
-            CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
-            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
-            CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
-    };
-
-    // The indices for the projection array above.
-    private static final int PROJECTION_ID_INDEX = 0;
-    private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
-    private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
-    private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
-
-    // Variables for edit invitees alert dialog.
-    private EditText attendees_entry;
-    AlertDialog.Builder builder;
-    static List<Integer> mSelectedUsers;
-    static String[] attendeesList;
-    static boolean[] checkedUserIDs;
-
-
-    EditText meeting_entry;
-    EditText location_entry;
-    EditText start_time_entry;
-    EditText start_date_entry;
-    EditText end_time_entry;
-    EditText end_date_entry;
-    EditText comments_entry;
-    Calendar startDateCalendar;
-    Calendar endDateCalendar;
-
-    //the current users calendarInfo
-    String[] calendarInfo;
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
