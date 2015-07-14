@@ -55,7 +55,7 @@ public class ClientListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
-        menu.findItem(R.id.action_save).setIcon(android.R.drawable.btn_plus);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -157,8 +157,6 @@ public class ClientListFragment extends Fragment {
                 ImageView addPolicyButton = vHolder.addPolicyButton;
                 ListView policyList = vHolder.policyListView;
                 ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, vHolder.policyDescriptions);
-
-
 
                 if(clientName != null){
                     clientName.setText(client.getString("Name"));
