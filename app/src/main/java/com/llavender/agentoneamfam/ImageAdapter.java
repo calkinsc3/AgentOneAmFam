@@ -2,6 +2,7 @@ package com.llavender.agentoneamfam;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -83,7 +84,7 @@ public class ImageAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
 
         ViewHolder vh;
-        View view;
+        View view = convertView;
 
         switch (mode) {
 
@@ -93,8 +94,6 @@ public class ImageAdapter extends BaseAdapter {
              * CLAIM MODE
              */
             case Singleton.CLAIM:
-
-                view = convertView;
 
                 //INFLATE VIEWS AND SET UP VIEW HOLDER
                 if (view == null) {
@@ -180,7 +179,6 @@ public class ImageAdapter extends BaseAdapter {
                 });
 
                 break;
-
 
 
             //CASE OF UPLOAD PHOTOS or MY UPLOADS
@@ -320,8 +318,7 @@ public class ImageAdapter extends BaseAdapter {
                                 .setAction(Intent.ACTION_GET_CONTENT);
 
                         //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
-                        ((Activity)context).startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
-
+                        ((Activity) context).startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
 
                         return true;
                     }
@@ -334,29 +331,75 @@ public class ImageAdapter extends BaseAdapter {
 
                 break;
 
+            case Singleton.MEETING:
 
-            //CASE OF POLICY LIST AND CLIENT LIST
+                ParseObject curr = objects.get(position);
+
+                //INFLATE VIEWS AND SET UP VIEW HOLDER
+                if (convertView == null) {
+
+                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    view = inflater.inflate(R.layout.info_list_item, null);
+
+                    vh = new ViewHolder();
+                    vh.textView = (TextView) view.findViewById(R.id.info_list_item_text);
+                    vh.delete_button = (ImageButton) view.findViewById(R.id.delete_button);
+                    vh.parseObject = curr;
+                    view.setTag(vh);
+                } else {
+                    vh = (ViewHolder) convertView.getTag();
+                    curr = vh.parseObject;
+                }
+
+                String temp = Tools.buildMessage(curr, Singleton.MEETING);
+
+                //SET THE TEXT
+                vh.textView.setText(temp);
+
+                //DELETE CLICK LISTENER
+                final ViewHolder vhf4 = vh;
+                vh.delete_button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+                        final ProgressDialog progressDialog = ProgressDialog.show(context, "", "", true);
+
+                        vhf4.parseObject.deleteInBackground(new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+
+                                progressDialog.dismiss();
+
+                                if (e == null) {
+                                    Toast.makeText(context, "Appointment Deleted.", Toast.LENGTH_SHORT).show();
+                                    MeetingListFragment.updateList();
+                                } else {
+                                    Toast.makeText(context, "Unable to Delete Appointment.", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+
+                    }
+                });
+                break;
+
             default:
-
-
-                //TODO
-
                 //INFLATE VIEWS
                 if (convertView == null) {
 
                     LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.info_list_item, null);
-                } else {
-                    view = convertView;
                 }
-
                 break;
-
         }
 
-
         return view;
+
     }
+
 
     /**
      * Custom ViewHolder class

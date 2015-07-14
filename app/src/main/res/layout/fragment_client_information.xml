@@ -1,8 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/padding_margin"
     tools:context="com.llavender.agentoneamfam.ClientInformationFragment">
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,6 +77,7 @@
                     android:id="@+id/clientName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -96,6 +98,7 @@
                     android:id="@+id/phoneNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -116,6 +119,7 @@
                     android:id="@+id/email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -136,6 +140,7 @@
                     android:id="@+id/addressLine1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -156,6 +161,7 @@
                     android:id="@+id/addressLine2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
         </LinearLayout>
@@ -171,7 +177,9 @@
                 android:layout_gravity="center"
                 android:text="Schedule Placeholder"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
+
         </FrameLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
