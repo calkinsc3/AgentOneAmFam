@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,7 +34,6 @@ public class MeetingListFragment extends Fragment {
     public static final int APPOINTMENTS = 1;
 
     //RESPECTIVE OBJECT HOLDERS
-    public static ParseObject selectedPolicy;
     public static ParseObject selectedAppointment;
 
     public static List<ParseObject> meetings;
@@ -42,6 +44,7 @@ public class MeetingListFragment extends Fragment {
     //REQUIRED FOR UPDATING LIST
     private static View view;
     private static Context context;
+    private ListView listView;
 
     public MeetingListFragment() {
         // Required empty public constructor
@@ -49,11 +52,12 @@ public class MeetingListFragment extends Fragment {
 
     /**
      * Queries parse and populates the listview
+     * NEEDS TO REMAIN STATIC: it is called from ImageAdapter
      */
     public static void updateList() {
 
         final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Retrieving data from Parse.com", true);
-        final ListView listView = (ListView) view.findViewById(R.id.policies_list_view);
+        final ListView listView = (ListView) view.findViewById(R.id.clientListView);
         SharedPreferences prefs = context.getSharedPreferences(Singleton.PREFERENCES, 0);
         ParseQuery<ParseObject>  query = ParseQuery.getQuery("Meeting");
 
@@ -86,7 +90,6 @@ public class MeetingListFragment extends Fragment {
                             break;
                     }
                 } else {
-
                     Toast.makeText(context, "Error from parse:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
@@ -98,25 +101,26 @@ public class MeetingListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list, container, false);
+        return inflater.inflate(R.layout.fragment_client_list, container, false);
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        final ListView listView = (ListView) view.findViewById(R.id.policies_list_view);
+        listView = (ListView) view.findViewById(R.id.clientListView);
 
-        //Generate ListVie
+        //Generate ListView
         MeetingListFragment.view = view;
         context = getActivity();
+
+        //reset appointment holder
+        selectedAppointment = null;
 
         updateList();
 
@@ -125,6 +129,7 @@ public class MeetingListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 ImageAdapter.ViewHolder vh = (ImageAdapter.ViewHolder) view.getTag();
+
                 selectedAppointment = meetings.get(vh.index);
                 Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
 
@@ -132,6 +137,25 @@ public class MeetingListFragment extends Fragment {
         });
 
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_add);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                //move to new meeting
+                Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

@@ -349,8 +349,8 @@ public class ImageAdapter extends BaseAdapter {
                     curr = vh.parseObject;
                 }
 
-                String temp = Tools.buildMessage(curr, Singleton.MEETING);
-
+                String temp = Tools.buildMessage(objects.get(position), Singleton.MEETING);
+                vh.index = position;
                 //SET THE TEXT
                 vh.textView.setText(temp);
 
