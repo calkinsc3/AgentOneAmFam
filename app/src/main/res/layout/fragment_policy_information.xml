@@ -8,20 +8,21 @@
 
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="#00ffffff"
-        android:src="@android:drawable/ic_menu_save" />
+        android:src="@android:drawable/ic_menu_save"
+        android:contentDescription="Save Button"/>
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/imageButton"
+        android:layout_below="@+id/saveButton"
         android:layout_centerVertical="true">
 
         <LinearLayout
@@ -48,7 +49,6 @@
                 android:id="@+id/LinearLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/linearLayout"
                 android:orientation="vertical">
 
                 <TextView
@@ -68,7 +68,6 @@
                 android:id="@+id/LinearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/LinearLayout1"
                 android:orientation="vertical">
 
                 <TextView
@@ -87,7 +86,6 @@
                 android:id="@+id/LinearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/LinearLayout2"
                 android:orientation="vertical">
 
                 <TextView
@@ -171,13 +169,16 @@
                     android:id="@+id/textView8"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Text" />
+                    android:text="Uploads" />
 
                 <ImageButton
-                    android:id="@+id/imageButton2"
+                    android:id="@+id/addUpload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="false" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@android:drawable/ic_input_add"
+                    android:background="#00ffffff" />
             </RelativeLayout>
 
             <RelativeLayout

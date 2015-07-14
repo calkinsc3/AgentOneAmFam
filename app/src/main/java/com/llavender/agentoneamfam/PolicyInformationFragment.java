@@ -2,6 +2,7 @@ package com.llavender.agentoneamfam;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -42,6 +44,7 @@ public class PolicyInformationFragment extends Fragment {
     EditText zip;
     CheckBox accepted;
     ImageButton saveButton;
+    ImageButton addUpload;
     ListView photoView;
     ParseObject policy;
     LinearLayout address2;
@@ -66,7 +69,8 @@ public class PolicyInformationFragment extends Fragment {
         stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
         photoView = (ListView)view.findViewById(R.id.photoList);
-        saveButton =(ImageButton)view.findViewById(R.id.save_button);
+        saveButton =(ImageButton)view.findViewById(R.id.saveButton);
+        addUpload = (ImageButton)view.findViewById(R.id.addUpload);
         policy = Singleton.getCurrentPolicy();
         accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
@@ -101,19 +105,31 @@ public class PolicyInformationFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseObject newPolicy = new ParseObject("Policy");
-                newPolicy.put("AgentID", ParseUser.getCurrentUser().getObjectId());
-                newPolicy.put("ClientID", Singleton.getCurrentClient().getObjectId());
-                newPolicy.put("Address", address.getText().toString());
-                newPolicy.put("City", city.getText().toString());
-                newPolicy.put("State", stateSpinner.getSelectedItem().toString());
-                newPolicy.put("Zip", zip.getText().toString());
-                newPolicy.put("Description", description.getText().toString());
-                newPolicy.put("Accepted", accepted.isChecked());
-                newPolicy.put("Cost", Double.parseDouble(cost.getText().toString()));
-                Log.d(" ", "");
+                ParseObject policyToSave = Singleton.getCurrentPolicy();
 
-                newPolicy.saveInBackground();
+                policyToSave.put("AgentID", ParseUser.getCurrentUser().getObjectId());
+                policyToSave.put("ClientID", Singleton.getCurrentClient().getObjectId());
+                policyToSave.put("Address", address.getText().toString());
+                policyToSave.put("City", city.getText().toString());
+                policyToSave.put("State", stateSpinner.getSelectedItem().toString());
+                policyToSave.put("Zip", zip.getText().toString());
+                policyToSave.put("Description", description.getText().toString());
+                policyToSave.put("Accepted", accepted.isChecked());
+                policyToSave.put("Cost", Double.parseDouble(cost.getText().toString()));
+
+                policyToSave.saveInBackground();
+                Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        addUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent.createChooser(intent, "Select Pictures"), 2);
             }
         });
 
@@ -126,6 +142,14 @@ public class PolicyInformationFragment extends Fragment {
             city.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
             zip.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+//        Singleton.getMediaFiles().add()
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public class ObjectArrayAdapter extends ArrayAdapter<ParseObject> {
