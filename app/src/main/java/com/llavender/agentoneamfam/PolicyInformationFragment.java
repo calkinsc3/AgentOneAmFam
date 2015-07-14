@@ -1,9 +1,14 @@
 package com.llavender.agentoneamfam;
 
 import android.app.Fragment;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,10 +23,14 @@ import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -41,11 +50,15 @@ public class PolicyInformationFragment extends Fragment {
     Spinner stateSpinner;
     EditText zip;
     CheckBox accepted;
+    Boolean saved;
     ImageButton saveButton;
+    ImageButton addUpload;
     ListView photoView;
     ParseObject policy;
     LinearLayout address2;
-    ObjectArrayAdapter adapter;
+    ArrayList<ParseObject> images;
+    ArrayList<String> comments;
+    ObjectArrayAdapter mediaAdapter;
 
     public PolicyInformationFragment() {
         // Required empty public constructor
@@ -66,11 +79,15 @@ public class PolicyInformationFragment extends Fragment {
         stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
         photoView = (ListView)view.findViewById(R.id.photoList);
-        saveButton =(ImageButton)view.findViewById(R.id.save_button);
+        saved = false;
+        saveButton =(ImageButton)view.findViewById(R.id.saveButton);
+        addUpload = (ImageButton)view.findViewById(R.id.addUpload);
         policy = Singleton.getCurrentPolicy();
         accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
+        comments = new ArrayList<>();
         String[] states = getResources().getStringArray(R.array.states);
+        images = new ArrayList<>();
 
         client.append(policy.getString("ClientID"));
         description.setText(policy.getString("Description"));
@@ -93,26 +110,47 @@ public class PolicyInformationFragment extends Fragment {
             Log.d("imageQuery: ", e.toString());
         }
 
-        adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getMediaFiles());
-        photoView.setAdapter(adapter);
+        mediaAdapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getMediaFiles());
+        photoView.setAdapter(mediaAdapter);
 
         checkOrientationSetLayoutOrientation();
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseObject newPolicy = new ParseObject("Policy");
-                newPolicy.put("AgentID", ParseUser.getCurrentUser().getObjectId());
-                newPolicy.put("ClientID", Singleton.getCurrentClient().getObjectId());
-                newPolicy.put("Address", address.getText().toString());
-                newPolicy.put("City", city.getText().toString());
-                newPolicy.put("State", stateSpinner.getSelectedItem().toString());
-                newPolicy.put("Zip", zip.getText().toString());
-                newPolicy.put("Description", description.getText().toString());
-                newPolicy.put("Accepted", accepted.isChecked());
-                newPolicy.put("Cost", Double.parseDouble(cost.getText().toString()));
+                ParseObject policyToSave = Singleton.getCurrentPolicy();
 
-                newPolicy.saveInBackground();
+                policyToSave.put("Address", address.getText().toString());
+                policyToSave.put("City", city.getText().toString());
+                policyToSave.put("State", stateSpinner.getSelectedItem().toString());
+                policyToSave.put("Zip", zip.getText().toString());
+                policyToSave.put("Description", description.getText().toString());
+                policyToSave.put("Accepted", accepted.isChecked());
+                policyToSave.put("Cost", Double.parseDouble(cost.getText().toString()));
+
+                policyToSave.saveInBackground();
+                Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
+
+                for (int i = 0; Singleton.getMediaFiles().size() > i; i++){
+                    ParseObject currFile = Singleton.getMediaFiles().get(i);
+                    currFile.put("Comment", comments.get(i));
+                    try {
+                        currFile.save();
+                    } catch(com.parse.ParseException e){
+                        Log.d("save: ", e.toString());
+                    }
+                }
+            }
+        });
+
+        addUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent.createChooser(intent, "Select Pictures"), 2);
             }
         });
 
@@ -124,6 +162,76 @@ public class PolicyInformationFragment extends Fragment {
             address2.setOrientation(LinearLayout.VERTICAL);
             city.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
             zip.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.d("result code:", String.valueOf(resultCode));
+
+        if (resultCode == getActivity().RESULT_OK) {
+            ClipData clipData = data.getClipData();
+            Uri targetUri;
+
+            if (clipData != null) {
+                for (int i = 0; clipData.getItemCount() > i; i++) {
+                    try {
+                        ParseObject upload = new ParseObject("Upload");
+                        ParseFile image = new ParseFile("photo.jpg", Tools.readBytes(getActivity(),
+                                clipData.getItemAt(i).getUri()), "jpeg");
+
+                        upload.put("PolicyID", Singleton.getCurrentPolicy().getObjectId());
+                        upload.put("UserID", ParseUser.getCurrentUser().getObjectId());
+                        upload.put("Media", image);
+
+                        //add to images array
+                        images.add(upload);
+                    } catch (Exception e) {
+                        Log.d("Load Multiple: ", e.toString());
+                    }
+                }
+            } else {
+                //get target Uri
+                targetUri = data.getData();
+
+                try {
+                    ParseObject upload = new ParseObject("Upload");
+                    ParseFile image = new ParseFile("photo.jpg", Tools.readBytes(getActivity(),
+                            targetUri), "jpeg");
+
+                    upload.put("PolicyID", Singleton.getCurrentPolicy().getObjectId());
+                    upload.put("UserID", ParseUser.getCurrentUser().getObjectId());
+                    upload.put("Media", image);
+
+
+
+                    images.add(upload);
+                } catch (Exception e) {
+                    Log.d("Load Single: ", e.toString());
+                }
+            }
+
+            ParseObject.saveAllInBackground(images, new SaveCallback() {
+
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        if(Singleton.getMediaFiles().size() > 0){
+                            Singleton.getMediaFiles().addAll(images);
+                        } else {
+                            Singleton.setMediaFiles(images);
+                        }
+
+                        mediaAdapter.notifyDataSetChanged();
+                        images.clear();
+                    } else {
+                        Log.d("Save Error: ", e.toString());
+                    }
+                }
+            });
+
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -180,6 +288,10 @@ public class PolicyInformationFragment extends Fragment {
 
             vHolder.index = position;
 
+            if(position >= comments.size()){
+                comments.add("");
+            }
+
             /**
              * Remember the variable position is sent in as an argument to this method.
              * The variable simply refers to the position of the current object on the list\
@@ -197,22 +309,22 @@ public class PolicyInformationFragment extends Fragment {
                 }
             }
 
-//            vHolder.commentsText.addTextChangedListener(new TextWatcher() {
-//                @Override
-//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                }
-//
-//                @Override
-//                public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                }
-//
-//                @Override
-//                public void afterTextChanged(Editable s) {
-//                    Holder.putInCommentsList(s.toString(), vHolder.index);
-//                }
-//            });
+            vHolder.commentsText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    comments.set(vHolder.index, s.toString());
+                }
+            });
 
 
 

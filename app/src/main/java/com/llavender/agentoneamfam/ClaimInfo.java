@@ -2,7 +2,6 @@ package com.llavender.agentoneamfam;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -53,11 +51,12 @@ public class ClaimInfo extends Fragment {
 
     Spinner clientSpinner;
     Spinner policySpinner;
+    EditText damages_entry;
+    EditText comments_entry;
 
     public ClaimInfo() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,10 +71,6 @@ public class ClaimInfo extends Fragment {
 
         return inflater.inflate(R.layout.fragment_claim_info, container, false);
     }
-
-    EditText damages_entry;
-    EditText comments_entry;
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {

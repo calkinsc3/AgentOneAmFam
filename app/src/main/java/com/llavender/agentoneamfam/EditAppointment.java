@@ -8,7 +8,6 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,11 +15,13 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -49,6 +50,37 @@ import java.util.TimeZone;
  */
 public class EditAppointment extends Fragment {
 
+    /**
+     * Public fields required for Google Calendar
+     */
+    public static final String[] EVENT_PROJECTION = new String[] {
+            CalendarContract.Calendars._ID,                           // 0
+            CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+            CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
+    };
+    // The indices for the projection array above.
+    private static final int PROJECTION_ID_INDEX = 0;
+    private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
+    private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
+    private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
+    static List<Integer> mSelectedUsers;
+    static String[] attendeesList;
+    static boolean[] checkedUserIDs;
+    AlertDialog.Builder builder;
+    EditText meeting_entry;
+    EditText location_entry;
+    EditText start_time_entry;
+    EditText start_date_entry;
+    EditText end_time_entry;
+    EditText end_date_entry;
+    EditText comments_entry;
+    Calendar startDateCalendar;
+    Calendar endDateCalendar;
+    //the current users calendarInfo
+    String[] calendarInfo;
+    // Variables for edit invitees alert dialog.
+    private EditText attendees_entry;
     public EditAppointment() {
         // Required empty public constructor
     }
@@ -56,95 +88,46 @@ public class EditAppointment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_appointment, container, false);
     }
 
-    public static final String[] EVENT_PROJECTION = new String[] {
-            CalendarContract.Calendars._ID,                           // 0
-            CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
-            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
-            CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
-    };
-
-    // The indices for the projection array above.
-    private static final int PROJECTION_ID_INDEX = 0;
-    private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
-    private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
-    private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
-
-    // Variables for edit invitees alert dialog.
-    private EditText attendees_entry;
-    AlertDialog.Builder builder;
-    static List<Integer> mSelectedUsers;
-    static String[] attendeesList;
-    static boolean[] checkedUserIDs;
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        final EditText meeting_entry = (EditText) view.findViewById(R.id.meeting_entry);
-        final EditText location_entry = (EditText) view.findViewById(R.id.location_entry);
-        final EditText start_time_entry = (EditText) view.findViewById(R.id.start_time_entry);
-        final EditText start_date_entry = (EditText) view.findViewById(R.id.start_date_entry);
-        final EditText end_time_entry = (EditText) view.findViewById(R.id.end_time_entry);
-        final EditText end_date_entry = (EditText) view.findViewById(R.id.end_date_entry);
-        final EditText comments_entry = (EditText) view.findViewById(R.id.comments_entry);
+        meeting_entry = (EditText) view.findViewById(R.id.meeting_entry);
+        location_entry = (EditText) view.findViewById(R.id.location_entry);
+        start_time_entry = (EditText) view.findViewById(R.id.start_time_entry);
+        start_date_entry = (EditText) view.findViewById(R.id.start_date_entry);
+        end_time_entry = (EditText) view.findViewById(R.id.end_time_entry);
+        end_date_entry = (EditText) view.findViewById(R.id.end_date_entry);
+        comments_entry = (EditText) view.findViewById(R.id.comments_entry);
         attendees_entry = (EditText) view.findViewById(R.id.attendees_entry);
 
-        ImageButton save_button = (ImageButton) view.findViewById(R.id.save_button);
-
-        final Calendar startDateCalendar = Calendar.getInstance();
-        final Calendar endDateCalendar = Calendar.getInstance();
+        startDateCalendar = Calendar.getInstance();
+        endDateCalendar = Calendar.getInstance();
+        calendarInfo = getCalendar();
 
         mSelectedUsers = new ArrayList<>();
-        attendeesList = new String[0];
         checkedUserIDs = new boolean[0];
         builder = new AlertDialog.Builder(getActivity());
-        String attendees = "";
-
-        // Users calendar
-        final String[] calendarInfo = getCalendar(getActivity());
 
         if (MeetingListFragment.selectedAppointment != null) {
-
-            // Load info
-            meeting_entry.setText(MeetingListFragment.selectedAppointment.getString("Title"));
-            location_entry.setText(MeetingListFragment.selectedAppointment.getString("Location"));
-            comments_entry.setText(MeetingListFragment.selectedAppointment.getString("Comment"));
-
-            // Load start and end date
-            Date startDate = MeetingListFragment.selectedAppointment.getDate("StartDate");
-            Date endDate = MeetingListFragment.selectedAppointment.getDate("EndDate");
-
-            startDateCalendar.setTime(startDate);
-            endDateCalendar.setTime(endDate);
-
-            Tools.updateTimeEntry(start_time_entry, startDateCalendar);
-            Tools.updateTimeEntry(end_time_entry, endDateCalendar);
-            Tools.updateDateEntry(start_date_entry, startDateCalendar);
-            Tools.updateDateEntry(end_date_entry, endDateCalendar);
-
-            //Load invitees
-            try {
-                JSONArray jArray = MeetingListFragment.selectedAppointment.getJSONArray("InvitedIDs");
-                attendeesList = new String[jArray.length()];
-
-                for (int i = 0; i < jArray.length(); i++) {
-                    attendeesList[i] = jArray.getString(i);
-
-                    if (i == 0)
-                        attendees += jArray.getString(i);
-                    else
-                        attendees += (", " + jArray.getString(i));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            attendees_entry.setText(attendees);
+            loadSelectedMeeting();
         }
 
         editInvitees();
+
+        setListeners();
+
+    }
+
+    /**
+     * Sets all the Listeners for edittexts and datePickers
+     */
+    public void setListeners(){
 
         start_date_entry.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,91 +220,132 @@ public class EditAppointment extends Fragment {
             }
         });
 
-        save_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "", true);
-                ParseObject appointmentToSave;
-
-                if (MeetingListFragment.selectedAppointment != null) {
-                    appointmentToSave = MeetingListFragment.selectedAppointment;
-                } else {
-                    appointmentToSave = new ParseObject("Meeting");
-                }
-
-                // Save input from user to parse database.
-                String title = meeting_entry.getText().toString();
-                JSONArray invitedIDS = new JSONArray((Arrays.asList(attendeesList)));
-                String location = location_entry.getText().toString();
-                Date startDate = startDateCalendar.getTime();
-                Date endDate = endDateCalendar.getTime();
-                String comments = comments_entry.getText().toString();
-
-                appointmentToSave.put("Title", title);
-                appointmentToSave.put("InvitedIDs", invitedIDS);
-                appointmentToSave.put("Location", location);
-                appointmentToSave.put("StartDate", startDate);
-                appointmentToSave.put("EndDate", endDate);
-                appointmentToSave.put("Comment", comments);
-                // TODO ??
-                appointmentToSave.put("Accepted", true);
-
-                appointmentToSave.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-
-                        progressDialog.dismiss();
-
-                        if (e == null) {
-                            Toast.makeText(getActivity(), "Appointment Saved to Parse.", Toast.LENGTH_SHORT).show();
-                            getActivity().onBackPressed();
-                        } else {
-                            Toast.makeText(getActivity(), "Appointment NOT Saved to Parse.", Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                 /**
-                 * SAVE TO GOOGLE CALENDAR
-                 */
-                long calID = Long.parseLong(calendarInfo[PROJECTION_ID_INDEX]);
-
-                ContentResolver cr = getActivity().getContentResolver();
-                ContentValues values = new ContentValues();
-                values.put(CalendarContract.Events.DTSTART, startDate.getTime());
-                values.put(CalendarContract.Events.DTEND, endDate.getTime());
-                values.put(CalendarContract.Events.TITLE, title);
-                values.put(CalendarContract.Events.DESCRIPTION, comments);
-                values.put(CalendarContract.Events.CALENDAR_ID, calID);
-                values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
-                Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-
-                // get the event ID that is the last element in the Uri
-                long eventID = Long.parseLong(uri.getLastPathSegment());
-
-                if(eventID != -1) {
-                    Toast.makeText(getActivity(), "Appointment saved to google Calendar", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(getActivity(), "Appointment not saved to google Calendar", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     /**
-     *
-     *
-     * @param context The current activity.
-     * @return
+     * Loads the information from the meeting selected on the meetingsList fragment
      */
-    public static String[] getCalendar(Context context){
+    public void loadSelectedMeeting(){
+        String attendees = "";
+
+        // Load info
+        meeting_entry.setText(MeetingListFragment.selectedAppointment.getString("Title"));
+        location_entry.setText(MeetingListFragment.selectedAppointment.getString("Location"));
+        comments_entry.setText(MeetingListFragment.selectedAppointment.getString("Comment"));
+
+        // Load start and end date
+        Date startDate = MeetingListFragment.selectedAppointment.getDate("StartDate");
+        Date endDate = MeetingListFragment.selectedAppointment.getDate("EndDate");
+
+        startDateCalendar.setTime(startDate);
+        endDateCalendar.setTime(endDate);
+
+        Tools.updateTimeEntry(start_time_entry, startDateCalendar);
+        Tools.updateTimeEntry(end_time_entry, endDateCalendar);
+        Tools.updateDateEntry(start_date_entry, startDateCalendar);
+        Tools.updateDateEntry(end_date_entry, endDateCalendar);
+
+        //Load invitees
+        try {
+            JSONArray jArray = MeetingListFragment.selectedAppointment.getJSONArray("InvitedIDs");
+            attendeesList = new String[jArray.length()];
+
+            for (int i = 0; i < jArray.length(); i++) {
+                attendeesList[i] = jArray.getString(i);
+
+                if (i == 0)
+                    attendees += jArray.getString(i);
+                else
+                    attendees += (", " + jArray.getString(i));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        attendees_entry.setText(attendees);
+    }
+
+    /**
+     * Saves the current appointment (new or old) and uploads it to the user's Google Calendar
+     */
+    public void saveAppointment(){
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "", true);
+        ParseObject appointmentToSave;
+
+        if (MeetingListFragment.selectedAppointment != null) {
+            appointmentToSave = MeetingListFragment.selectedAppointment;
+        } else {
+            appointmentToSave = new ParseObject("Meeting");
+        }
+
+        // Save input from user to parse database.
+        String title = meeting_entry.getText().toString();
+        JSONArray invitedIDS = new JSONArray((Arrays.asList(attendeesList)));
+        String location = location_entry.getText().toString();
+        Date startDate = startDateCalendar.getTime();
+        Date endDate = endDateCalendar.getTime();
+        String comments = comments_entry.getText().toString();
+
+        appointmentToSave.put("Title", title);
+        appointmentToSave.put("InvitedIDs", invitedIDS);
+        appointmentToSave.put("Location", location);
+        appointmentToSave.put("StartDate", startDate);
+        appointmentToSave.put("EndDate", endDate);
+        appointmentToSave.put("Comment", comments);
+        // TODO ??
+        appointmentToSave.put("Accepted", true);
+
+        appointmentToSave.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+
+                progressDialog.dismiss();
+
+                if (e == null) {
+                    Toast.makeText(getActivity(), "Appointment Saved to Parse.", Toast.LENGTH_SHORT).show();
+                    getActivity().onBackPressed();
+                } else {
+                    Toast.makeText(getActivity(), "Appointment NOT Saved to Parse.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /**
+         * SAVE TO GOOGLE CALENDAR
+         */
+        long calID = Long.parseLong(calendarInfo[PROJECTION_ID_INDEX]);
+
+        ContentResolver cr = getActivity().getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(CalendarContract.Events.DTSTART, startDate.getTime());
+        values.put(CalendarContract.Events.DTEND, endDate.getTime());
+        values.put(CalendarContract.Events.TITLE, title);
+        values.put(CalendarContract.Events.DESCRIPTION, comments);
+        values.put(CalendarContract.Events.CALENDAR_ID, calID);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+
+        // get the event ID that is the last element in the Uri
+        long eventID = Long.parseLong(uri.getLastPathSegment());
+
+        if(eventID != -1) {
+            Toast.makeText(getActivity(), "Appointment saved to google Calendar", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getActivity(), "Appointment not saved to google Calendar", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Gets the User's google calendar from google
+     * @return an array of information regarding the user's calendar
+     *         it is put into the array in the format outlined by the google calendar fields
+     */
+    public String[] getCalendar(){
 
         // Run query
         Cursor cur;
-        ContentResolver cr = context.getContentResolver();
+        ContentResolver cr = getActivity().getContentResolver();
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_NAME + " = ?) AND ("
                 + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?) AND ("
@@ -485,5 +509,23 @@ public class EditAppointment extends Fragment {
         newList.addAll(oldList);
 
         return new ArrayList<>(newList);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                saveAppointment();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

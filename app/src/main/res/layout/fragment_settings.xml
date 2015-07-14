@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding_margin"
     android:orientation="vertical"
+    android:padding="@dimen/padding_margin"
     tools:context="com.example.jaz020.oneamfamoffice.Settings">
 
     <ScrollView
@@ -16,9 +16,9 @@
 
             <LinearLayout
                 android:id="@+id/top_linear"
-                android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
                 <EditText
                     android:id="@+id/username_entry"
@@ -43,9 +43,9 @@
 
             <LinearLayout
                 android:id="@+id/middle_linear"
-                android:layout_below="@id/top_linear"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/top_linear"
                 android:orientation="horizontal" >
 
                 <EditText
@@ -70,10 +70,10 @@
 
             <LinearLayout
                 android:id="@+id/bottom_linear"
-                android:layout_below="@id/middle_linear"
-                android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:layout_below="@id/middle_linear"
+                android:orientation="vertical" >
 
                 <EditText
                     android:id="@+id/name_entry"
@@ -112,7 +112,7 @@
         android:id="@+id/email_support_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/email_support"
-        android:layout_above="@id/logout_button" />
+        android:layout_above="@id/logout_button"
+        android:text="@string/email_support" />
 
 </RelativeLayout>

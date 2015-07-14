@@ -7,7 +7,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +34,11 @@ import java.util.List;
 public class MyUploads extends Fragment {
 
 
-    public static ParseObject tempObject = null; //Holds the Upload Object that the image is being changed on
-    private static View mainView = null; //This fragments main view
-
     //REQUEST CODES FOR GALLERY INTENT RETURN
     final public static int NEW_UPLOAD = 0;
     final public static int CHANGE_IMAGE = 1;
-
+    public static ParseObject tempObject = null; //Holds the Upload Object that the image is being changed on
+    private static View mainView = null; //This fragments main view
     /**
      * These fields are used for the MyUploads fragment, within the ClaimsInfo fragment
      * they will all be null unless this fragment is withing the ClaimsInfo fragment
@@ -51,6 +48,124 @@ public class MyUploads extends Fragment {
     private static Bundle args;   //arguments passed to this fragment
 
     public MyUploads() {
+    }
+
+    /**
+     * Calls parse.com and retrieves all photos upload for the current user (Agent).
+     * Copies the uploads into a local datastore.
+     */
+    public static void refreshLocalData(Context context) {
+
+        String userID = ParseUser.getCurrentUser().getObjectId();
+
+        //USED FOR QUERYING UPLOADS SPECIFIC TO A CLAIM (null for creating a new claim)
+        ParseQuery<ParseObject> mainQuery = null;
+
+        //Build a query for each upload found in the uploadIDs of the Current Claim
+        if(uploadIDs != null && args != null){
+
+            //get list from arguments
+            List<ParseQuery<ParseObject>> queries = new ArrayList<>();
+
+            for(int i = 0; i < MyUploads.uploadIDs.size(); i++){
+                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId", MyUploads.uploadIDs.get(i)));
+            }
+
+            if(!queries.isEmpty()) {
+                mainQuery = ParseQuery.or(queries);
+            }
+
+        }
+        //MY UPLOADS: add a single query to mainQuery
+        else if(args == null){
+            mainQuery = ParseQuery.getQuery("Upload")
+                    .whereEqualTo("UserID", userID);
+        }
+
+
+        //IF A QUERY WAS BUILT (wont enter this code of creating a new Claim)
+        if(mainQuery != null) {
+
+            //only get files that have media uploaded
+            mainQuery.whereExists("Media");
+
+
+            try {
+
+                //TODO this blocks the UI thread so we must add a loading dialog or take off the UI thread
+                //run the query and set the uploads List to the result
+                Singleton.setUploads(mainQuery.find());
+
+                //Build the local backend list with the uploads retrieved
+                if (!Singleton.getUploads().isEmpty()) {
+
+                    Singleton.setImages(new ArrayList<>());
+                    Singleton.setComments(new ArrayList<String>());
+
+                    for (int i = 0; i < Singleton.getUploads().size(); i++) {
+                        ParseObject object = Singleton.getUploads().get(i);
+                        ParseFile parseFile = object.getParseFile("Media");
+                        Object obj = parseFile.getUrl();
+                        String comm = object.getString("Comment");
+                        Singleton.getComments().add(comm);
+                        Singleton.getImages().add(obj);
+                    }
+
+                    updateListView(context);
+                } else {
+                    Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
+                }
+
+            } catch (ParseException e) {
+                Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Updates the listview from the singleton backend
+     */
+    public static void updateListView(Context context) {
+
+        ListView pictureList = (ListView) MyUploads.mainView.findViewById(R.id.my_uploads_list_view);
+        ImageAdapter adapter = new ImageAdapter(context, Singleton.getImages(), Singleton.getComments(), null, Singleton.IMAGE);
+        pictureList.setAdapter(adapter);
+    }
+
+    /**
+     * Loops through the Comments List (Singleton Backend) and updates the comments in the
+     * ParseObject in the concurrent uploads List (Singleton Backend).
+     *
+     * Once all the uploads have been updated with new comments,
+     * save them all to Parse
+     *
+     * @param context the activity that this fragment belongs to
+     */
+    public static void saveComments(final Context context){
+
+        ParseObject photo;
+
+        if(Singleton.getComments() != null) {
+            //only updates comments
+            for (int i = 0; i < Singleton.getComments().size(); i++) {
+                photo = Singleton.getUploads().get(i);
+                photo.put("Comment", Singleton.getComments().get(i));
+            }
+
+            ParseObject.saveAllInBackground(Singleton.getUploads(), new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+
+                    if (e == null) {
+                        Toast.makeText(context, "Comments Saved.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+
     }
 
     @Override
@@ -158,7 +273,6 @@ public class MyUploads extends Fragment {
             }
         });
     }
-
 
     /**
      *Handles return from image selection.  Updates parse and refreshes the local datastore
@@ -283,124 +397,6 @@ public class MyUploads extends Fragment {
                 }
                 break;
         }
-    }
-
-    /**
-     * Calls parse.com and retrieves all photos upload for the current user (Agent).
-     * Copies the uploads into a local datastore.
-     */
-    public static void refreshLocalData(Context context) {
-
-        String userID = ParseUser.getCurrentUser().getObjectId();
-
-        //USED FOR QUERYING UPLOADS SPECIFIC TO A CLAIM (null for creating a new claim)
-        ParseQuery<ParseObject> mainQuery = null;
-
-        //Build a query for each upload found in the uploadIDs of the Current Claim
-        if(uploadIDs != null && args != null){
-
-            //get list from arguments
-            List<ParseQuery<ParseObject>> queries = new ArrayList<>();
-
-            for(int i = 0; i < MyUploads.uploadIDs.size(); i++){
-                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId", MyUploads.uploadIDs.get(i)));
-            }
-
-            if(!queries.isEmpty()) {
-                mainQuery = ParseQuery.or(queries);
-            }
-
-        }
-        //MY UPLOADS: add a single query to mainQuery
-        else if(args == null){
-            mainQuery = ParseQuery.getQuery("Upload")
-                    .whereEqualTo("UserID", userID);
-        }
-
-
-        //IF A QUERY WAS BUILT (wont enter this code of creating a new Claim)
-        if(mainQuery != null) {
-
-            //only get files that have media uploaded
-            mainQuery.whereExists("Media");
-
-
-            try {
-
-                //TODO this blocks the UI thread so we must add a loading dialog or take off the UI thread
-                //run the query and set the uploads List to the result
-                Singleton.setUploads(mainQuery.find());
-
-                //Build the local backend list with the uploads retrieved
-                if (!Singleton.getUploads().isEmpty()) {
-
-                    Singleton.setImages(new ArrayList<>());
-                    Singleton.setComments(new ArrayList<String>());
-
-                    for (int i = 0; i < Singleton.getUploads().size(); i++) {
-                        ParseObject object = Singleton.getUploads().get(i);
-                        ParseFile parseFile = object.getParseFile("Media");
-                        Object obj = parseFile.getUrl();
-                        String comm = object.getString("Comment");
-                        Singleton.getComments().add(comm);
-                        Singleton.getImages().add(obj);
-                    }
-
-                    updateListView(context);
-                } else {
-                    Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
-                }
-
-            } catch (ParseException e) {
-                Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Updates the listview from the singleton backend
-     */
-    public static void updateListView(Context context) {
-
-        ListView pictureList = (ListView) MyUploads.mainView.findViewById(R.id.my_uploads_list_view);
-        ImageAdapter adapter = new ImageAdapter(context, Singleton.getImages(), Singleton.getComments(), null, Singleton.IMAGE);
-        pictureList.setAdapter(adapter);
-    }
-
-    /**
-     * Loops through the Comments List (Singleton Backend) and updates the comments in the
-     * ParseObject in the concurrent uploads List (Singleton Backend).
-     *
-     * Once all the uploads have been updated with new comments,
-     * save them all to Parse
-     *
-     * @param context the activity that this fragment belongs to
-     */
-    public static void saveComments(final Context context){
-
-        ParseObject photo;
-
-        if(Singleton.getComments() != null) {
-            //only updates comments
-            for (int i = 0; i < Singleton.getComments().size(); i++) {
-                photo = Singleton.getUploads().get(i);
-                photo.put("Comment", Singleton.getComments().get(i));
-            }
-
-            ParseObject.saveAllInBackground(Singleton.getUploads(), new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-
-                    if (e == null) {
-                        Toast.makeText(context, "Comments Saved.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-
     }
 
 
