@@ -62,37 +62,36 @@ public class MeetingListFragment extends Fragment {
         //query.whereEqualTo("AgentID" ,  prefs.getString("OfficeUserID", null));
 
 
+        query.findInBackground(new FindCallback<ParseObject>() {
 
-            query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
 
-                @Override
-                public void done(List<ParseObject> list, ParseException e) {
+                progressDialog.dismiss();
 
-                    progressDialog.dismiss();
+                if (e == null && !list.isEmpty()) {
 
-                    if (e == null && !list.isEmpty()) {
+                    meetings = list;
+                    listView.setAdapter(new ImageAdapter(context, null, null, meetings, Singleton.MEETING));
 
-                        meetings = list;
-                        listView.setAdapter(new ImageAdapter(context, null, null, meetings, Singleton.MEETING));
+                } else if (e == null) {
+                    switch (mode) {
 
-                    } else if (e == null) {
-                        switch (mode) {
+                        case POLICIES:
+                            Toast.makeText(context, "No Policies Found.", Toast.LENGTH_SHORT).show();
+                            break;
 
-                            case POLICIES:
-                                Toast.makeText(context, "No Policies Found.", Toast.LENGTH_SHORT).show();
-                                break;
-
-                            case APPOINTMENTS:
-                                Toast.makeText(context, "No Appointments Found.", Toast.LENGTH_SHORT).show();
-                                break;
-                        }
-                    } else {
-
-                        Toast.makeText(context, "Error from parse:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        case APPOINTMENTS:
+                            Toast.makeText(context, "No Appointments Found.", Toast.LENGTH_SHORT).show();
+                            break;
                     }
+                } else {
 
+                    Toast.makeText(context, "Error from parse:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });
+
+            }
+        });
 
     }
 
