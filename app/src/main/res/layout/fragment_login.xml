@@ -54,6 +54,7 @@
                 android:singleLine="true" />
 
         </LinearLayout>
+
     </ScrollView>
 
     <LinearLayout
@@ -73,9 +74,10 @@
             android:id="@+id/stayLoggedIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:checked="false"
             android:text="Keep Me Logged In" />
+
     </LinearLayout>
 
     <Button
@@ -88,4 +90,3 @@
         android:textStyle="bold" />
 
 </LinearLayout>
-
