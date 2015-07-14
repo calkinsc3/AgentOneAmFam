@@ -57,7 +57,7 @@ public class AddPolicyFragment extends Fragment {
         stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
         photoView = (ListView)view.findViewById(R.id.photoList);
-        saveButton =(ImageButton)view.findViewById(R.id.save_button);
+       // saveButton =(ImageButton)view.findViewById(R.id.save_button);
         policy = Singleton.getCurrentPolicy();
         accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);

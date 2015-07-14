@@ -6,15 +6,6 @@
     android:padding="@dimen/padding_margin"
     tools:context="com.example.jaz020.oneamfamoffice.EditAppointment">
 
-    <!-- Remove image button once save button is added to action bar. -->
-
-    <ImageButton
-        android:id="@+id/save_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:src="@android:drawable/ic_menu_save" />
-
     <ScrollView
 
         android:layout_width="fill_parent"
