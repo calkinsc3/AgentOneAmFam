@@ -337,7 +337,8 @@ public class EditAppointment extends Fragment {
     }
 
     /**
-     * Gets the User's google calendar from google
+     * Gets the User's google calendar from google.
+     *
      * @return an array of information regarding the user's calendar
      *         it is put into the array in the format outlined by the google calendar fields
      */

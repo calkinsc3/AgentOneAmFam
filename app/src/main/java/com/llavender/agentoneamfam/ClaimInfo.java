@@ -3,6 +3,8 @@ package com.llavender.agentoneamfam;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +28,8 @@ import com.parse.SaveCallback;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,12 +93,54 @@ public class ClaimInfo extends Fragment {
 
         //load the selected claims info into the fields
         if (selectedClaim != null) {
-            damages_entry.setText("$" + selectedClaim.getNumber("Damages").toString());
+            //TODO
+
+            String damages = selectedClaim.getNumber("Damages").toString();
+
+//            BigDecimal parsed = new BigDecimal(damages)
+//                    .setScale(2, BigDecimal.ROUND_FLOOR)
+//                    .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+
+            String formattedDamages = NumberFormat.getCurrencyInstance().format(damages);
+
+            damages_entry.setText(formattedDamages);
             comments_entry.setText(selectedClaim.getString("Comment"));
             showMyUploads();
         }
 
+        // Formats the damages into currency format.
+        damages_entry.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
+            private String current = "";
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!s.toString().equals(current)){
+                    damages_entry.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[$,.]", "");
+
+                    BigDecimal parsed = new BigDecimal(cleanString)
+                            .setScale(2, BigDecimal.ROUND_FLOOR)
+                            .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+
+                    String formatted = NumberFormat.getCurrencyInstance().format(parsed);
+
+                    current = formatted;
+                    damages_entry.setText(formatted);
+                    damages_entry.setSelection(formatted.length());
+
+                    damages_entry.addTextChangedListener(this);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     /**
@@ -103,9 +149,12 @@ public class ClaimInfo extends Fragment {
     private void saveClaim(){
         final ParseObject obj;
 
-        String damages = damages_entry.getText().toString();
         String comments = comments_entry.getText().toString();
         String policyID = policyList.get(policyNames.indexOf(policySpinnerText)).getObjectId();
+
+        String damages = damages_entry.getText().toString();
+        damages = damages.replace("$","");
+        damages = damages.replace(",","");
 
         if (Claims.selectedClaim != null) {
             obj = Singleton.getClaims().get(Claims.selectedClaim.index);
@@ -113,7 +162,7 @@ public class ClaimInfo extends Fragment {
             obj = new ParseObject("Claim");
         }
 
-        obj.put("Damages", Double.parseDouble(damages.substring(1, damages.length())));
+        obj.put("Damages", Double.parseDouble(damages));
         obj.put("Comment", comments);
         obj.put("PolicyID", policyID);
         obj.put("UploadIDs", new ArrayList<>());
@@ -127,7 +176,7 @@ public class ClaimInfo extends Fragment {
                     selectedClaim = obj;
                     showMyUploads();
 
-                    //save comment changes
+                    // Save comment changes
                     MyUploads.saveComments(getActivity());
                 } else {
                     Toast.makeText(getActivity(), "Claim NOT saved:" + e.getMessage(), Toast.LENGTH_SHORT).show();

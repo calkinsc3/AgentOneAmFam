@@ -90,7 +90,6 @@ public class ImageAdapter extends BaseAdapter {
 
 
             /**
-             *
              * CLAIM MODE
              */
             case Singleton.CLAIM:
@@ -412,7 +411,6 @@ public class ImageAdapter extends BaseAdapter {
         int index;
         ImageButton delete_button;
         ParseObject parseObject;
-
 
     }
 

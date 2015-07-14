@@ -59,8 +59,7 @@
                 <EditText
                     android:id="@+id/description"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Type Something" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -79,7 +78,7 @@
                     android:id="@+id/cost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Type Something"/>
+                    android:inputType="numberDecimal"/>
 
             </LinearLayout>
 
@@ -98,8 +97,7 @@
                 <EditText
                     android:id="@+id/address"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Type Something"/>
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 

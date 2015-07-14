@@ -48,7 +48,8 @@
             <EditText
                 android:id="@+id/damages_entry"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
 
             <TextView
                 android:id="@+id/Comments_title"

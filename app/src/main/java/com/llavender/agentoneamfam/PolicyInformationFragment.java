@@ -33,6 +33,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -92,9 +94,17 @@ public class PolicyInformationFragment extends Fragment {
         String[] states = getResources().getStringArray(R.array.states);
         images = new ArrayList<>();
 
+        String costString = policy.getNumber("Cost").toString();
+
+        BigDecimal parsed = new BigDecimal(costString)
+                .setScale(2, BigDecimal.ROUND_FLOOR)
+                .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+
+        String formattedCost = NumberFormat.getCurrencyInstance().format(parsed);
+
         client.append(policy.getString("ClientID"));
         description.setText(policy.getString("Description"));
-        cost.setText(String.valueOf(policy.getNumber("Cost")));
+        cost.setText(formattedCost);
         address.setText(policy.getString("Address"));
         city.setText(policy.getString("City"));
         zip.setText(String.valueOf(policy.getNumber("Zip")));
@@ -118,6 +128,37 @@ public class PolicyInformationFragment extends Fragment {
 
         checkOrientationSetLayoutOrientation();
 
+        cost.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            private String current = "";
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!s.toString().equals(current)){
+                    cost.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[$,.]", "");
+
+                    BigDecimal parsed = new BigDecimal(cleanString)
+                            .setScale(2,BigDecimal.ROUND_FLOOR)
+                            .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+
+                    String formatted = NumberFormat.getCurrencyInstance().format(parsed);
+
+                    current = formatted;
+                    cost.setText(formatted);
+                    cost.setSelection(formatted.length());
+
+                    cost.addTextChangedListener(this);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +170,12 @@ public class PolicyInformationFragment extends Fragment {
                 policyToSave.put("Zip", zip.getText().toString());
                 policyToSave.put("Description", description.getText().toString());
                 policyToSave.put("Accepted", accepted.isChecked());
-                policyToSave.put("Cost", Double.parseDouble(cost.getText().toString()));
+
+                // TODO cost is not being uploaded to parse correctly.
+                String costFormatted = cost.getText().toString();
+                costFormatted = costFormatted.replace("$","");
+                costFormatted = costFormatted.replace(",","");
+                policyToSave.put("Cost", Double.parseDouble(costFormatted));
 
                 policyToSave.saveInBackground();
                 Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
