@@ -35,6 +35,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -167,6 +170,7 @@ public class PolicyInformationFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        images.clear();
 
         Log.d("result code:", String.valueOf(resultCode));
 
@@ -204,8 +208,6 @@ public class PolicyInformationFragment extends Fragment {
                     upload.put("UserID", ParseUser.getCurrentUser().getObjectId());
                     upload.put("Media", image);
 
-
-
                     images.add(upload);
                 } catch (Exception e) {
                     Log.d("Load Single: ", e.toString());
@@ -219,12 +221,14 @@ public class PolicyInformationFragment extends Fragment {
                     if (e == null) {
                         if(Singleton.getMediaFiles().size() > 0){
                             Singleton.getMediaFiles().addAll(images);
+                            Singleton.setMediaFiles(removeDuplicates(Singleton.getMediaFiles()));
                         } else {
                             Singleton.setMediaFiles(images);
                         }
 
-                        mediaAdapter.notifyDataSetChanged();
-                        images.clear();
+                        mediaAdapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getMediaFiles());
+                        photoView.setAdapter(mediaAdapter);
+
                     } else {
                         Log.d("Save Error: ", e.toString());
                     }
@@ -233,6 +237,13 @@ public class PolicyInformationFragment extends Fragment {
 
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private ArrayList<ParseObject> removeDuplicates(List<ParseObject> oldList) {
+        Set<ParseObject> newList = new HashSet<>();
+        newList.addAll(oldList);
+
+        return new ArrayList<>(newList);
     }
 
     public class ObjectArrayAdapter extends ArrayAdapter<ParseObject> {
