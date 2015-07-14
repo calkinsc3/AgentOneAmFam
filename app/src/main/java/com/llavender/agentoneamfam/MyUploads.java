@@ -38,6 +38,7 @@ public class MyUploads extends Fragment {
     final public static int NEW_UPLOAD = 0;
     final public static int CHANGE_IMAGE = 1;
     public static ParseObject tempObject = null; //Holds the Upload Object that the image is being changed on
+    public static Fragment fragment;
     private static View mainView = null; //This fragments main view
     /**
      * These fields are used for the MyUploads fragment, within the ClaimsInfo fragment
@@ -184,6 +185,7 @@ public class MyUploads extends Fragment {
          *
          */
         args = getArguments();
+        fragment = this;
 
         if(this.getArguments() == null){
             uploadIDs = null;
