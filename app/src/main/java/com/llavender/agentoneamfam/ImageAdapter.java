@@ -131,7 +131,6 @@ public class ImageAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
 
-                        //TODO move to class
                         DialogInterface.OnClickListener dialogClick = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -210,6 +209,7 @@ public class ImageAdapter extends BaseAdapter {
                 //URI OF IMAGE TO BE LOADED
                 String imageUri = images.get(position).toString();
 
+                //TODO image resizing
                 //LOAD THE IMAGE WITH PICASSO LIBRARY
                 Picasso.with(context)
                         .load(imageUri)
@@ -231,9 +231,7 @@ public class ImageAdapter extends BaseAdapter {
 
                     @Override
                     public void afterTextChanged(Editable s) {
-
                         Singleton.getComments().set(vhf.index, s.toString());
-
                     }
                 });
 
@@ -351,8 +349,8 @@ public class ImageAdapter extends BaseAdapter {
                     curr = vh.parseObject;
                 }
 
-                String temp = Tools.buildMessage(curr, Singleton.MEETING);
-
+                String temp = Tools.buildMessage(objects.get(position), Singleton.MEETING);
+                vh.index = position;
                 //SET THE TEXT
                 vh.textView.setText(temp);
 
