@@ -84,7 +84,9 @@ public class Tools {
         return byteBuffer.toByteArray();
     }
 
+    //TODO recomment
     /**
+     *
      * Formats the information of a client or a policy object to be
      * viewed as a list item in a TextView
      *
@@ -114,6 +116,14 @@ public class Tools {
             //TODO
             case Singleton.CLAIM:
                 message = object.getObjectId() + "\n" + object.get("Damages");
+                break;
+
+            case Singleton.MEETING:
+                message = object.getString("Title") + "\n" + object.getString("Location") + "\n" +
+                        object.getDate("StartDate").toString() +  "\n" +
+                        object.getDate("EndDate").toString() + "\n" +
+                        object.getString("Comment");
+                break;
 
         }
 

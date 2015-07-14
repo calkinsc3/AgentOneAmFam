@@ -83,9 +83,6 @@ public class ClaimInfo extends Fragment {
 
         damages_entry = (EditText) view.findViewById(R.id.damages_entry);
         comments_entry = (EditText) view.findViewById(R.id.comments_entry);
-        final ImageButton save_button = (ImageButton) view.findViewById(R.id.save_button);
-
-        MenuItem action_save_claim = (MenuItem) view.findViewById(R.id.action_save_claim);
 
         clientSpinner = (Spinner) view.findViewById(R.id.client_spinner);
         policySpinner = (Spinner) view.findViewById(R.id.policy_spinner);
@@ -93,8 +90,8 @@ public class ClaimInfo extends Fragment {
         clients = ParseUser.getQuery();
         policies = ParseQuery.getQuery("Policy");
 
-        setSpinners(save_button);
-        spinnerListeners(save_button);
+        setSpinners();
+        spinnerListeners();
 
         //load the selected claims info into the fields
         if (selectedClaim != null) {
@@ -106,6 +103,9 @@ public class ClaimInfo extends Fragment {
 
     }
 
+    /**
+     * Saves the current claim
+     */
     private void saveClaim(){
         final ParseObject obj;
 
@@ -140,7 +140,11 @@ public class ClaimInfo extends Fragment {
         });
     }
 
+    /**
+     * Shows the myUploads sub fragment below the information displays
+     */
     private void showMyUploads(){
+
         Fragment newFragment = new MyUploads();
         Bundle bundle = new Bundle();
         ArrayList<String> uploadIds = new ArrayList<>();
@@ -167,7 +171,8 @@ public class ClaimInfo extends Fragment {
         ft.add(R.id.bottom_container, newFragment).commit();
     }
 
-    private void setSpinners(ImageButton save_button) {
+    //TODO Josh comment
+    private void setSpinners() {
         try {
             clients.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
 
@@ -251,18 +256,19 @@ public class ClaimInfo extends Fragment {
                     android.R.layout.simple_spinner_item, policyNames);
             policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             policySpinner.setAdapter(policySpinnerAdapter);
-
-            if (policyNames.isEmpty()) {
-                save_button.setVisibility(View.GONE);
-                Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                save_button.setVisibility(View.VISIBLE);
-            }
+//
+//            if (policyNames.isEmpty()) {
+//                save_button.setVisibility(View.GONE);
+//                Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
+//                        Toast.LENGTH_SHORT).show();
+//            } else {
+//                save_button.setVisibility(View.VISIBLE);
+//            }
         }
     }
 
-    private void spinnerListeners(final ImageButton save_button) {
+    //TODO Josh comment
+    private void spinnerListeners() {
         clientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -274,7 +280,9 @@ public class ClaimInfo extends Fragment {
                     policies.whereEqualTo("ClientID",
                             clientList.get(clientNames.indexOf(clientSpinnerText)).getObjectId());
                     policyList.addAll(policies.find());
-                } catch (ParseException pe) { pe.printStackTrace(); }
+                } catch (ParseException pe) {
+                    pe.printStackTrace();
+                }
 
                 for (int i = 0; i < policyList.size(); i++) {
                     policyNames.add(policyList.get(i).getString("Description"));
@@ -285,13 +293,6 @@ public class ClaimInfo extends Fragment {
                 policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 policySpinner.setAdapter(policySpinnerAdapter);
 
-                if (policyNames.isEmpty()) {
-                    save_button.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    save_button.setVisibility(View.VISIBLE);
-                }
             }
 
             @Override
@@ -313,8 +314,8 @@ public class ClaimInfo extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.findItem(R.id.action_save_claim).setVisible(true);
-        menu.findItem(R.id.action_save_claim).setIcon(android.R.drawable.ic_menu_save);
+        menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -323,8 +324,15 @@ public class ClaimInfo extends Fragment {
 
         Log.d("onOptionsItemSelected", "yes");
         switch (item.getItemId()) {
-            case R.id.action_save_claim:
-                saveClaim();
+            case R.id.action_save:
+
+                if(policyNames.isEmpty()){
+                    Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
+                            Toast.LENGTH_SHORT).show();
+                }else{
+                    saveClaim();
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

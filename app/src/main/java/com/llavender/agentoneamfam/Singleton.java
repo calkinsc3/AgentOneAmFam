@@ -25,6 +25,7 @@ public class Singleton {
     public static final int CLIENT = 1;
     public static final int POLICY = 2;
     public static final int CLAIM = 3;
+    public static final int MEETING = 4;
 
     protected Singleton() {
 
