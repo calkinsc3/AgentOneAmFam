@@ -123,7 +123,7 @@ public class MeetingListFragment extends Fragment {
 
         final ListView listView = (ListView) view.findViewById(R.id.policies_list_view);
 
-        //Generate ListView
+        //Generate ListVie
         MeetingListFragment.view = view;
         context = getActivity();
         updateList();
@@ -134,16 +134,8 @@ public class MeetingListFragment extends Fragment {
 
 
                 CustomAdapter.ViewHolder vh = (CustomAdapter.ViewHolder) view.getTag();
-
-                switch (mode) {
-
-                    case APPOINTMENTS:
-                        selectedAppointment = vh.parseObject;
-                        Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
-                        break;
-
-                }
-
+                selectedAppointment = vh.parseObject;
+                Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
 
             }
         });
@@ -154,7 +146,7 @@ public class MeetingListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //super.onCreateOptionsMenu(menu, inflater);
-       // MenuItem add_button = menu.findItem(R.id.add_policy);
+        // MenuItem add_button = menu.findItem(R.id.add_policy);
 
         //`make add button visible
         //add_button.setVisible(true);
