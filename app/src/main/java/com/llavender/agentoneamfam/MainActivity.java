@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_settings:
                 Toast.makeText(this, "One AmFam Office Application. Made By the IS Division Interns", Toast.LENGTH_SHORT).show();
+                Tools.replaceFragment(new Settings(), getFragmentManager(), true);
                 break;
 
             case android.R.id.home:
