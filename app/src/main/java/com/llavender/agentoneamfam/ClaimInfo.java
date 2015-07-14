@@ -62,7 +62,6 @@ public class ClaimInfo extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         try {
             selectedClaim = Singleton.getClaims().get(this.getArguments().getInt("claimIndex"));
         }catch (NullPointerException e){
@@ -111,6 +110,7 @@ public class ClaimInfo extends Fragment {
 
         String damages = damages_entry.getText().toString();
         String comments = comments_entry.getText().toString();
+        String policyID = policyList.get(policyNames.indexOf(policySpinnerText)).getObjectId();
 
         if (Claims.selectedClaim != null) {
             obj = Singleton.getClaims().get(Claims.selectedClaim.index);
@@ -120,7 +120,7 @@ public class ClaimInfo extends Fragment {
 
         obj.put("Damages", Double.parseDouble(damages.substring(1, damages.length())));
         obj.put("Comment", comments);
-        obj.put("PolicyID", policyList.get(policyNames.indexOf(policySpinnerText)).getObjectId());
+        obj.put("PolicyID", policyID);
         obj.put("UploadIDs", new ArrayList<>());
 
         obj.saveInBackground(new SaveCallback() {
@@ -131,6 +131,7 @@ public class ClaimInfo extends Fragment {
                     Toast.makeText(getActivity(), "Claim Saved.", Toast.LENGTH_SHORT).show();
                     selectedClaim = obj;
                     showMyUploads();
+
                     //save comment changes
                     MyUploads.saveComments(getActivity());
                 } else {
@@ -151,10 +152,9 @@ public class ClaimInfo extends Fragment {
 
         if(selectedClaim != null) {
             JSONArray jsonArray = selectedClaim.getJSONArray("UploadIDs");
-            //convert jsonArray to arraylist
 
+            // Convert jsonArray to array list.
             for (int i = 0; i < jsonArray.length(); i++) {
-
                 try {
                     uploadIds.add(jsonArray.getString(i));
                 } catch (JSONException e) {
@@ -171,50 +171,56 @@ public class ClaimInfo extends Fragment {
         ft.add(R.id.bottom_container, newFragment).commit();
     }
 
-    //TODO Josh comment
+    /**
+     * Sets the values for the spinners.
+     * If it is a new claim, the spinners are set to the first client in the list of clients and
+     * their first policy listed and the spinners are clickable. Else, the spinners are set to the
+     * client and policy the claim belongs to and the spinners are not clickable.
+     */
     private void setSpinners() {
         try {
             clients.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
-
             clientList = clients.find();
+
             clientNames = new ArrayList<>();
             policyNames = new ArrayList<>();
             policyList = new ArrayList<>();
 
+            // Find the policies of each of the clients and get the client's names.
             for (int i = 0; i < clientList.size(); i++) {
                 clientNames.add(clientList.get(i).getString("Name"));
-
-                policies.whereEqualTo("ClientID", clientList.get(i).getObjectId());
-                policyList.addAll(policies.find());
             }
 
-            for (int i = 0; i < policyList.size(); i++) {
-                policyNames.add(policyList.get(i).getString("Description"));
-            }
-
+            // Populate the spinners with the client names.
             clientSpinnerAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_spinner_item, clientNames);
             clientSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             clientSpinner.setAdapter(clientSpinnerAdapter);
 
-        } catch (ParseException pe) { pe.printStackTrace(); }
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
 
         if (selectedClaim != null) {
+            // Existing claim case.
             clientSpinner.setClickable(false);
             policySpinner.setClickable(false);
 
-            Toast.makeText(getActivity(), "" + clientSpinner.isClickable(),Toast.LENGTH_LONG);
-
-            policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_spinner_item, policyNames);
-            policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            policySpinner.setAdapter(policySpinnerAdapter);
-
+            // Get the current policy which the current claim is under.
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Policy");
             query.getInBackground(Singleton.getClaims().get(Claims.selectedClaim.index)
                     .getString("PolicyID"), new GetCallback<ParseObject>() {
                 public void done(ParseObject policy, ParseException e) {
                     if (e == null) {
+                        policyNames.add(policy.getString("Description"));
+
+                        // Populate the policy spinner.
+                        policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
+                                android.R.layout.simple_spinner_item, policyNames);
+                        policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        policySpinner.setAdapter(policySpinnerAdapter);
+
+                        // Set the policy spinner.
                         ArrayAdapter policyArrayAdapter = (ArrayAdapter) policySpinner.getAdapter();
                         policySpinner.setSelection(policyArrayAdapter.getPosition
                                 (policy.getString("Description")));
@@ -222,6 +228,7 @@ public class ClaimInfo extends Fragment {
                         try {
                             ParseQuery<ParseUser> query = ParseUser.getQuery();
 
+                            // Set the client spinner.
                             ArrayAdapter clientArrayAdapter = (ArrayAdapter) clientSpinner.getAdapter();
                             clientSpinner.setSelection(clientArrayAdapter.getPosition
                                     (query.get(policy.getString("ClientID")).getString("Name")));
@@ -235,40 +242,45 @@ public class ClaimInfo extends Fragment {
             });
 
         } else {
+            // New claim case.
             clientSpinner.setClickable(true);
             policySpinner.setClickable(true);
 
-            clientSpinnerText = clientNames.get(0);
-            policyNames = new ArrayList<>();
             policyList = new ArrayList<>();
+            clientSpinnerText = clientNames.get(0);
 
             try {
+                // Get the policies for the selected client.
                 policies.whereEqualTo("ClientID",
                         clientList.get(clientNames.indexOf(clientSpinnerText)).getObjectId());
                 policyList.addAll(policies.find());
-            } catch (ParseException pe) { pe.printStackTrace(); }
+
+            } catch (ParseException pe) {
+                pe.printStackTrace();
+            }
 
             for (int i = 0; i < policyList.size(); i++) {
                 policyNames.add(policyList.get(i).getString("Description"));
             }
 
+            // Populate the policy spinner with the policy names.
             policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_spinner_item, policyNames);
             policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             policySpinner.setAdapter(policySpinnerAdapter);
-//
-//            if (policyNames.isEmpty()) {
-//                save_button.setVisibility(View.GONE);
-//                Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
-//                        Toast.LENGTH_SHORT).show();
-//            } else {
-//                save_button.setVisibility(View.VISIBLE);
-//            }
+
+            if (policyNames.isEmpty()) {
+                Toast.makeText(getActivity(), clientSpinnerText + " doesn't have any policies!",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    //TODO Josh comment
+    /**
+     * Listeners for the selection of spinner items.
+     */
     private void spinnerListeners() {
+        // User changes the selected client.
         clientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -276,10 +288,12 @@ public class ClaimInfo extends Fragment {
                 policyNames = new ArrayList<>();
                 policyList = new ArrayList<>();
 
+                // Find all the policies of the new selected client.
                 try {
                     policies.whereEqualTo("ClientID",
                             clientList.get(clientNames.indexOf(clientSpinnerText)).getObjectId());
                     policyList.addAll(policies.find());
+
                 } catch (ParseException pe) {
                     pe.printStackTrace();
                 }
@@ -288,11 +302,16 @@ public class ClaimInfo extends Fragment {
                     policyNames.add(policyList.get(i).getString("Description"));
                 }
 
+                // Update the policy spinner with the new list of policies.
                 policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
                         android.R.layout.simple_spinner_item, policyNames);
                 policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 policySpinner.setAdapter(policySpinnerAdapter);
 
+                if (policyNames.isEmpty()) {
+                    Toast.makeText(getActivity(), clientSpinnerText + " doesn't have any policies!",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -300,6 +319,7 @@ public class ClaimInfo extends Fragment {
             }
         });
 
+        // User changes the selected policy.
         policySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -327,7 +347,7 @@ public class ClaimInfo extends Fragment {
             case R.id.action_save:
 
                 if(policyNames.isEmpty()){
-                    Toast.makeText(getActivity(),clientSpinnerText + " doesn't have any policies!",
+                    Toast.makeText(getActivity(), clientSpinnerText + " doesn't have any policies!",
                             Toast.LENGTH_SHORT).show();
                 }else{
                     saveClaim();
