@@ -1,13 +1,16 @@
 package com.llavender.agentoneamfam;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.EditText;
 
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,6 +36,18 @@ public class Tools {
         fTransaction.commit();
 
         //refresh options menu
+    }
+
+    public static void logout(Context context) {
+
+        SharedPreferences.Editor editor = context.getSharedPreferences(Singleton.PREFERENCES, 0).edit();
+        editor.remove("OfficeUserID");
+        editor.remove("OfficeStayLoggedIn");
+        editor.apply();
+
+        ParseUser.logOut();
+        ((Activity) context).finish();
+
     }
 
     public static void updateDateEntry(EditText editText, Calendar calendar) {

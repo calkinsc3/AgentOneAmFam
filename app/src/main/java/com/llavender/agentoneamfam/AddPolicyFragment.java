@@ -4,7 +4,11 @@ package com.llavender.agentoneamfam;
 import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,6 +40,7 @@ public class AddPolicyFragment extends Fragment {
     ListView photoView;
     ParseObject policy;
     LinearLayout address2;
+    String[] states;
 
 
     public AddPolicyFragment() {
@@ -49,6 +54,18 @@ public class AddPolicyFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_policy_information, container, false);
 
+        setHasOptionsMenu(true);
+        initializeVariables(view);
+
+        stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, states));
+
+        checkOrientationSetLayoutOrientation();
+
+
+        return view;
+    }
+
+    private void initializeVariables(View view){
         client = (TextView)view.findViewById(R.id.clientID);
         description = (EditText)view.findViewById(R.id.description);
         cost = (EditText)view.findViewById(R.id.cost);
@@ -57,17 +74,10 @@ public class AddPolicyFragment extends Fragment {
         stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
         photoView = (ListView)view.findViewById(R.id.photoList);
-        saveButton =(ImageButton)view.findViewById(R.id.save_button);
         policy = Singleton.getCurrentPolicy();
         accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
-        String[] states = getResources().getStringArray(R.array.states);
-
-        stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, states));
-
-        checkOrientationSetLayoutOrientation();
-
-        return view;
+        states = getResources().getStringArray(R.array.states);
     }
 
     public void checkOrientationSetLayoutOrientation(){
@@ -78,5 +88,27 @@ public class AddPolicyFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Log.d("onOptionsItemSelected", "yes");
+        switch (item.getItemId()) {
+            //is actually a call to create a new Policy
+            case R.id.action_save:
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddClientFragment())
+                        .addToBackStack(null)
+                        .commit();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

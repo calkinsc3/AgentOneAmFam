@@ -44,11 +44,10 @@ public class MainActivity extends AppCompatActivity {
         //Set the navigation drawer navigation
         setDrawerItemClickListener();
         //Enables Parse on startup
-        enableParse();
         //checks if a user has selected "Keep me logged in"
         checkLoginStatus();
         //loads the appropriate initial fragment
-        loadInitialFragment(savedInstanceState);
+        Tools.replaceFragment(new MainFragment(), getFragmentManager(), true);
 
     }
 
@@ -63,28 +62,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadInitialFragment(Bundle savedInstanceState){
-        if (currentUser != null) {
-            // do stuff with the user
-            getFragmentManager().beginTransaction().add(R.id.fragment_container, new MainFragment())
-                    .addToBackStack("MAIN")
-                    .commit();
-        } else {
-            // show the sign up or login screen
-            if (findViewById(R.id.fragment_container) != null) {
-                if (savedInstanceState == null) {
-                    LoginFragment loginFragment = new LoginFragment();
-                    // In case the activity was started with special instructions from an Intent
-                    // pass the Intent's extras to the fragment as arguments
-                    loginFragment.setArguments(getIntent().getExtras());
-
-                    getFragmentManager().beginTransaction().add(R.id.fragment_container, loginFragment)
-                            .addToBackStack(null)
-                            .commit();
-                }
-            }
-        }
-    }
 
     public void enableParse(){
         if (!hasRun) {
@@ -158,12 +135,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        hasRun = true;
-        super.onStart();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -174,21 +145,7 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
 
             case R.id.action_logout:
-                SharedPreferences.Editor spEditor = sharedPref.edit();
-                FragmentManager fm = getFragmentManager();
-                spEditor.remove("STAYLOGGEDIN");
-                spEditor.commit();
-
-                //logout the parseUser
-                ParseUser.logOut();
-
-                //Clear the backStack
-                while (fm.getBackStackEntryCount() > 1){
-                    fm.popBackStackImmediate();
-                }
-                //Restart the Login fragment
-                fm.beginTransaction().replace(R.id.fragment_container, new LoginFragment())
-                        .commit();
+                Tools.logout(this);
                 break;
 
             case R.id.action_contact_support:
@@ -230,8 +187,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

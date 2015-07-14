@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -130,7 +129,6 @@ public class ImageAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
 
-                        //TODO move to class
                         DialogInterface.OnClickListener dialogClick = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -209,6 +207,7 @@ public class ImageAdapter extends BaseAdapter {
                 //URI OF IMAGE TO BE LOADED
                 String imageUri = images.get(position).toString();
 
+                //TODO image resizing
                 //LOAD THE IMAGE WITH PICASSO LIBRARY
                 Picasso.with(context)
                         .load(imageUri)
@@ -230,9 +229,7 @@ public class ImageAdapter extends BaseAdapter {
 
                     @Override
                     public void afterTextChanged(Editable s) {
-
                         Singleton.getComments().set(vhf.index, s.toString());
-
                     }
                 });
 
@@ -317,7 +314,7 @@ public class ImageAdapter extends BaseAdapter {
                                 .setAction(Intent.ACTION_GET_CONTENT);
 
                         //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
-                        ((Activity) context).startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
+                        MyUploads.fragment.startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
 
                         return true;
                     }
@@ -345,13 +342,17 @@ public class ImageAdapter extends BaseAdapter {
                     vh.delete_button = (ImageButton) view.findViewById(R.id.delete_button);
                     vh.parseObject = curr;
                     view.setTag(vh);
+
                 } else {
+
                     vh = (ViewHolder) convertView.getTag();
                     curr = vh.parseObject;
+
                 }
 
-                String temp = Tools.buildMessage(curr, Singleton.MEETING);
 
+                String temp = Tools.buildMessage(objects.get(position), Singleton.MEETING);
+                vh.index = position;
                 //SET THE TEXT
                 vh.textView.setText(temp);
 

@@ -7,6 +7,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -38,6 +41,7 @@ public class ClientListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_client_list, container, false);
 
@@ -45,17 +49,32 @@ public class ClientListFragment extends Fragment {
         ObjectArrayAdapter adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getListOfClients());
         clientListView.setAdapter(adapter);
 
-//        clientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new ClientInformationFragment())
-//                        .addToBackStack(null)
-//                        .commit();
-//            }
-//        });
-
         return view;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Log.d("onOptionsItemSelected", "yes");
+        switch (item.getItemId()) {
+            //is actually a call to create a new Client
+            case R.id.action_save:
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddClientFragment())
+                        .addToBackStack(null)
+                        .commit();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     public class ObjectArrayAdapter extends ArrayAdapter<ParseObject> {
 
@@ -100,7 +119,7 @@ public class ClientListFragment extends Fragment {
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.client_list_item, null);
                 vHolder.clientName = (TextView)view.findViewById(R.id.clientName);
-                vHolder.addClientButton = (ImageView)view.findViewById(R.id.addClientButton);
+                vHolder.addPolicyButton = (ImageView)view.findViewById(R.id.addPolicyButton);
                 vHolder.policyListView = (ListView)view.findViewById(R.id.policyList);
 
                 view.setTag(vHolder);
@@ -135,11 +154,9 @@ public class ClientListFragment extends Fragment {
             if (client != null) {
                 // obtain a reference to the widgets in the defined layout
                 TextView clientName = vHolder.clientName;
-                ImageView addPolicyButton = vHolder.addClientButton;
+                ImageView addPolicyButton = vHolder.addPolicyButton;
                 ListView policyList = vHolder.policyListView;
                 ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, vHolder.policyDescriptions);
-
-
 
                 if(clientName != null){
                     clientName.setText(client.getString("Name"));
@@ -187,7 +204,7 @@ public class ClientListFragment extends Fragment {
 
         public class ViewHolder {
             TextView clientName;
-            ImageView addClientButton;
+            ImageView addPolicyButton;
             ListView policyListView;
             ArrayList<String> policyDescriptions;
             ArrayList<ParseObject> policies;

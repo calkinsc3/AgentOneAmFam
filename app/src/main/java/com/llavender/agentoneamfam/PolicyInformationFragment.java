@@ -216,7 +216,6 @@ public class PolicyInformationFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        images.clear();
 
         Log.d("result code:", String.valueOf(resultCode));
 
