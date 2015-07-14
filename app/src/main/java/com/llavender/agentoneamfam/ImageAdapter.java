@@ -1,5 +1,6 @@
 package com.llavender.agentoneamfam;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -319,7 +320,8 @@ public class ImageAdapter extends BaseAdapter {
                                 .setAction(Intent.ACTION_GET_CONTENT);
 
                         //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
-                        MyUploads.fragment.startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
+                        ((Activity)context).startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
+
 
                         return true;
                     }
