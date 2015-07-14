@@ -3,69 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="@dimen/padding_margin"
     tools:context="com.example.jaz020.oneamfamoffice.Settings">
 
-    <Button
-        android:id="@+id/email_support_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/email_support"
-        android:layout_alignParentTop="true"
-        />
-
-    <Button
-        android:id="@+id/logout_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/logout"
-        />
-
     <ScrollView
-        android:layout_below="@id/email_support_button"
-        android:layout_above="@id/logout_button"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content" >
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" >
 
             <LinearLayout
                 android:id="@+id/top_linear"
-                android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
                 <EditText
                     android:id="@+id/username_entry"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/username"
-                    />
+                    android:hint="@string/username" />
+
                 <EditText
                     android:id="@+id/password_entry"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password"
-                    />
+                    android:hint="@string/password" />
 
                 <EditText
                     android:id="@+id/address_street"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/address" />
+
             </LinearLayout>
 
 
             <LinearLayout
                 android:id="@+id/middle_linear"
-                android:layout_below="@id/top_linear"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_below="@id/top_linear"
+                android:orientation="horizontal" >
 
                 <EditText
                     android:id="@+id/address_city"
@@ -76,7 +57,7 @@
                 <Spinner
                     android:id="@+id/state_spinner"
                     android:layout_width="100dp"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
                 <EditText
                     android:id="@+id/zip_code"
@@ -89,38 +70,49 @@
 
             <LinearLayout
                 android:id="@+id/bottom_linear"
-                android:layout_below="@id/middle_linear"
-                android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/middle_linear"
+                android:orientation="vertical" >
+
                 <EditText
                     android:id="@+id/name_entry"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/name"
-                    />
+                    android:hint="@string/name" />
 
                 <EditText
                     android:id="@+id/phone_entry"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/phone_number"
-                    android:inputType="phone"
-                    />
+                    android:inputType="phone" />
 
                 <EditText
                     android:id="@+id/email_entry"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
-                    android:inputType="textEmailAddress"
-                    />
+                    android:inputType="textEmailAddress" />
 
             </LinearLayout>
+
         </RelativeLayout>
+
     </ScrollView>
 
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/logout" />
 
-
+    <Button
+        android:id="@+id/email_support_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/logout_button"
+        android:text="@string/email_support" />
 
 </RelativeLayout>

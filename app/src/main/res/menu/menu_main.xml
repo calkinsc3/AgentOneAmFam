@@ -11,5 +11,10 @@
         android:id="@+id/action_contact_support"
         android:title="Contact Support"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_save"
+        android:title="Save"
+        android:visible="false"
+        app:showAsAction="ifRoom"
+    />
 </menu>

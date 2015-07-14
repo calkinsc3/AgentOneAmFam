@@ -1,11 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingEnd="15dp"
-    android:paddingStart="15dp"
-    android:paddingTop="15dp"
+    android:padding="@dimen/padding_margin"
     tools:context="com.llavender.agentoneamfam.PolicyInformationFragment">
 
+    <!-- Remove image button once save button is added to action bar. -->
 
     <ImageButton
         android:id="@+id/saveButton"
@@ -15,8 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:background="#00ffffff"
-        android:src="@android:drawable/ic_menu_save"
-        android:contentDescription="Save Button"/>
+        android:src="@android:drawable/ic_menu_save" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -49,6 +47,7 @@
                 android:id="@+id/LinearLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout"
                 android:orientation="vertical">
 
                 <TextView
@@ -68,6 +67,7 @@
                 android:id="@+id/LinearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/LinearLayout1"
                 android:orientation="vertical">
 
                 <TextView
@@ -80,12 +80,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Type Something"/>
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/LinearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/LinearLayout2"
                 android:orientation="vertical">
 
                 <TextView
@@ -98,6 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Type Something"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -106,7 +109,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="6">
-
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -143,6 +145,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="2"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -159,11 +162,14 @@
                     android:layout_height="wrap_content"
                     android:checked="false"
                     android:text="Accepted" />
+
             </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp">
 
                 <TextView
                     android:id="@+id/textView8"
@@ -176,9 +182,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@android:drawable/ic_input_add"
-                    android:background="#00ffffff" />
+                    android:background="#00ffffff"
+                    android:src="@android:drawable/ic_input_add" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -189,11 +195,14 @@
                     android:id="@+id/photoList"
                     android:layout_width="match_parent"
                     android:layout_height="fill_parent"
-                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="false"
                     android:layout_alignParentStart="false" />
+
             </RelativeLayout>
 
         </LinearLayout>
+
     </ScrollView>
+
 </RelativeLayout>

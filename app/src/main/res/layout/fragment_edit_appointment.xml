@@ -1,8 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_margin"
     tools:context="com.example.jaz020.oneamfamoffice.EditAppointment">
+
+    <!-- Remove image button once save button is added to action bar. -->
 
     <ImageButton
         android:id="@+id/save_button"
@@ -11,34 +15,29 @@
         android:layout_alignParentEnd="true"
         android:src="@android:drawable/ic_menu_save" />
 
-    <TextView
-        android:id="@+id/meeting_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/meeting_title"
-        android:layout_toStartOf="@id/save_button"
-
-        />
-
-    <EditText
-        android:id="@+id/meeting_entry"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:layout_toStartOf="@id/save_button"
-        android:layout_below="@id/meeting_title"
-        />
-
     <ScrollView
-        android:layout_below="@id/save_button"
-        android:paddingTop="@dimen/activity_vertical_margin"
+
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:paddingTop="@dimen/activity_vertical_margin" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/meeting_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/meeting_title"
+                />
+
+            <EditText
+                android:id="@+id/meeting_entry"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
 
             <TextView
                 android:id="@+id/attendees_title"
@@ -128,7 +127,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="date" />
 
-
         </LinearLayout>
+
     </ScrollView>
-</RelativeLayout>
+
+</LinearLayout>

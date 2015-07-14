@@ -1,16 +1,13 @@
 package com.llavender.agentoneamfam;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.EditText;
 
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,9 +15,6 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 
 
 /**
@@ -84,7 +78,9 @@ public class Tools {
         return byteBuffer.toByteArray();
     }
 
+    //TODO recomment
     /**
+     *
      * Formats the information of a client or a policy object to be
      * viewed as a list item in a TextView
      *
@@ -114,6 +110,14 @@ public class Tools {
             //TODO
             case Singleton.CLAIM:
                 message = object.getObjectId() + "\n" + object.get("Damages");
+                break;
+
+            case Singleton.MEETING:
+                message = object.getString("Title") + "\n" + object.getString("Location") + "\n" +
+                        object.getDate("StartDate").toString() +  "\n" +
+                        object.getDate("EndDate").toString() + "\n" +
+                        object.getString("Comment");
+                break;
 
         }
 

@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +34,8 @@ public class MeetingListFragment extends Fragment {
     public static ParseObject selectedPolicy;
     public static ParseObject selectedAppointment;
 
+    public static List<ParseObject> meetings;
+
     // POLICIES OR APPOINTMENTS
     public static int mode = -1;
 
@@ -55,21 +55,13 @@ public class MeetingListFragment extends Fragment {
         final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Retrieving data from Parse.com", true);
         final ListView listView = (ListView) view.findViewById(R.id.policies_list_view);
         SharedPreferences prefs = context.getSharedPreferences(Singleton.PREFERENCES, 0);
-        ParseQuery<ParseObject> query;
+        ParseQuery<ParseObject>  query = ParseQuery.getQuery("Meeting");
 
-        //SET QUERY FROM MODE
-        if (mode == POLICIES) {
-            query = ParseQuery.getQuery("Policy");
-        } else if (mode == APPOINTMENTS) {
-            query = ParseQuery.getQuery("Meeting");
-        } else {
-            query = null;
-        }
 
         //TODO update to work only for this agent
         //query.whereEqualTo("AgentID" ,  prefs.getString("OfficeUserID", null));
 
-        if (query != null) {
+
 
             query.findInBackground(new FindCallback<ParseObject>() {
 
@@ -80,7 +72,8 @@ public class MeetingListFragment extends Fragment {
 
                     if (e == null && !list.isEmpty()) {
 
-                        listView.setAdapter(new CustomAdapter(context, list, mode));
+                        meetings = list;
+                        listView.setAdapter(new ImageAdapter(context, null, null, meetings, Singleton.MEETING));
 
                     } else if (e == null) {
                         switch (mode) {
@@ -101,7 +94,6 @@ public class MeetingListFragment extends Fragment {
                 }
             });
 
-        }
     }
 
     @Override
@@ -126,15 +118,15 @@ public class MeetingListFragment extends Fragment {
         //Generate ListVie
         MeetingListFragment.view = view;
         context = getActivity();
+
         updateList();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
-                CustomAdapter.ViewHolder vh = (CustomAdapter.ViewHolder) view.getTag();
-                selectedAppointment = vh.parseObject;
+                ImageAdapter.ViewHolder vh = (ImageAdapter.ViewHolder) view.getTag();
+                selectedAppointment = meetings.get(vh.index);
                 Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
 
             }
@@ -143,13 +135,4 @@ public class MeetingListFragment extends Fragment {
 
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //super.onCreateOptionsMenu(menu, inflater);
-        // MenuItem add_button = menu.findItem(R.id.add_policy);
-
-        //`make add button visible
-        //add_button.setVisible(true);
-
-    }
 }

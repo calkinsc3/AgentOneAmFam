@@ -36,6 +36,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -168,13 +170,13 @@ public class PolicyInformationFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        images.clear();
 
         Log.d("result code:", String.valueOf(resultCode));
 
         if (resultCode == getActivity().RESULT_OK) {
             ClipData clipData = data.getClipData();
             Uri targetUri;
-            images.clear();
 
             if (clipData != null) {
                 for (int i = 0; clipData.getItemCount() > i; i++) {
@@ -205,9 +207,6 @@ public class PolicyInformationFragment extends Fragment {
                     upload.put("PolicyID", Singleton.getCurrentPolicy().getObjectId());
                     upload.put("UserID", ParseUser.getCurrentUser().getObjectId());
                     upload.put("Media", image);
-                    upload.put("Comment", "");
-
-
 
                     images.add(upload);
                 } catch (Exception e) {
@@ -222,17 +221,14 @@ public class PolicyInformationFragment extends Fragment {
                     if (e == null) {
                         if(Singleton.getMediaFiles().size() > 0){
                             Singleton.getMediaFiles().addAll(images);
+                            Singleton.setMediaFiles(removeDuplicates(Singleton.getMediaFiles()));
                         } else {
                             Singleton.setMediaFiles(images);
                         }
-                        HashSet<ParseObject> hashMedia = new HashSet<>(Singleton.getMediaFiles());
-                        ArrayList<ParseObject> media = new ArrayList<>(hashMedia);
 
-                        ObjectArrayAdapter secondaryAdapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, media);
-                        photoView.setAdapter(secondaryAdapter);
+                        mediaAdapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getMediaFiles());
+                        photoView.setAdapter(mediaAdapter);
 
-//                        mediaAdapter.notifyDataSetChanged();
-//                        images.clear();
                     } else {
                         Log.d("Save Error: ", e.toString());
                     }
@@ -241,6 +237,13 @@ public class PolicyInformationFragment extends Fragment {
 
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private ArrayList<ParseObject> removeDuplicates(List<ParseObject> oldList) {
+        Set<ParseObject> newList = new HashSet<>();
+        newList.addAll(oldList);
+
+        return new ArrayList<>(newList);
     }
 
     public class ObjectArrayAdapter extends ArrayAdapter<ParseObject> {
