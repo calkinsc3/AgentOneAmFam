@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.GetCallback;
@@ -67,7 +68,7 @@ public class ClaimInfo extends Fragment {
                              Bundle savedInstanceState) {
         try {
             selectedClaim = Singleton.getClaims().get(this.getArguments().getInt("claimIndex"));
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             selectedClaim = null;
         }
 
@@ -89,7 +90,6 @@ public class ClaimInfo extends Fragment {
         policies = ParseQuery.getQuery("Policy");
 
         setSpinners();
-        spinnerListeners();
 
         //load the selected claims info into the fields
         if (selectedClaim != null) {
@@ -99,6 +99,7 @@ public class ClaimInfo extends Fragment {
 
             damages_entry.setText(formattedDamages);
             comments_entry.setText(selectedClaim.getString("Comment"));
+
             showMyUploads();
         }
 
@@ -164,7 +165,6 @@ public class ClaimInfo extends Fragment {
         obj.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-
                 if (e == null) {
                     Toast.makeText(getActivity(), "Claim Saved.", Toast.LENGTH_SHORT).show();
                     selectedClaim = obj;
@@ -183,7 +183,6 @@ public class ClaimInfo extends Fragment {
      * Shows the myUploads sub fragment below the information displays
      */
     private void showMyUploads(){
-
         Fragment newFragment = new MyUploads();
         Bundle bundle = new Bundle();
         ArrayList<String> uploadIds = new ArrayList<>();
@@ -246,8 +245,7 @@ public class ClaimInfo extends Fragment {
 
             // Get the current policy which the current claim is under.
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Policy");
-            query.getInBackground(Singleton.getClaims().get(Claims.selectedClaim.index)
-                    .getString("PolicyID"), new GetCallback<ParseObject>() {
+            query.getInBackground(selectedClaim.getString("PolicyID"), new GetCallback<ParseObject>() {
                 public void done(ParseObject policy, ParseException e) {
                     if (e == null) {
                         policyNames.add(policy.getString("Description"));
@@ -255,12 +253,12 @@ public class ClaimInfo extends Fragment {
                         // Populate the policy spinner.
                         policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
                                 android.R.layout.simple_spinner_item, policyNames);
+
                         policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         policySpinner.setAdapter(policySpinnerAdapter);
 
                         // Set the policy spinner.
-                        ArrayAdapter policyArrayAdapter = (ArrayAdapter) policySpinner.getAdapter();
-                        policySpinner.setSelection(policyArrayAdapter.getPosition
+                        policySpinner.setSelection(policySpinnerAdapter.getPosition
                                 (policy.getString("Description")));
 
                         try {
@@ -283,6 +281,8 @@ public class ClaimInfo extends Fragment {
             // New claim case.
             clientSpinner.setClickable(true);
             policySpinner.setClickable(true);
+
+            spinnerListeners();
 
             policyList = new ArrayList<>();
             clientSpinnerText = clientNames.get(0);
@@ -379,8 +379,6 @@ public class ClaimInfo extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        Log.d("onOptionsItemSelected", "yes");
         switch (item.getItemId()) {
             case R.id.action_save:
 
