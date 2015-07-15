@@ -48,7 +48,6 @@
 
             </LinearLayout>
 
-
             <LinearLayout
                 android:id="@+id/middle_linear"
                 android:layout_width="fill_parent"
@@ -94,7 +93,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/phone_number"
-                    android:inputType="phone" />
+                    android:inputType="phone"
+                    android:maxLength="14" />
 
                 <EditText
                     android:id="@+id/email_entry"
