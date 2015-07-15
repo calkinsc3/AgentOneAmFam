@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
 
@@ -53,7 +54,6 @@ public class PolicyInformationFragment extends Fragment {
     public PolicyInformationFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,38 +114,7 @@ public class PolicyInformationFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) { }
-        });
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseObject policyToSave = Singleton.getCurrentPolicy();
-
-                policyToSave.put("Address", address.getText().toString());
-                policyToSave.put("City", city.getText().toString());
-                policyToSave.put("State", stateSpinner.getSelectedItem().toString());
-                policyToSave.put("Zip", zip.getText().toString());
-                policyToSave.put("Description", description.getText().toString());
-                policyToSave.put("Accepted", accepted.isChecked());
-
-                String costFormatted = cost.getText().toString();
-                costFormatted = costFormatted.replace("$","");
-                costFormatted = costFormatted.replace(",","");
-                policyToSave.put("Cost", Double.parseDouble(costFormatted));
-
-                policyToSave.saveInBackground();
-                Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
-
-                for (int i = 0; Singleton.getMediaFiles().size() > i; i++) {
-                    ParseObject currFile = Singleton.getMediaFiles().get(i);
-                    currFile.put("Comment", comments.get(i));
-                    try {
-                        currFile.save();
-                    } catch (com.parse.ParseException e) {
-                        Log.d("save: ", e.toString());
-                    }
-                }
+            public void afterTextChanged(Editable s) {
             }
         });
 
@@ -209,114 +178,23 @@ public class PolicyInformationFragment extends Fragment {
     }
 
     private void savePolicy() {
+
         ParseObject policyToSave = Singleton.getCurrentPolicy();
 
-        //declare Array List of items we create
-        private ArrayList<ParseObject> images;
+        policyToSave.put("Address", address.getText().toString());
+        policyToSave.put("City", city.getText().toString());
+        policyToSave.put("State", stateSpinner.getSelectedItem().toString());
+        policyToSave.put("Zip", Double.valueOf(zip.getText().toString()));
+        policyToSave.put("Description", description.getText().toString());
+        policyToSave.put("Accepted", accepted.isChecked());
 
-        // TODO cost is not being uploaded to parse correctly.
         String costFormatted = cost.getText().toString();
-        costFormatted = costFormatted.replace("$", "");
-        costFormatted = costFormatted.replace(",", "");
+        costFormatted = costFormatted.replace("$","");
+        costFormatted = costFormatted.replace(",","");
         policyToSave.put("Cost", Double.parseDouble(costFormatted));
 
-        /**
-         * Constructor overrides constructor for array adapter
-         * The only variable we care about is the ArrayList<PlatformVersion> objects
-         * it is the list of the objects we want to display
-         *
-         * @param context The current context.
-         * @param resource The resource ID for a layout file containing a layout to use when
-         *                           instantiating views.
-         * @param images The objects to represent in the ListView.
-         */
-        public ObjectArrayAdapter(Context context, int resource, ArrayList<ParseObject> images) {
-            super(context, resource, images);
-            this.images = images;
-        }
+        policyToSave.saveInBackground();
+        Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
 
-        /**
-         * Creates a custom view for our list View and populates the data
-         *
-         * @param position position in the ListView
-         * @param convertView View to change to
-         * @param parent the calling class
-         * @return view the inflated view
-         */
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            final ViewHolder vHolder;
-
-            /**
-             * Checking to see if the view is null. If it is we must inflate the view
-             * "inflate" means to render/show the view
-             */
-
-            if (view == null) {
-                vHolder = new ViewHolder();
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.photo_display_item, null);
-                vHolder.commentsText = (MultiAutoCompleteTextView) view.findViewById(R.id.CommentsText);
-                vHolder.imageToUpload = (ImageView) view.findViewById(R.id.imageToUpload);
-
-                view.setTag(vHolder);
-
-            } else {
-                vHolder = (ViewHolder)convertView.getTag();
-            }
-
-            vHolder.index = position;
-
-            if(position >= comments.size()){
-                comments.add("");
-            }
-
-            /**
-             * Remember the variable position is sent in as an argument to this method.
-             * The variable simply refers to the position of the current object on the list\
-             * The ArrayAdapter iterate through the list we sent it
-             */
-            String url = images.get(position).getParseFile("Media").getUrl();
-
-            if (url != null) {
-                // obtain a reference to the widgets in the defined layout
-                if (vHolder.imageToUpload != null) {
-                    Picasso.with(getContext()).load(url).fit().centerInside().into(vHolder.imageToUpload);
-                }
-                if (vHolder.commentsText != null) {
-                    vHolder.commentsText.setText(images.get(vHolder.index).getString("Comment"));
-                }
-            }
-
-            vHolder.commentsText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    comments.set(vHolder.index, s.toString());
-                }
-            });
-
-
-
-            // view must be returned to our current activity
-            return view;
-        }
-
-        private class ViewHolder {
-            MultiAutoCompleteTextView commentsText;
-            ImageView imageToUpload;
-            int index;
-        }
     }
-
-
 }
