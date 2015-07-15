@@ -76,22 +76,29 @@ public class Login extends Activity {
 
                         if (e == null && user != null) {
 
-                            //UPDATE SHARED PREFERENCES
-                            SharedPreferences.Editor editor = p.edit();
-                            editor.putString("UserID", user.getObjectId());
-                            editor.putBoolean("StayLoggedIn", login_checkbox.isChecked());
-                            if (username_checkbox.isChecked()) {
-                                editor.putString("Username", username);
-                            } else {
-                                editor.remove("Username");
-                            }
-                            editor.apply();
+                            if (!user.getString("accountType").equals("Agent")) {
 
-                            //login successful
-                            loginSuccess();
+                                loginFail(0);
+
+                            } else {
+
+                                //UPDATE SHARED PREFERENCES
+                                SharedPreferences.Editor editor = p.edit();
+                                editor.putString("UserID", user.getObjectId());
+                                editor.putBoolean("StayLoggedIn", login_checkbox.isChecked());
+                                if (username_checkbox.isChecked()) {
+                                    editor.putString("Username", username);
+                                } else {
+                                    editor.remove("Username");
+                                }
+                                editor.apply();
+
+                                //login successful
+                                loginSuccess();
+                            }
 
                         } else if (user == null) {
-                            loginFail();
+                            loginFail(1);
 
                         } else {
                             loginError(e);
@@ -110,9 +117,13 @@ public class Login extends Activity {
     }
 
 
-    public void loginFail() {
+    public void loginFail(int mode) {
 
-        Toast.makeText(this, "Wrong Username or Password", Toast.LENGTH_SHORT).show();
+        if (mode == 1) {
+            Toast.makeText(this, "Wrong Username or Password", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "You must be an Agent to use this app.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
