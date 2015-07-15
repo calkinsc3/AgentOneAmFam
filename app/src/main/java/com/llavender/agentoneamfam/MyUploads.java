@@ -62,6 +62,9 @@ public class MyUploads extends Fragment {
         //USED FOR QUERYING UPLOADS SPECIFIC TO A CLAIM (null for creating a new claim)
         ParseQuery<ParseObject> mainQuery = null;
 
+        //if coming from Policies create Main query
+
+
         //Build a query for each upload found in the uploadIDs of the Current Claim
         if(uploadIDs != null && args != null){
 
@@ -76,9 +79,11 @@ public class MyUploads extends Fragment {
                 mainQuery = ParseQuery.or(queries);
             }
 
+        } else if (uploadIDs == null && args != null){
+            mainQuery = new ParseQuery<>("Upload").whereEqualTo("PolicyID", Singleton.getCurrentPolicy().getObjectId());
         }
         //MY UPLOADS: add a single query to mainQuery
-        else if(args == null){
+        else{
             mainQuery = ParseQuery.getQuery("Upload")
                     .whereEqualTo("UserID", userID);
         }

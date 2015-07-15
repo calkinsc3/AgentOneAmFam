@@ -55,6 +55,8 @@ public class ClientListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setTitle("Add Client");
+        menu.findItem(R.id.action_save).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
         super.onCreateOptionsMenu(menu, inflater);
     }

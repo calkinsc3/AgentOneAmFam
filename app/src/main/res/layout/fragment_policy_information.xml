@@ -6,27 +6,17 @@
 
     <!-- Remove image button once save button is added to action bar. -->
 
-    <ImageButton
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:background="#00ffffff"
-        android:src="@android:drawable/ic_menu_save" />
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/saveButton"
         android:layout_centerVertical="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="1">
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -163,41 +153,12 @@
 
             </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp">
-
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Uploads" />
-
-                <ImageButton
-                    android:id="@+id/addUpload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:background="#00ffffff"
-                    android:src="@android:drawable/ic_input_add" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="165dp">
-
-                <ListView
-                    android:id="@+id/photoList"
-                    android:layout_width="match_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="false"
-                    android:layout_alignParentStart="false" />
-
-            </RelativeLayout>
+            <FrameLayout
+                android:id="@+id/bottom_container"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="3.38" />
 
         </LinearLayout>
 
