@@ -2,6 +2,7 @@ package com.llavender.agentoneamfam;
 
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
@@ -46,6 +47,7 @@ public class AddPolicyFragment extends Fragment {
     ParseObject policy;
     LinearLayout address2;
     String[] states;
+    FragmentManager fm;
 
     public AddPolicyFragment() {
         // Required empty public constructor
@@ -86,6 +88,7 @@ public class AddPolicyFragment extends Fragment {
         accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
         states = getResources().getStringArray(R.array.states);
+        fm = getFragmentManager();
     }
 
     private void setCostTextChangedListener(){
@@ -144,7 +147,7 @@ public class AddPolicyFragment extends Fragment {
         costFormatted = costFormatted.replace("$","");
         costFormatted = costFormatted.replace(",","");
 
-        ParseObject newPolicy = new ParseObject("Policy");
+        final ParseObject newPolicy = new ParseObject("Policy");
         newPolicy.put("AgentID", ParseUser.getCurrentUser().getObjectId());
         newPolicy.put("ClientID", Singleton.getCurrentClient().getObjectId());
         newPolicy.put("Address", address.getText().toString());
@@ -160,9 +163,8 @@ public class AddPolicyFragment extends Fragment {
             public void done(ParseException e) {
                 if(e == null){
                     Toast.makeText(getActivity(), "New Policy Created", Toast.LENGTH_SHORT).show();
-                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, new MainFragment())
-                            .addToBackStack(null)
-                            .commit();
+                    Singleton.setCurrentPolicy(newPolicy);
+                    startPolicyInformationFragment();
                 } else {
                     Log.e("Save Error: ", e.toString());
                     Toast.makeText(getActivity(), "Error saving new Policy", Toast.LENGTH_SHORT).show();
@@ -170,6 +172,16 @@ public class AddPolicyFragment extends Fragment {
             }
         });
 
+    }
+
+    private void startPolicyInformationFragment(){
+        while (fm.getBackStackEntryCount() > 1){
+            fm.popBackStackImmediate();
+        }
+        //Start the policyInformation Fragment
+        fm.beginTransaction().replace(R.id.fragment_container, new PolicyInformationFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

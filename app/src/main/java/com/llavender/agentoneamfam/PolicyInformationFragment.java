@@ -197,4 +197,6 @@ public class PolicyInformationFragment extends Fragment {
         Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
 
     }
+
+
 }
