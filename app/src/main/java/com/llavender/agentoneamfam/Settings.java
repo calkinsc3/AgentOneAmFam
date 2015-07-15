@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.parse.ParseUser;
 
@@ -33,6 +34,7 @@ public class Settings extends Fragment {
 
     private EditText username_entry;
     private EditText password_entry;
+    private EditText password_reentry;
     private EditText name_entry;
     private EditText phone_entry;
     private EditText email_entry;
@@ -59,6 +61,7 @@ public class Settings extends Fragment {
 
         username_entry = (EditText) view.findViewById(R.id.username_entry);
         password_entry = (EditText) view.findViewById(R.id.password_entry);
+        password_reentry = (EditText) view.findViewById(R.id.password_reentry);
         name_entry = (EditText) view.findViewById(R.id.name_entry);
         phone_entry = (EditText) view.findViewById(R.id.phone_entry);
         email_entry = (EditText) view.findViewById(R.id.email_entry);
@@ -108,20 +111,28 @@ public class Settings extends Fragment {
     }
 
     private void saveSettings() {
-        curUser.put("username", username_entry.getText().toString());
-        curUser.put("Address", street_entry.getText().toString());
-        curUser.put("City", city_entry.getText().toString());
-        curUser.put("State", state_spinner.getSelectedItem().toString());
-        curUser.put("Zip", Double.valueOf(zip_entry.getText().toString()));
-        curUser.put("Name", name_entry.getText().toString());
-        curUser.put("phoneNumber", Double.valueOf(phone_entry.getText().toString()));
-        curUser.setEmail(email_entry.getText().toString());
+        if (!password_entry.getText().toString().equals(password_reentry.getText().toString())) {
+            password_entry.setError("Passwords are not equal!");
+            password_reentry.setError("Passwords are not equal!");
+        } else {
+            curUser.put("username", username_entry.getText().toString());
+            curUser.put("Address", street_entry.getText().toString());
+            curUser.put("City", city_entry.getText().toString());
+            curUser.put("State", state_spinner.getSelectedItem().toString());
+            curUser.put("Zip", Double.valueOf(zip_entry.getText().toString()));
+            curUser.put("Name", name_entry.getText().toString());
+            curUser.put("phoneNumber", Double.valueOf(phone_entry.getText().toString()));
+            curUser.setEmail(email_entry.getText().toString());
 
-        if (!password_entry.getText().toString().equals(""))
-            curUser.setPassword(password_entry.getText().toString());
+            if (!password_entry.getText().toString().equals(""))
+                curUser.setPassword(password_entry.getText().toString());
 
-        curUser.saveInBackground();
-        password_entry.getText().clear();
+            curUser.saveInBackground();
+            password_entry.getText().clear();
+            password_reentry.getText().clear();
+
+            Toast.makeText(getActivity(), "Settings saved!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -133,8 +144,6 @@ public class Settings extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        Log.d("onOptionsItemSelected", "yes");
         switch (item.getItemId()) {
             case R.id.action_save:
                 saveSettings();
