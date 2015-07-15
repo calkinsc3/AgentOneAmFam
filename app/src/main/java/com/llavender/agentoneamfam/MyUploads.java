@@ -7,7 +7,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -195,12 +194,9 @@ public class MyUploads extends Fragment {
             claimPolicyID = null;
         }
         else{
-
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
-            Log.d(" ", "");
         }
-
     }
 
     @Override
