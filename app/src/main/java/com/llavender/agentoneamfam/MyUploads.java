@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,9 +62,6 @@ public class MyUploads extends Fragment {
 
         //USED FOR QUERYING UPLOADS SPECIFIC TO A CLAIM (null for creating a new claim)
         ParseQuery<ParseObject> mainQuery = null;
-
-        //if coming from Policies create Main query
-
 
         //Build a query for each upload found in the uploadIDs of the Current Claim
         if(uploadIDs != null && args != null){
@@ -200,6 +198,7 @@ public class MyUploads extends Fragment {
 
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
+            Log.d(" ", "");
         }
 
     }
@@ -372,24 +371,30 @@ public class MyUploads extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null) {
+                                    refreshLocalData(getActivity());
+
                                     final String objectID = obj.getObjectId();
-                                    uploadIDs.add(objectID);
-                                    JSONArray jsonArray = new JSONArray(uploadIDs);
+                                    if (uploadIDs == null) {
+                                        uploadIDs = new ArrayList<>();
+                                    }
+                                    if (!getArguments().getBoolean("FROMPOLICY")) {
+                                        uploadIDs.add(objectID);
+                                        JSONArray jsonArray = new JSONArray(uploadIDs);
 
-                                    ClaimInfo.selectedClaim.put("UploadIDs", jsonArray);
-                                    ClaimInfo.selectedClaim.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
+                                        ClaimInfo.selectedClaim.put("UploadIDs", jsonArray);
+                                        ClaimInfo.selectedClaim.saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
 
-                                            if (e == null) {
-                                                Toast.makeText(getActivity(), "Upload " + objectID + " saved.", Toast.LENGTH_SHORT).show();
-                                                refreshLocalData(getActivity());
-                                            } else {
-                                                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                if (e == null) {
+                                                    Toast.makeText(getActivity(), "Upload " + objectID + " saved.", Toast.LENGTH_SHORT).show();
+                                                    refreshLocalData(getActivity());
+                                                } else {
+                                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
                                             }
-                                        }
-                                    });
-
+                                        });
+                                    }
                                 } else {
                                     Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -405,6 +410,4 @@ public class MyUploads extends Fragment {
                 break;
         }
     }
-
-
 }
