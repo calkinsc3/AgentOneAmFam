@@ -93,15 +93,9 @@ public class ClaimInfo extends Fragment {
 
         //load the selected claims info into the fields
         if (selectedClaim != null) {
-            //TODO
-
             String damages = selectedClaim.getNumber("Damages").toString();
-
-//            BigDecimal parsed = new BigDecimal(damages)
-//                    .setScale(2, BigDecimal.ROUND_FLOOR)
-//                    .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
-
-            String formattedDamages = NumberFormat.getCurrencyInstance().format(damages);
+            BigDecimal parsed = new BigDecimal(damages).setScale(2, BigDecimal.ROUND_FLOOR);
+            String formattedDamages = NumberFormat.getCurrencyInstance().format(parsed);
 
             damages_entry.setText(formattedDamages);
             comments_entry.setText(selectedClaim.getString("Comment"));

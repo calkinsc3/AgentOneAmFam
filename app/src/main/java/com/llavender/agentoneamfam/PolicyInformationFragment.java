@@ -95,11 +95,7 @@ public class PolicyInformationFragment extends Fragment {
         images = new ArrayList<>();
 
         String costString = policy.getNumber("Cost").toString();
-
-        BigDecimal parsed = new BigDecimal(costString)
-                .setScale(2, BigDecimal.ROUND_FLOOR)
-                .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
-
+        BigDecimal parsed = new BigDecimal(costString).setScale(2, BigDecimal.ROUND_FLOOR);
         String formattedCost = NumberFormat.getCurrencyInstance().format(parsed);
 
         client.append(policy.getString("ClientID"));
@@ -111,7 +107,6 @@ public class PolicyInformationFragment extends Fragment {
         accepted.setChecked(policy.getBoolean("Accepted"));
 
         stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, states));
-
         stateSpinner.setSelection(Arrays.asList(states).indexOf(policy.getString("State")));
 
         ParseQuery imageQuery = new ParseQuery("Upload");
@@ -171,7 +166,6 @@ public class PolicyInformationFragment extends Fragment {
                 policyToSave.put("Description", description.getText().toString());
                 policyToSave.put("Accepted", accepted.isChecked());
 
-                // TODO cost is not being uploaded to parse correctly.
                 String costFormatted = cost.getText().toString();
                 costFormatted = costFormatted.replace("$","");
                 costFormatted = costFormatted.replace(",","");
@@ -293,7 +287,7 @@ public class PolicyInformationFragment extends Fragment {
 
     public class ObjectArrayAdapter extends ArrayAdapter<ParseObject> {
 
-        //declare Array List of items we create
+        // Array List of items we create
         private ArrayList<ParseObject> images;
 
 
@@ -328,7 +322,6 @@ public class PolicyInformationFragment extends Fragment {
              * Checking to see if the view is null. If it is we must inflate the view
              * "inflate" means to render/show the view
              */
-
             if (view == null) {
                 vHolder = new ViewHolder();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -381,8 +374,6 @@ public class PolicyInformationFragment extends Fragment {
                     comments.set(vHolder.index, s.toString());
                 }
             });
-
-
 
             // view must be returned to our current activity
             return view;
