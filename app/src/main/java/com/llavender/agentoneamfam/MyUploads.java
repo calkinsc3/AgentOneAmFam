@@ -261,7 +261,6 @@ public class MyUploads extends Fragment {
                 //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
                 startActivityForResult(Intent.createChooser(intent, "Select Picture(s)"), NEW_UPLOAD);
 
-
             }
         });
 
