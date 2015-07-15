@@ -45,11 +45,11 @@ public class Login extends Activity {
         context = this;
 
         //CHECK FOR LOGIN
-        if (p.getString("OfficeUserID", null) != null && p.getBoolean("OfficeStayLoggedIn", false)) {
+        if (p.getString("UserID", null) != null && p.getBoolean("StayLoggedIn", false)) {
             loginSuccess();
-        } else if (p.getString("OfficeUsername", null) != null) {
+        } else if (p.getString("Username", null) != null) {
             username_checkbox.setChecked(true);
-            username_entry.setText(p.getString("OfficeUsername", ""));
+            username_entry.setText(p.getString("Username", ""));
         }
 
         //INITIALIZE PARSE
@@ -78,12 +78,12 @@ public class Login extends Activity {
 
                             //UPDATE SHARED PREFERENCES
                             SharedPreferences.Editor editor = p.edit();
-                            editor.putString("OfficeUserID", user.getObjectId());
-                            editor.putBoolean("OfficeStayLoggedIn", login_checkbox.isChecked());
+                            editor.putString("UserID", user.getObjectId());
+                            editor.putBoolean("StayLoggedIn", login_checkbox.isChecked());
                             if (username_checkbox.isChecked()) {
-                                editor.putString("OfficeUsername", username);
+                                editor.putString("Username", username);
                             } else {
-                                editor.remove("OfficeUsername");
+                                editor.remove("Username");
                             }
                             editor.apply();
 
