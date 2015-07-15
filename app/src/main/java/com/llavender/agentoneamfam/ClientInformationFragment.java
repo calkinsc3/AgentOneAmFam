@@ -40,23 +40,14 @@ public class ClientInformationFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_client_information, container, false);
 
-        phoneButton = (ImageButton)view.findViewById(R.id.phoneButton);
-        emailButton = (ImageButton)view.findViewById(R.id.emailButton);
-        mapButton = (ImageButton)view.findViewById(R.id.mapButton);
-        clientName = (TextView)view.findViewById(R.id.clientName);
-        phoneNumber = (TextView)view.findViewById(R.id.phoneNumber);
-        email = (TextView)view.findViewById(R.id.email);
-        address1 = (TextView)view.findViewById(R.id.addressLine1);
-        address2 = (TextView)view.findViewById(R.id.addressLine2);
-        client = Singleton.getCurrentClient();
+        initializeFields(view);
 
+        setOnClickListeners();
 
-        clientName.setText(client.getString("Name"));
-        phoneNumber.setText(String.valueOf(client.getNumber("phoneNumber")));
-        email.setText(client.getString("email"));
-        address1.setText(client.getString("Address"));
-        address2.setText(client.getString("City") + client.getString("State") + client.getInt("Zip"));
+        return view;
+    }
 
+    private void setOnClickListeners(){
         phoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +61,7 @@ public class ClientInformationFragment extends Fragment {
             public void onClick(View v) {
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.setData(Uri.parse("mailto:"));
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {client.getString("email")});
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{client.getString("email")});
                 emailIntent.setType("plain/text");
                 if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(Intent.createChooser(emailIntent, "Choose Mail Application"));
@@ -96,9 +87,24 @@ public class ClientInformationFragment extends Fragment {
                 startActivity(mapIntent);
             }
         });
-
-        return view;
     }
 
+    private void initializeFields(View view){
+        phoneButton = (ImageButton)view.findViewById(R.id.phoneButton);
+        emailButton = (ImageButton)view.findViewById(R.id.emailButton);
+        mapButton = (ImageButton)view.findViewById(R.id.mapButton);
+        clientName = (TextView)view.findViewById(R.id.clientName);
+        phoneNumber = (TextView)view.findViewById(R.id.phoneNumber);
+        email = (TextView)view.findViewById(R.id.email);
+        address1 = (TextView)view.findViewById(R.id.addressLine1);
+        address2 = (TextView)view.findViewById(R.id.addressLine2);
+        client = Singleton.getCurrentClient();
 
+
+        clientName.setText(client.getString("Name"));
+        phoneNumber.setText(String.valueOf(client.getNumber("phoneNumber")));
+        email.setText(client.getString("email"));
+        address1.setText(client.getString("Address"));
+        address2.setText(client.getString("City") + client.getString("State") + client.getInt("Zip"));
+    }
 }

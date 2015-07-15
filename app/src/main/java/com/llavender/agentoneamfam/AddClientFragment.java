@@ -42,7 +42,13 @@ public class AddClientFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_add_client, container, false);
         fm = getFragmentManager();
         initializeFields();
+        setListViewSelections();
+        setClientButtonClickListener();
 
+        return rootView;
+    }
+
+    private void setClientButtonClickListener(){
         createClientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,8 +57,17 @@ public class AddClientFragment extends Fragment {
                 returnToMain();
             }
         });
+    }
 
-        return rootView;
+    private void setListViewSelections(){
+         /* Set the spinner with all the states */
+        ArrayAdapter<CharSequence> stateSpinnerAdapter =
+                ArrayAdapter.createFromResource(getActivity(),
+                        R.array.states,android.R.layout.simple_spinner_item);
+
+        stateSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        stateSpinner.setAdapter(stateSpinnerAdapter);
     }
 
     private void returnToMain(){
@@ -74,19 +89,10 @@ public class AddClientFragment extends Fragment {
         zipEdit = (EditText) rootView.findViewById(R.id.editZip);
         usernameEdit = (EditText) rootView.findViewById(R.id.editUsername);
         passwordEdit = (EditText) rootView.findViewById(R.id.editPassword);
-
         stateSpinner = (Spinner) rootView.findViewById(R.id.spinnerState);
-
-        /* Set the spinner with all the states */
-        ArrayAdapter<CharSequence> stateSpinnerAdapter =
-                ArrayAdapter.createFromResource(getActivity(),
-                        R.array.states,android.R.layout.simple_spinner_item);
-
-        stateSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        stateSpinner.setAdapter(stateSpinnerAdapter);
-
         createClientButton = (Button) rootView.findViewById(R.id.createClientButton);
+
+        fm = getFragmentManager();
     }
 
     private void createClient() {

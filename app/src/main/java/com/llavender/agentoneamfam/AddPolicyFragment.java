@@ -4,6 +4,8 @@ package com.llavender.agentoneamfam;
 import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,13 +16,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 
 /**
@@ -36,17 +44,14 @@ public class AddPolicyFragment extends Fragment {
     Spinner stateSpinner;
     EditText zip;
     CheckBox accepted;
-    ImageButton saveButton;
     ListView photoView;
     ParseObject policy;
     LinearLayout address2;
     String[] states;
 
-
     public AddPolicyFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,9 +62,12 @@ public class AddPolicyFragment extends Fragment {
         setHasOptionsMenu(true);
         initializeVariables(view);
 
+        //Set the adapter for the state spinner
         stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, states));
 
         checkOrientationSetLayoutOrientation();
+
+        setCostTextChangedListener();
 
 
         return view;
@@ -80,6 +88,41 @@ public class AddPolicyFragment extends Fragment {
         states = getResources().getStringArray(R.array.states);
     }
 
+    private void setCostTextChangedListener(){
+        cost.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(current)) {
+                    cost.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[$,.]", "");
+
+                    BigDecimal parsed = new BigDecimal(cleanString)
+                            .setScale(2, BigDecimal.ROUND_FLOOR)
+                            .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+
+                    String formatted = NumberFormat.getCurrencyInstance().format(parsed);
+
+                    current = formatted;
+                    cost.setText(formatted);
+                    cost.setSelection(formatted.length());
+
+                    cost.addTextChangedListener(this);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
     public void checkOrientationSetLayoutOrientation(){
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             address2.setOrientation(LinearLayout.VERTICAL);
@@ -95,6 +138,40 @@ public class AddPolicyFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    private void createPolicy(){
+
+        String costFormatted = cost.getText().toString();
+        costFormatted = costFormatted.replace("$","");
+        costFormatted = costFormatted.replace(",","");
+
+        ParseObject newPolicy = new ParseObject("Policy");
+        newPolicy.put("AgentID", ParseUser.getCurrentUser().getObjectId());
+        newPolicy.put("ClientID", Singleton.getCurrentClient().getObjectId());
+        newPolicy.put("Address", address.getText().toString());
+        newPolicy.put("City", city.getText().toString());
+        newPolicy.put("State", stateSpinner.getSelectedItem().toString());
+        newPolicy.put("Zip", Integer.valueOf(zip.getText().toString()));
+        newPolicy.put("Description", description.getText().toString());
+        newPolicy.put("Accepted", accepted.isChecked());
+        newPolicy.put("Cost", Double.parseDouble(costFormatted));
+
+        newPolicy.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e == null){
+                    Toast.makeText(getActivity(), "New Policy Created", Toast.LENGTH_SHORT).show();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, new MainFragment())
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    Log.e("Save Error: ", e.toString());
+                    Toast.makeText(getActivity(), "Error saving new Policy", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -102,9 +179,7 @@ public class AddPolicyFragment extends Fragment {
         switch (item.getItemId()) {
             //is actually a call to create a new Policy
             case R.id.action_save:
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddClientFragment())
-                        .addToBackStack(null)
-                        .commit();
+                createPolicy();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
