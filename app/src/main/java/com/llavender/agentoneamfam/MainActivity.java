@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private ListView drawerList;
-    private boolean hasRun = false;
     private ParseUser currentUser;
     private SharedPreferences sharedPref;
     private String[] drawerItems;
@@ -32,11 +31,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerItems = getResources().getStringArray(R.array.drawerItems);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
+        drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, drawerItems));
 
         //sets the Up Navigation enabled only if fragments are on backStack
@@ -46,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
         //Enables Parse on startup
         //checks if a user has selected "Keep me logged in"
         checkLoginStatus();
-        //loads the appropriate initial fragment
-        Tools.replaceFragment(new MainFragment(), getFragmentManager(), true);
 
+        if (savedInstanceState == null) {
+            //loads the appropriate initial fragment
+            Tools.replaceFragment(new MainFragment(), getFragmentManager(), true);
+        }
     }
 
     public void checkLoginStatus(){
@@ -59,15 +61,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Welcome " + currentUser.getString("username"), Toast.LENGTH_SHORT).show();
         } else {
             currentUser = null;
-        }
-    }
-
-
-    public void enableParse(){
-        if (!hasRun) {
-            Parse.enableLocalDatastore(this);
-            Parse.initialize(this, "4YBarCfwhDQKdD9w7edqe8fIazqWRXv8RhRbNgd7", "zUguFYSgfxNkzTw6lQGkCWssT1VCMWBccWD44MFw");
-            hasRun = true;
         }
     }
 
@@ -84,25 +77,29 @@ public class MainActivity extends AppCompatActivity {
                 final int SETTINGS = 3;
                 final int UPLOADS = 4;
 
-
                 switch (position) {
                     case CLIENTS:
                         Tools.replaceFragment(new ClientListFragment(), getFragmentManager(), true);
                         break;
+
                     case CLAIMS:
                         Tools.replaceFragment(new Claims(), getFragmentManager(), true);
                         break;
+
                     case SCHEDULE:
-                        //move to schdulefrage
+                        //move to meetings fragment
                         Tools.replaceFragment(new MeetingListFragment(), getFragmentManager(), true);
                         MeetingListFragment.mode = MeetingListFragment.APPOINTMENTS;
                         break;
+
                     case SETTINGS:
                         Tools.replaceFragment(new Settings(), getFragmentManager(), true);
                         break;
+
                     case UPLOADS:
                         Tools.replaceFragment(new MyUploads(), getFragmentManager(), true);
                         break;
+                    
                     default:
                         Log.d("Error", "Reached default in drawer");
                 }
@@ -143,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         switch (id) {
-
             case R.id.action_logout:
                 Tools.logout(this);
                 break;
@@ -169,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             default:
-                //Do nothing
                 break;
         }
 
@@ -182,9 +177,7 @@ public class MainActivity extends AppCompatActivity {
         if (fm.getBackStackEntryCount() >= 1) {
             fm.popBackStackImmediate();
         } else {
-
             super.onBackPressed();
         }
     }
-
 }
