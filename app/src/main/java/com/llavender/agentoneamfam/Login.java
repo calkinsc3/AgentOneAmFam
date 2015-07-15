@@ -45,11 +45,11 @@ public class Login extends Activity {
         context = this;
 
         //CHECK FOR LOGIN
-        if (p.getString("OfficeUserID", null) != null && p.getBoolean("OfficeStayLoggedIn", false)) {
+        if (p.getString("UserID", null) != null && p.getBoolean("StayLoggedIn", false)) {
             loginSuccess();
-        } else if (p.getString("OfficeUsername", null) != null) {
+        } else if (p.getString("Username", null) != null) {
             username_checkbox.setChecked(true);
-            username_entry.setText(p.getString("OfficeUsername", ""));
+            username_entry.setText(p.getString("Username", ""));
         }
 
         //INITIALIZE PARSE
@@ -76,22 +76,29 @@ public class Login extends Activity {
 
                         if (e == null && user != null) {
 
-                            //UPDATE SHARED PREFERENCES
-                            SharedPreferences.Editor editor = p.edit();
-                            editor.putString("OfficeUserID", user.getObjectId());
-                            editor.putBoolean("OfficeStayLoggedIn", login_checkbox.isChecked());
-                            if (username_checkbox.isChecked()) {
-                                editor.putString("OfficeUsername", username);
-                            } else {
-                                editor.remove("OfficeUsername");
-                            }
-                            editor.apply();
+                            if (!user.getString("accountType").equals("Agent")) {
 
-                            //login successful
-                            loginSuccess();
+                                loginFail(0);
+
+                            } else {
+
+                                //UPDATE SHARED PREFERENCES
+                                SharedPreferences.Editor editor = p.edit();
+                                editor.putString("UserID", user.getObjectId());
+                                editor.putBoolean("StayLoggedIn", login_checkbox.isChecked());
+                                if (username_checkbox.isChecked()) {
+                                    editor.putString("Username", username);
+                                } else {
+                                    editor.remove("Username");
+                                }
+                                editor.apply();
+
+                                //login successful
+                                loginSuccess();
+                            }
 
                         } else if (user == null) {
-                            loginFail();
+                            loginFail(1);
 
                         } else {
                             loginError(e);
@@ -110,9 +117,13 @@ public class Login extends Activity {
     }
 
 
-    public void loginFail() {
+    public void loginFail(int mode) {
 
-        Toast.makeText(this, "Wrong Username or Password", Toast.LENGTH_SHORT).show();
+        if (mode == 1) {
+            Toast.makeText(this, "Wrong Username or Password", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "You must be an Agent to use this app.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
