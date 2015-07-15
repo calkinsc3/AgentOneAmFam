@@ -110,10 +110,10 @@ public class ClaimInfo extends Fragment {
 
         // Formats the damages into currency format.
         damages_entry.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            private String current = "";
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {

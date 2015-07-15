@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
 
@@ -68,10 +69,7 @@ public class PolicyInformationFragment extends Fragment {
         includeMyUploadsFragment();
 
         String costString = policy.getNumber("Cost").toString();
-
-        BigDecimal parsed = new BigDecimal(costString)
-                .setScale(2, BigDecimal.ROUND_FLOOR);
-
+        BigDecimal parsed = new BigDecimal(costString).setScale(2, BigDecimal.ROUND_FLOOR);
         String formattedCost = NumberFormat.getCurrencyInstance().format(parsed);
 
         client.append(policy.getString("ClientID"));
@@ -181,22 +179,24 @@ public class PolicyInformationFragment extends Fragment {
     }
 
     private void savePolicy() {
+
         ParseObject policyToSave = Singleton.getCurrentPolicy();
 
         policyToSave.put("Address", address.getText().toString());
         policyToSave.put("City", city.getText().toString());
         policyToSave.put("State", stateSpinner.getSelectedItem().toString());
-        policyToSave.put("Zip", zip.getText().toString());
+        policyToSave.put("Zip", Double.valueOf(zip.getText().toString()));
         policyToSave.put("Description", description.getText().toString());
         policyToSave.put("Accepted", accepted.isChecked());
 
-        // TODO cost is not being uploaded to parse correctly.
         String costFormatted = cost.getText().toString();
-        costFormatted = costFormatted.replace("$", "");
-        costFormatted = costFormatted.replace(",", "");
+        costFormatted = costFormatted.replace("$","");
+        costFormatted = costFormatted.replace(",","");
         policyToSave.put("Cost", Double.parseDouble(costFormatted));
 
         policyToSave.saveInBackground();
+        Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
+
     }
 
 
