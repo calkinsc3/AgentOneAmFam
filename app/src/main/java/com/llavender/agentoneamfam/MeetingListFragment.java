@@ -35,6 +35,7 @@ public class MeetingListFragment extends Fragment {
 
     //RESPECTIVE OBJECT HOLDERS
     public static ParseObject selectedAppointment;
+    public static ParseObject selectedClient;
 
     public static List<ParseObject> meetings;
 
@@ -50,6 +51,7 @@ public class MeetingListFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     /**
      * Queries parse and populates the listview
      * NEEDS TO REMAIN STATIC: it is called from ImageAdapter
@@ -60,6 +62,11 @@ public class MeetingListFragment extends Fragment {
         final ListView listView = (ListView) view.findViewById(R.id.clientListView);
         SharedPreferences prefs = context.getSharedPreferences(Singleton.PREFERENCES, 0);
         ParseQuery<ParseObject>  query = ParseQuery.getQuery("Meeting");
+
+        //if this fragment is being inflated withing clientInformation, set the query to filter as such
+        if (selectedClient != null) {
+            query.whereEqualTo("InvitedIDs", selectedClient.getObjectId());
+        }
 
 
         //TODO update to work only for this agent
@@ -102,6 +109,11 @@ public class MeetingListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (getArguments() != null) {
+            selectedClient = Singleton.getCurrentClient();
+        }
+
     }
 
     @Override

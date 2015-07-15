@@ -2,6 +2,7 @@ package com.llavender.agentoneamfam;
 
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.ParseObject;
@@ -28,6 +30,7 @@ public class ClientInformationFragment extends Fragment {
     TextView address1;
     TextView address2;
     ParseObject client;
+    ListView meetingListView;
 
     public ClientInformationFragment() {
         // Required empty public constructor
@@ -38,13 +41,17 @@ public class ClientInformationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_client_information, container, false);
+        return inflater.inflate(R.layout.fragment_client_information, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
 
         initializeFields(view);
 
         setOnClickListeners();
 
-        return view;
+        showMeetings();
     }
 
     private void setOnClickListeners(){
@@ -87,6 +94,17 @@ public class ClientInformationFragment extends Fragment {
                 startActivity(mapIntent);
             }
         });
+    }
+
+    private void showMeetings() {
+        Fragment newFragment = new MeetingListFragment();
+        //empty bundle sent to meetingLIstFragment to say its coming from this fragment
+        Bundle bundle = new Bundle(1);
+
+        newFragment.setArguments(bundle);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(R.id.bottom_container, newFragment).commit();
+
     }
 
     private void initializeFields(View view){
