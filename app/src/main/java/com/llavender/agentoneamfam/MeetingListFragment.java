@@ -1,6 +1,7 @@
 package com.llavender.agentoneamfam;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -58,13 +59,24 @@ public class MeetingListFragment extends Fragment {
 
         final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Retrieving data from Parse.com", true);
         final ListView listView = (ListView) view.findViewById(R.id.clientListView);
+        final com.github.clans.fab.FloatingActionButton fab =
+                (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
+
         SharedPreferences prefs = context.getSharedPreferences(Singleton.PREFERENCES, 0);
         ParseQuery<ParseObject>  query = ParseQuery.getQuery("Meeting");
 
+        fab.setImageResource(android.R.drawable.ic_input_add);
+        fab.setVisibility(View.VISIBLE);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tools.replaceFragment(new EditAppointment(), ((Activity)context).getFragmentManager(), true);
+            }
+        });
 
         //TODO update to work only for this agent
         //query.whereEqualTo("AgentID" ,  prefs.getString("OfficeUserID", null));
-
 
         query.findInBackground(new FindCallback<ParseObject>() {
 
@@ -74,13 +86,11 @@ public class MeetingListFragment extends Fragment {
                 progressDialog.dismiss();
 
                 if (e == null && !list.isEmpty()) {
-
                     meetings = list;
                     listView.setAdapter(new ImageAdapter(context, null, null, meetings, Singleton.MEETING));
 
                 } else if (e == null) {
                     switch (mode) {
-
                         case POLICIES:
                             Toast.makeText(context, "No Policies Found.", Toast.LENGTH_SHORT).show();
                             break;
@@ -92,10 +102,8 @@ public class MeetingListFragment extends Fragment {
                 } else {
                     Toast.makeText(context, "Error from parse:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-
     }
 
     @Override
@@ -132,30 +140,27 @@ public class MeetingListFragment extends Fragment {
 
                 selectedAppointment = meetings.get(vh.index);
                 Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
-
             }
         });
-
-
     }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.findItem(R.id.action_save).setVisible(true);
-        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_add);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_save:
-                //move to new meeting
-                Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
+//
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        menu.findItem(R.id.action_save).setVisible(true);
+//        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_add);
+//        super.onCreateOptionsMenu(menu, inflater);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.action_save:
+//                //move to new meeting
+//                Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
+//
 }

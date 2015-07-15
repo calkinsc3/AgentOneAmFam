@@ -123,14 +123,10 @@ public class Tools {
 
             case Singleton.CLAIM:
                 String damages = String.valueOf(object.get("Damages"));
+                BigDecimal parsed = new BigDecimal(damages).setScale(2,BigDecimal.ROUND_FLOOR);
+                String formattedDamages = NumberFormat.getCurrencyInstance().format(parsed);
 
-                BigDecimal parsed = new BigDecimal(damages)
-                        .setScale(2,BigDecimal.ROUND_FLOOR)
-                        .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
-
-                String formatted = NumberFormat.getCurrencyInstance().format(parsed);
-
-                message = object.getObjectId() + "\n" + formatted;//object.get("Damages");
+                message = object.getObjectId() + "\n" + formattedDamages;
                 break;
 
             case Singleton.MEETING:
