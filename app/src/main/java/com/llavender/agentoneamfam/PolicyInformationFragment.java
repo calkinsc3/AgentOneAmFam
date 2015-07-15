@@ -174,28 +174,19 @@ public class PolicyInformationFragment extends Fragment {
                 policyToSave.saveInBackground();
                 Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
 
-                for (int i = 0; Singleton.getMediaFiles().size() > i; i++){
+                for (int i = 0; Singleton.getMediaFiles().size() > i; i++) {
                     ParseObject currFile = Singleton.getMediaFiles().get(i);
                     currFile.put("Comment", comments.get(i));
                     try {
                         currFile.save();
-                    } catch(com.parse.ParseException e){
+                    } catch (com.parse.ParseException e) {
                         Log.d("save: ", e.toString());
                     }
                 }
             }
         });
 
-        addUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent.createChooser(intent, "Select Pictures"), 2);
-            }
-        });
+        setAddUploadClickListener();
 
         return view;
     }
@@ -206,6 +197,19 @@ public class PolicyInformationFragment extends Fragment {
             city.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
             zip.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
         }
+    }
+
+    private void setAddUploadClickListener(){
+        addUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent.createChooser(intent, "Select Pictures"), 2);
+            }
+        });
     }
 
     @Override
