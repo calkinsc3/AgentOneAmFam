@@ -140,6 +140,7 @@ public class PolicyInformationFragment extends Fragment {
         MyUploads myUploads = new MyUploads();
 
         isNewBundle.putBoolean("FROMPOLICY", true);
+        isNewBundle.putString("claimPolicyID", Singleton.getCurrentPolicy().getObjectId());
         myUploads.setArguments(isNewBundle);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
