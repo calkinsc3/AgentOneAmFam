@@ -1,17 +1,22 @@
 package com.llavender.agentoneamfam;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.EditText;
 
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -31,6 +36,18 @@ public class Tools {
         fTransaction.commit();
 
         //refresh options menu
+    }
+
+    public static void logout(Context context) {
+
+        SharedPreferences.Editor editor = context.getSharedPreferences(Singleton.PREFERENCES, 0).edit();
+        editor.remove("OfficeUserID");
+        editor.remove("OfficeStayLoggedIn");
+        editor.apply();
+
+        ParseUser.logOut();
+        ((Activity) context).finish();
+
     }
 
     public static void updateDateEntry(EditText editText, Calendar calendar) {
@@ -80,7 +97,6 @@ public class Tools {
 
     //TODO recomment
     /**
-     *
      * Formats the information of a client or a policy object to be
      * viewed as a list item in a TextView
      *
@@ -95,7 +111,6 @@ public class Tools {
         switch (mode) {
 
             case Singleton.CLIENT:
-
                 message = object.getString("FirstName");
                 message += " " + object.getString("LastName") + "\n";
                 message += object.getString("Address") + "\n";
@@ -103,13 +118,19 @@ public class Tools {
                 break;
 
             case Singleton.POLICY:
-
                 message = object.getString("Line1") + "\n" + object.getString("Line2") + "\n" + object.getNumber("PolicyNumber");
                 break;
 
-            //TODO
             case Singleton.CLAIM:
-                message = object.getObjectId() + "\n" + object.get("Damages");
+                String damages = String.valueOf(object.get("Damages"));
+
+                BigDecimal parsed = new BigDecimal(damages)
+                        .setScale(2,BigDecimal.ROUND_FLOOR)
+                        .divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+
+                String formatted = NumberFormat.getCurrencyInstance().format(parsed);
+
+                message = object.getObjectId() + "\n" + formatted;//object.get("Damages");
                 break;
 
             case Singleton.MEETING:
@@ -122,6 +143,5 @@ public class Tools {
         }
 
         return message;
-
     }
 }

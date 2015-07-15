@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -90,7 +89,6 @@ public class ImageAdapter extends BaseAdapter {
 
 
             /**
-             *
              * CLAIM MODE
              */
             case Singleton.CLAIM:
@@ -316,7 +314,7 @@ public class ImageAdapter extends BaseAdapter {
                                 .setAction(Intent.ACTION_GET_CONTENT);
 
                         //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
-                        ((Activity) context).startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
+                        MyUploads.fragment.startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
 
                         return true;
                     }
@@ -344,10 +342,14 @@ public class ImageAdapter extends BaseAdapter {
                     vh.delete_button = (ImageButton) view.findViewById(R.id.delete_button);
                     vh.parseObject = curr;
                     view.setTag(vh);
+
                 } else {
+
                     vh = (ViewHolder) convertView.getTag();
                     curr = vh.parseObject;
+
                 }
+
 
                 String temp = Tools.buildMessage(objects.get(position), Singleton.MEETING);
                 vh.index = position;
@@ -410,7 +412,6 @@ public class ImageAdapter extends BaseAdapter {
         int index;
         ImageButton delete_button;
         ParseObject parseObject;
-
 
     }
 
