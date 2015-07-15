@@ -5,7 +5,11 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -25,11 +29,22 @@ import java.util.List;
 public class Settings extends Fragment {
     public static String user_email = ParseUser.getCurrentUser().getEmail();
 
+    private ParseUser curUser;
+
+    private EditText username_entry;
+    private EditText password_entry;
+    private EditText name_entry;
+    private EditText phone_entry;
+    private EditText email_entry;
+
+    private EditText street_entry;
+    private EditText city_entry;
+    private EditText zip_entry;
+    private Spinner state_spinner;
 
     public Settings() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,21 +55,21 @@ public class Settings extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
-        final EditText username_entry = (EditText) view.findViewById(R.id.username_entry);
-        final EditText password_entry = (EditText) view.findViewById(R.id.password_entry);
-        final EditText name_entry = (EditText) view.findViewById(R.id.name_entry);
-        final EditText phone_entry = (EditText) view.findViewById(R.id.phone_entry);
-        final EditText email_entry = (EditText) view.findViewById(R.id.email_entry);
+        setHasOptionsMenu(true);
 
+        username_entry = (EditText) view.findViewById(R.id.username_entry);
+        password_entry = (EditText) view.findViewById(R.id.password_entry);
+        name_entry = (EditText) view.findViewById(R.id.name_entry);
+        phone_entry = (EditText) view.findViewById(R.id.phone_entry);
+        email_entry = (EditText) view.findViewById(R.id.email_entry);
 
-        final EditText street_entry = (EditText) view.findViewById(R.id.address_street);
-        final EditText city_entry = (EditText) view.findViewById(R.id.address_city);
-        final EditText zip_entry = (EditText) view.findViewById(R.id.zip_code);
+        street_entry = (EditText) view.findViewById(R.id.address_street);
+        city_entry = (EditText) view.findViewById(R.id.address_city);
+        zip_entry = (EditText) view.findViewById(R.id.zip_code);
 
-
+        state_spinner = (Spinner) view.findViewById(R.id.state_spinner);
         Button email_support_button = (Button) view.findViewById(R.id.email_support_button);
         Button logout_button = (Button) view.findViewById(R.id.logout_button);
-        Spinner state_spinner = (Spinner) view.findViewById(R.id.state_spinner);
 
         List<String> states = Arrays.asList(getResources().getStringArray(R.array.all_abbreviations));
 
@@ -63,30 +78,24 @@ public class Settings extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         state_spinner.setAdapter(adapter);
 
-        //load info
-        ParseUser currUser = ParseUser.getCurrentUser();
+        //load current user info
+        curUser = ParseUser.getCurrentUser();
 
-        username_entry.setText(currUser.getUsername());
-        //TODO
-        // password_entry.setText(currUser.get("password").toString());
-        street_entry.setText(currUser.get("Address").toString());
-        city_entry.setText(currUser.get("City").toString());
-        zip_entry.setText(currUser.get("Zip").toString());
-        name_entry.setText(currUser.get("Name").toString());
-        phone_entry.setText(currUser.get("phoneNumber").toString());
-        email_entry.setText(currUser.getEmail());
-        state_spinner.setSelection(states.indexOf(currUser.getString("State")));
-
-
+        username_entry.setText(curUser.getUsername());
+        street_entry.setText(curUser.get("Address").toString());
+        city_entry.setText(curUser.get("City").toString());
+        zip_entry.setText(String.valueOf(curUser.getNumber("Zip")));
+        name_entry.setText(curUser.get("Name").toString());
+        phone_entry.setText(String.valueOf(curUser.getNumber("phoneNumber")));
+        email_entry.setText(curUser.getEmail());
+        state_spinner.setSelection(states.indexOf(curUser.getString("State")));
 
         email_support_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support.intern@amfam.com"));
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Support Question");
                 startActivity(Intent.createChooser(intent, "Send Email"));
-
             }
         });
 
@@ -96,7 +105,43 @@ public class Settings extends Fragment {
 //                Tools.logout(getActivity());
 //            }
 //        });
-
     }
 
+    private void saveSettings() {
+        curUser.put("username", username_entry.getText().toString());
+        curUser.put("Address", street_entry.getText().toString());
+        curUser.put("City", city_entry.getText().toString());
+        curUser.put("State", state_spinner.getSelectedItem().toString());
+        curUser.put("Zip", Double.valueOf(zip_entry.getText().toString()));
+        curUser.put("Name", name_entry.getText().toString());
+        curUser.put("phoneNumber", Double.valueOf(phone_entry.getText().toString()));
+        curUser.setEmail(email_entry.getText().toString());
+
+        if (!password_entry.getText().toString().equals(""))
+            curUser.setPassword(password_entry.getText().toString());
+
+        curUser.saveInBackground();
+        password_entry.getText().clear();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Log.d("onOptionsItemSelected", "yes");
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                saveSettings();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
