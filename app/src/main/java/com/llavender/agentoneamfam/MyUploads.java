@@ -7,7 +7,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class MyUploads extends Fragment {
+
 
 
     //REQUEST CODES FOR GALLERY INTENT RETURN
@@ -195,12 +195,9 @@ public class MyUploads extends Fragment {
             claimPolicyID = null;
         }
         else{
-
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
-            Log.d(" ", "");
         }
-
     }
 
     @Override
@@ -374,7 +371,7 @@ public class MyUploads extends Fragment {
 
                                     final String objectID = obj.getObjectId();
 
-                                    if (!getArguments().getBoolean("FROMPOLICY")) {
+                                    if (!getArguments().getBoolean("FROMPOLICY", false)) {
                                         uploadIDs.add(objectID);
                                         JSONArray jsonArray = new JSONArray(uploadIDs);
 
