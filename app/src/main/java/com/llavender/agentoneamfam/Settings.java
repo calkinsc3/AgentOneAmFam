@@ -110,12 +110,12 @@ public class Settings extends Fragment {
             }
         });
 
-//        logout_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Tools.logout(getActivity());
-//            }
-//        });
+        logout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tools.logout(getActivity());
+            }
+        });
     }
 
     private void saveSettings() {
