@@ -107,7 +107,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
                 <TextView
                     android:id="@+id/end_time_title"
                     android:layout_width="fill_parent"
