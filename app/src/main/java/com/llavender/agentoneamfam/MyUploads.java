@@ -373,9 +373,7 @@ public class MyUploads extends Fragment {
                                     refreshLocalData(getActivity());
 
                                     final String objectID = obj.getObjectId();
-                                    if (uploadIDs == null) {
-                                        uploadIDs = new ArrayList<>();
-                                    }
+
                                     if (!getArguments().getBoolean("FROMPOLICY")) {
                                         uploadIDs.add(objectID);
                                         JSONArray jsonArray = new JSONArray(uploadIDs);
