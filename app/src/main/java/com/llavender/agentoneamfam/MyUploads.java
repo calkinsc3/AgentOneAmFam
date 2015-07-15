@@ -35,6 +35,7 @@ import java.util.List;
 public class MyUploads extends Fragment {
 
 
+
     //REQUEST CODES FOR GALLERY INTENT RETURN
     final public static int NEW_UPLOAD = 0;
     final public static int CHANGE_IMAGE = 1;
