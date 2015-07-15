@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -89,9 +91,15 @@ public class Settings extends Fragment {
         city_entry.setText(curUser.get("City").toString());
         zip_entry.setText(String.valueOf(curUser.getNumber("Zip")));
         name_entry.setText(curUser.get("Name").toString());
-        phone_entry.setText(String.valueOf(curUser.getNumber("phoneNumber")));
         email_entry.setText(curUser.getEmail());
         state_spinner.setSelection(states.indexOf(curUser.getString("State")));
+
+        String phoneText = String.valueOf(curUser.getNumber("phoneNumber"));
+        String phoneNumber = ("(" + phoneText.substring(0,3) + ")" + " " +
+                phoneText.substring(3,6) + "-" + phoneText.substring(6));
+
+        phone_entry.setText(phoneNumber);
+        phone_entry.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         email_support_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,12 +110,12 @@ public class Settings extends Fragment {
             }
         });
 
-//        logout_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Tools.logout(getActivity());
-//            }
-//        });
+        logout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tools.logout(getActivity());
+            }
+        });
     }
 
     private void saveSettings() {
@@ -115,13 +123,19 @@ public class Settings extends Fragment {
             password_entry.setError("Passwords are not equal!");
             password_reentry.setError("Passwords are not equal!");
         } else {
+            String phoneUpdate = phone_entry.getText().toString();
+            phoneUpdate = phoneUpdate.replace("(","");
+            phoneUpdate = phoneUpdate.replace(")","");
+            phoneUpdate = phoneUpdate.replace("-","");
+            phoneUpdate = phoneUpdate.replace(" ","");
+
             curUser.put("username", username_entry.getText().toString());
             curUser.put("Address", street_entry.getText().toString());
             curUser.put("City", city_entry.getText().toString());
             curUser.put("State", state_spinner.getSelectedItem().toString());
             curUser.put("Zip", Double.valueOf(zip_entry.getText().toString()));
             curUser.put("Name", name_entry.getText().toString());
-            curUser.put("phoneNumber", Double.valueOf(phone_entry.getText().toString()));
+            curUser.put("phoneNumber", Double.valueOf(phoneUpdate));
             curUser.setEmail(email_entry.getText().toString());
 
             if (!password_entry.getText().toString().equals(""))

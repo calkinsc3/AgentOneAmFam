@@ -44,9 +44,7 @@ public class ClientInformationFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         initializeFields(view);
-
         setOnClickListeners();
 
         showMeetings();
@@ -96,30 +94,38 @@ public class ClientInformationFragment extends Fragment {
 
     private void showMeetings() {
         Fragment newFragment = new MeetingListFragment();
+
         //empty bundle sent to meetingLIstFragment to say its coming from this fragment
         Bundle bundle = new Bundle(1);
         newFragment.setArguments(bundle);
+
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.bottom_container, newFragment).commit();
 
     }
 
     private void initializeFields(View view){
+        client = Singleton.getCurrentClient();
+
         phoneButton = (ImageButton)view.findViewById(R.id.phoneButton);
         emailButton = (ImageButton)view.findViewById(R.id.emailButton);
         mapButton = (ImageButton)view.findViewById(R.id.mapButton);
+
         clientName = (TextView)view.findViewById(R.id.clientName);
         phoneNumber = (TextView)view.findViewById(R.id.phoneNumber);
         email = (TextView)view.findViewById(R.id.email);
         address1 = (TextView)view.findViewById(R.id.addressLine1);
         address2 = (TextView)view.findViewById(R.id.addressLine2);
-        client = Singleton.getCurrentClient();
-
 
         clientName.setText(client.getString("Name"));
-        phoneNumber.setText(String.valueOf(client.getNumber("phoneNumber")));
         email.setText(client.getString("email"));
         address1.setText(client.getString("Address"));
         address2.setText(client.getString("City") + client.getString("State") + client.getInt("Zip"));
+
+        String phoneText = String.valueOf(client.getNumber("phoneNumber"));
+        phoneText = ("(" + phoneText.substring(0,3) + ")" + " " +
+                phoneText.substring(3,6) + "-" + phoneText.substring(6));
+
+        phoneNumber.setText(phoneText);
     }
 }
