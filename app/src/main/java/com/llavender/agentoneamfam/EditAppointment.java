@@ -88,8 +88,8 @@ public class EditAppointment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         setHasOptionsMenu(true);
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_appointment, container, false);
     }
@@ -247,20 +247,30 @@ public class EditAppointment extends Fragment {
 
         //Load invitees
         try {
+            ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+
             JSONArray jArray = MeetingListFragment.selectedAppointment.getJSONArray("InvitedIDs");
             attendeesList = new String[jArray.length()];
 
             for (int i = 0; i < jArray.length(); i++) {
                 attendeesList[i] = jArray.getString(i);
+                userQuery.whereEqualTo("objectId", jArray.getString(i));
+
+                String attendeeName = userQuery.get(jArray.getString(i)).getString("Name");
+
+                if (attendeeName == null || attendeeName.equals("")) {
+                    attendeeName = userQuery.get(jArray.getString(i)).getString("username");
+                }
 
                 if (i == 0)
-                    attendees += jArray.getString(i);
+                    attendees += attendeeName;
                 else
-                    attendees += (", " + jArray.getString(i));
+                    attendees += (", " + attendeeName);
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         attendees_entry.setText(attendees);
     }
 
@@ -397,13 +407,18 @@ public class EditAppointment extends Fragment {
             @Override
             public void done(final List<ParseUser> possibleAttendees, ParseException e) {
                 if (e == null && possibleAttendees.size() != 0) {
-                    String[] userIDs = new String[possibleAttendees.size()];
+                    String[] attendeeNames = new String[possibleAttendees.size()];
                     checkedUserIDs = new boolean[possibleAttendees.size()];
 
                     for (int i = 0; i < possibleAttendees.size(); i++) {
-                        // Add object ids for all possible attendees to a concurrent string array.
+                        // Add names of all possible attendees to a concurrent string array.
                         String objID = possibleAttendees.get(i).getObjectId();
-                        userIDs[i] = objID;
+                        String attendeeName = possibleAttendees.get(i).getString("Name");
+
+                        if (attendeeName != null && !attendeeName.equals(""))
+                            attendeeNames[i] = attendeeName;
+                        else
+                            attendeeNames[i] = possibleAttendees.get(i).getString("username");
 
                         // Checks if a user is already added to the list of invitees and adds them
                         // to a list to have them already checked when alert dialog pops up.
@@ -413,7 +428,7 @@ public class EditAppointment extends Fragment {
                         }
                     }
 
-                    showPopupDialog(possibleAttendees, userIDs);
+                    showPopupDialog(possibleAttendees, attendeeNames);
 
                 } else if (possibleAttendees.size() == 0) {
                     builder.setTitle("Select Attendees");
@@ -449,10 +464,13 @@ public class EditAppointment extends Fragment {
                             // A new user is invited.
                             mSelectedUsers.add(item);
                             checkedUserIDs[item] = true;
+
                         } else if (mSelectedUsers.contains(item)) {
+
                             if (mSelectedUsers.size() == 1) {
                                 // All the possible invitees are unselected.
                                 mSelectedUsers = new ArrayList<>();
+
                             } else {
                                 // A previous invitee was unselected.
                                 mSelectedUsers.remove(Integer.valueOf(item));
@@ -475,12 +493,17 @@ public class EditAppointment extends Fragment {
                 // attendees_entry edit text.
                 for (int i = 0; i < mSelectedUsers.size(); i++) {
                     String objID = possibleAttendees.get(mSelectedUsers.get(i)).getObjectId();
+                    String attendeeName = possibleAttendees.get(mSelectedUsers.get(i)).getString("Name");
                     attendeesList[i] = objID;
 
+                    if (attendeeName == null  || attendeeName.equals("")) {
+                        attendeeName = possibleAttendees.get(mSelectedUsers.get(i)).getString("username");
+                    }
+
                     if (i == 0)
-                        attendees += objID;
+                        attendees += attendeeName;
                     else
-                        attendees += (", " + objID);
+                        attendees += (", " + attendeeName);
                 }
 
                 attendees_entry.setText(attendees);
