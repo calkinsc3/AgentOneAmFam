@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.ParseObject;
@@ -30,7 +29,6 @@ public class ClientInformationFragment extends Fragment {
     TextView address1;
     TextView address2;
     ParseObject client;
-    ListView meetingListView;
 
     public ClientInformationFragment() {
         // Required empty public constructor
@@ -100,7 +98,6 @@ public class ClientInformationFragment extends Fragment {
         Fragment newFragment = new MeetingListFragment();
         //empty bundle sent to meetingLIstFragment to say its coming from this fragment
         Bundle bundle = new Bundle(1);
-
         newFragment.setArguments(bundle);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.bottom_container, newFragment).commit();

@@ -8,12 +8,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -60,8 +58,7 @@ public class MeetingListFragment extends Fragment {
 
         final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Retrieving data from Parse.com", true);
         final ListView listView = (ListView) view.findViewById(R.id.clientListView);
-        final com.github.clans.fab.FloatingActionButton fab =
-                (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
+
 
         SharedPreferences prefs = context.getSharedPreferences(Singleton.PREFERENCES, 0);
         ParseQuery<ParseObject>  query = ParseQuery.getQuery("Meeting");
@@ -71,16 +68,7 @@ public class MeetingListFragment extends Fragment {
             query.whereEqualTo("InvitedIDs", selectedClient.getObjectId());
         }
 
-        fab.setImageResource(android.R.drawable.ic_input_add);
-        fab.setVisibility(View.VISIBLE);
 
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tools.replaceFragment(new EditAppointment(), ((Activity)context).getFragmentManager(), true);
-            }
-        });
 
         //TODO update to work only for this agent
         //query.whereEqualTo("AgentID" ,  prefs.getString("OfficeUserID", null));
@@ -125,6 +113,8 @@ public class MeetingListFragment extends Fragment {
 
         if (getArguments() != null) {
             selectedClient = Singleton.getCurrentClient();
+        } else {
+            selectedClient = null;
         }
 
     }
@@ -138,6 +128,9 @@ public class MeetingListFragment extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
+        final com.github.clans.fab.FloatingActionButton fab =
+                (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
+        final ImageButton add_button = (ImageButton) view.findViewById(R.id.image_button);
         listView = (ListView) view.findViewById(R.id.clientListView);
 
         //Generate ListView
@@ -161,26 +154,30 @@ public class MeetingListFragment extends Fragment {
             }
         });
 
+        if (selectedClient == null) {
+            fab.setImageResource(android.R.drawable.ic_input_add);
+            fab.setVisibility(View.VISIBLE);
 
-    }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.findItem(R.id.action_save).setVisible(true);
-        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_add);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Tools.replaceFragment(new EditAppointment(), ((Activity) context).getFragmentManager(), true);
+                }
+            });
+        } else {
+            //show imagebutton
+            add_button.setVisibility(View.VISIBLE);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_save:
-                //move to new meeting
-                Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            add_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Tools.replaceFragment(new EditAppointment(), ((Activity) context).getFragmentManager(), true);
+                }
+            });
         }
+
+
     }
 
 }
