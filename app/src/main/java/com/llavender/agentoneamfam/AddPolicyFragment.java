@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +43,6 @@ public class AddPolicyFragment extends Fragment {
     Spinner stateSpinner;
     EditText zip;
     CheckBox accepted;
-    ListView photoView;
     ParseObject policy;
     LinearLayout address2;
     String[] states;
@@ -61,6 +59,9 @@ public class AddPolicyFragment extends Fragment {
 
         setHasOptionsMenu(true);
         initializeVariables(view);
+
+        //set the client ID
+        client.append(Singleton.getCurrentClient().getObjectId());
 
         //Set the adapter for the state spinner
         stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, states));
@@ -81,7 +82,6 @@ public class AddPolicyFragment extends Fragment {
         city = (EditText)view.findViewById(R.id.city);
         stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
-        photoView = (ListView)view.findViewById(R.id.photoList);
         policy = Singleton.getCurrentPolicy();
         accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
@@ -134,7 +134,7 @@ public class AddPolicyFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
-        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
