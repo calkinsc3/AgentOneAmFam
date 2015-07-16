@@ -18,6 +18,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +34,6 @@ public class Claims extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,7 +43,6 @@ public class Claims extends Fragment {
 
     @Override
     public  void onViewCreated(View view, Bundle savedInstanceState){
-
         mainView = view;
 
         final ListView pictureList = (ListView) view.findViewById(R.id.my_uploads_list_view);
@@ -53,8 +54,7 @@ public class Claims extends Fragment {
         //only set visible if on the claims screen
         if(this.getArguments() == null) {
             fab.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             add_button.setVisibility(View.VISIBLE);
         }
 
@@ -63,12 +63,9 @@ public class Claims extends Fragment {
 
         refreshLocalClaimData(getActivity());
 
-
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
                 selectedClaim = (ImageAdapter.ViewHolder) view.getTag();
 
                 Bundle args = new Bundle();
@@ -78,63 +75,59 @@ public class Claims extends Fragment {
                 fragment.setArguments(args);
 
                 Tools.replaceFragment(fragment, getFragmentManager(), true);
-
             }
         });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //nullify selected claim for good measure
                 selectedClaim = null;
-
 
                 Tools.replaceFragment(new ClaimInfo(), getFragmentManager(), true);
             }
         });
-
-
     }
 
     /**
-     * Calls parse.com and retrieves all photos upload for the current user (Agent).
+     * Calls parse.com and retrieves all claims for the current user (Agent).
      * Copies the uploads into a local datastore.
      */
     public static void refreshLocalClaimData(Context context) {
-
-        String userID = ParseUser.getCurrentUser().getString("AgentID");
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Claim");
-       // query.whereEqualTo("PolicyID", MainActivity.selectedPolicy);
-
+        // Gets the list of claims which are linked with the current agent.
         try {
-            Singleton.setClaims(query.find());
+            List<ParseObject> claims = new ArrayList<>();
 
-            if (!Singleton.getClaims().isEmpty()) {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Policy");
+            query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+            List<ParseObject> policies = query.find();
 
-                updateListView(context);
+            for (int i = 0; i < policies.size(); i++) {
+                ParseQuery<ParseObject> claimQuery = ParseQuery.getQuery("Claim");
+                claimQuery.whereEqualTo("PolicyID", policies.get(i).getObjectId());
 
-            } else {
-
-                Toast.makeText(context, "No Claims Found", Toast.LENGTH_LONG).show();
+                claims.addAll(claimQuery.find());
             }
 
-        } catch (ParseException e) {
+            Singleton.setClaims(claims);
 
-            Toast.makeText(context, "Parse.com Erro:" + e.getMessage(), Toast.LENGTH_LONG).show();
+            if (!Singleton.getClaims().isEmpty()) {
+                updateListView(context);
+            } else {
+                Toast.makeText(context, "No Claims Found", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (ParseException pe) {
+            pe.printStackTrace();
         }
-
     }
 
     /**
      * Updates the listview from the local datastore
      */
     public static void updateListView(Context context) {
-
         ListView pictureList = (ListView) mainView.findViewById(R.id.my_uploads_list_view);
         ImageAdapter adapter = new ImageAdapter(context, null, null, Singleton.getClaims(), Singleton.CLAIM);
         pictureList.setAdapter(adapter);
     }
-
 }
