@@ -211,7 +211,7 @@ public class ImageAdapter extends BaseAdapter {
                 //LOAD THE IMAGE WITH PICASSO LIBRARY
                 Picasso.with(context)
                         .load(imageUri)
-                        .resize(500, 500)
+                        .resize(150, 150)
                         .into(vh.imageButton);
 
                 //TEXT LISTENER THAT HANDLES LOCAL COMMENT UPDATES
