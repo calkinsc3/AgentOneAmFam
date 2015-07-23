@@ -108,11 +108,12 @@ public class ClaimInfo extends Fragment {
             private String current = "";
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!s.toString().equals(current)){
+                if (!s.toString().equals(current)) {
                     damages_entry.removeTextChangedListener(this);
 
                     String cleanString = s.toString().replaceAll("[$,.]", "");
@@ -217,6 +218,7 @@ public class ClaimInfo extends Fragment {
     private void setSpinners() {
         try {
             clients.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+            clients.whereEqualTo("accountType", "Client");
             clientList = clients.find();
 
             clientNames = new ArrayList<>();
@@ -282,8 +284,6 @@ public class ClaimInfo extends Fragment {
             clientSpinner.setClickable(true);
             policySpinner.setClickable(true);
 
-            spinnerListeners();
-
             policyList = new ArrayList<>();
             clientSpinnerText = clientNames.get(0);
 
@@ -301,16 +301,18 @@ public class ClaimInfo extends Fragment {
                 policyNames.add(policyList.get(i).getString("Description"));
             }
 
-            // Populate the policy spinner with the policy names.
-            policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_spinner_item, policyNames);
-            policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            policySpinner.setAdapter(policySpinnerAdapter);
-
             if (policyNames.isEmpty()) {
                 Toast.makeText(getActivity(), clientSpinnerText + " doesn't have any policies!",
                         Toast.LENGTH_SHORT).show();
+            } else {
+                // Populate the policy spinner with the policy names.
+                policySpinnerAdapter = new ArrayAdapter<>(getActivity(),
+                        android.R.layout.simple_spinner_item, policyNames);
+                policySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                policySpinner.setAdapter(policySpinnerAdapter);
             }
+
+            spinnerListeners();
         }
     }
 
