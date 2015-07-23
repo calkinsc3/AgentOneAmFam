@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:background="#00ffffff"
         android:focusable="false"
-        android:src="@android:drawable/ic_menu_delete" />
+        android:src="@android:drawable/ic_menu_delete"
+        android:background="#00ffffff" />
 
     <TextView
         android:id="@+id/info_list_item_text"

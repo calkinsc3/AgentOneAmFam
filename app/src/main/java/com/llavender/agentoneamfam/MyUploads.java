@@ -66,18 +66,16 @@ public class MyUploads extends Fragment {
         //Build a query for each upload found in the uploadIDs of the Current Claim
         if(uploadIDs != null && args != null){
 
-//            //get list from arguments
-//            List<ParseQuery<ParseObject>> queries = new ArrayList<>();
-//
-//            for(int i = 0; i < MyUploads.uploadIDs.size(); i++){
-//                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId", MyUploads.uploadIDs.get(i)));
-//            }
-//
-//            if(!queries.isEmpty()) {
-//                mainQuery = ParseQuery.or(queries);
-//            }
+            //get list from arguments
+            List<ParseQuery<ParseObject>> queries = new ArrayList<>();
 
-            mainQuery = ParseQuery.getQuery("Upload").whereEqualTo("ClaimID", ClaimInfo.selectedClaim.getObjectId());
+            for(int i = 0; i < MyUploads.uploadIDs.size(); i++){
+                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId", MyUploads.uploadIDs.get(i)));
+            }
+
+            if(!queries.isEmpty()) {
+                mainQuery = ParseQuery.or(queries);
+            }
 
         } else if (uploadIDs == null && args != null){
             mainQuery = new ParseQuery<>("Upload").whereEqualTo("PolicyID", Singleton.getCurrentPolicy().getObjectId());
@@ -362,7 +360,6 @@ public class MyUploads extends Fragment {
                         image.saveInBackground();
 
                         obj.put("PolicyID", claimPolicyID);
-                        obj.put("ClaimID", ClaimInfo.selectedClaim.getObjectId());
                         obj.put("UserID", ParseUser.getCurrentUser().getObjectId());
                         obj.put("Media", image);
 
@@ -378,19 +375,19 @@ public class MyUploads extends Fragment {
                                         uploadIDs.add(objectID);
                                         JSONArray jsonArray = new JSONArray(uploadIDs);
 
-//                                        ClaimInfo.selectedClaim.put("UploadIDs", jsonArray);
-//                                        ClaimInfo.selectedClaim.saveInBackground(new SaveCallback() {
-//                                            @Override
-//                                            public void done(ParseException e) {
-//
-//                                                if (e == null) {
-//                                                    Toast.makeText(getActivity(), "Upload " + objectID + " saved.", Toast.LENGTH_SHORT).show();
-//                                                    refreshLocalData(getActivity());
-//                                                } else {
-//                                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-//                                                }
-//                                            }
-//                                        });
+                                        ClaimInfo.selectedClaim.put("UploadIDs", jsonArray);
+                                        ClaimInfo.selectedClaim.saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+
+                                                if (e == null) {
+                                                    Toast.makeText(getActivity(), "Upload " + objectID + " saved.", Toast.LENGTH_SHORT).show();
+                                                    refreshLocalData(getActivity());
+                                                } else {
+                                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
                                     }
                                 } else {
                                     Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
