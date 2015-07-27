@@ -160,7 +160,6 @@ public class ClaimInfo extends Fragment {
         obj.put("Damages", Double.parseDouble(damages));
         obj.put("Comment", comments);
         obj.put("PolicyID", policyID);
-        obj.put("UploadIDs", new ArrayList<>());
 
         obj.saveInBackground(new SaveCallback() {
             @Override
