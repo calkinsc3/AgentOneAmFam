@@ -18,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.parse.Parse;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
 
-                //leave this crap here levi!!!!
+                //Declare constant variables referencing fragments
                 final int CLIENTS = 0;
                 final int CLAIMS = 1;
                 final int SCHEDULE = 2;

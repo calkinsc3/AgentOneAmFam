@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
+        android:background="#00ffffff"
         android:focusable="false"
         android:src="@android:drawable/ic_menu_delete" />
 
