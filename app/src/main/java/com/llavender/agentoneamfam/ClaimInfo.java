@@ -145,7 +145,8 @@ public class ClaimInfo extends Fragment {
         final ParseObject obj;
 
         String comments = comments_entry.getText().toString();
-        String policyID = policyList.get(policyNames.indexOf(policySpinnerText)).getObjectId();
+
+        String policyID = policyList.get(policyNames.indexOf(policySpinner.getSelectedItem().toString())).getObjectId();
 
         String damages = damages_entry.getText().toString();
         damages = damages.replace("$","");
@@ -248,6 +249,7 @@ public class ClaimInfo extends Fragment {
             query.getInBackground(selectedClaim.getString("PolicyID"), new GetCallback<ParseObject>() {
                 public void done(ParseObject policy, ParseException e) {
                     if (e == null) {
+                        policyList.add(policy);
                         policyNames.add(policy.getString("Description"));
 
                         // Populate the policy spinner.
