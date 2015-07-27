@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -211,8 +212,7 @@ public class MyUploads extends Fragment {
      * Handles initial listview population and Listeners for save/delete/change image
      */
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
-        //set mainView
+        //Set mainView
         mainView = view;
 
         final TextView header = (TextView) view.findViewById(R.id.title);
@@ -221,11 +221,9 @@ public class MyUploads extends Fragment {
 
         //set fab icon, set title, show fab
         if (args != null) {
-
             //show top side imageButton for save if on claimsInfo
             add_button.setVisibility(View.VISIBLE);
         } else {
-
             //show fab if on Claims
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(android.R.drawable.ic_menu_save);
@@ -246,8 +244,6 @@ public class MyUploads extends Fragment {
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 //INTENT FOR MOVING TO GALLERY
                 Intent intent = new Intent()
                         .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
@@ -256,10 +252,8 @@ public class MyUploads extends Fragment {
 
                 //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
                 MyUploads.fragment.startActivityForResult(Intent.createChooser(intent, "Select Picture(s)"), NEW_UPLOAD);
-
             }
         });
-
 
         /**
          * Save the comments.
@@ -270,7 +264,6 @@ public class MyUploads extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 saveComments(getActivity());
             }
         });
@@ -360,6 +353,7 @@ public class MyUploads extends Fragment {
                         image.saveInBackground();
 
                         obj.put("PolicyID", claimPolicyID);
+                        obj.put("ClaimID", ClaimInfo.selectedClaim.getObjectId());
                         obj.put("UserID", ParseUser.getCurrentUser().getObjectId());
                         obj.put("Media", image);
 
@@ -373,7 +367,13 @@ public class MyUploads extends Fragment {
 
                                     if (!getArguments().getBoolean("FROMPOLICY", false)) {
                                         uploadIDs.add(objectID);
+
+                                        for (int x = 0; x < uploadIDs.size(); x++)
+                                            if (uploadIDs.get(x) == null)
+                                                uploadIDs.remove(x);
+
                                         JSONArray jsonArray = new JSONArray(uploadIDs);
+                                        Log.i("UPLOAD", jsonArray.toString());
 
                                         ClaimInfo.selectedClaim.put("UploadIDs", jsonArray);
                                         ClaimInfo.selectedClaim.saveInBackground(new SaveCallback() {
@@ -381,10 +381,13 @@ public class MyUploads extends Fragment {
                                             public void done(ParseException e) {
 
                                                 if (e == null) {
-                                                    Toast.makeText(getActivity(), "Upload " + objectID + " saved.", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getActivity(),
+                                                            "Upload " + objectID + " saved.",
+                                                            Toast.LENGTH_SHORT).show();
                                                     refreshLocalData(getActivity());
                                                 } else {
-                                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getActivity(), e.getMessage(),
+                                                            Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
