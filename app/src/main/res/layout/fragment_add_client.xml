@@ -90,6 +90,7 @@
                     android:layout_weight="33"
                     android:gravity="center_horizontal|left"
                     android:inputType="phone"
+                    android:maxLength="14"
                     android:padding="15dp"
                     android:text=""
                     android:textSize="15sp" />
@@ -194,10 +195,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="30"
-                    android:hint="99999"
+                    android:hint="@string/zip_hint"
                     android:padding="15dp"
+                    android:maxLength="5"
                     android:text=""
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
 
             </LinearLayout>
 
