@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.parse.Parse;
 import com.parse.ParseUser;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
 
-                //leave this crap here levi!!!!
                 final int CLIENTS = 0;
                 final int CLAIMS = 1;
                 final int SCHEDULE = 2;
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case SCHEDULE:
-                        //move to meetings fragment
                         Tools.replaceFragment(new MeetingListFragment(), getFragmentManager(), true);
                         MeetingListFragment.mode = MeetingListFragment.APPOINTMENTS;
                         break;
@@ -174,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         FragmentManager fm = getFragmentManager();
         if (fm.getBackStackEntryCount() >= 1) {
             fm.popBackStackImmediate();

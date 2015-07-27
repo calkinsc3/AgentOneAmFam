@@ -72,7 +72,8 @@
                     android:id="@+id/zip_code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/zipcode"
+                    android:hint="@string/zip_hint"
+                    android:maxLength="5"
                     android:inputType="number" />
 
             </LinearLayout>
