@@ -214,6 +214,7 @@ public class MyUploads extends Fragment {
 
         //set mainView
         mainView = view;
+        view.setBackground(getResources().getDrawable(R.drawable.clouds));
 
         final TextView header = (TextView) view.findViewById(R.id.title);
         final ImageButton add_button = (ImageButton) view.findViewById(R.id.add_button);

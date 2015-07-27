@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/padding_margin"
-    tools:context="com.example.jaz020.oneamfamoffice.ClaimInfo">
+    tools:context="com.example.jaz020.oneamfamoffice.ClaimInfo"
+    android:background="@drawable/clouds">
 
     <ScrollView
         android:id="@+id/info_scroll"
@@ -13,7 +14,8 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/cloudy_white">
 
             <TextView
                 android:id="@+id/client_title"

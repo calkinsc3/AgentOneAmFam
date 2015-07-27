@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="30dp">
+    android:paddingTop="30dp"
+    android:background="@drawable/clouds">
 
     <LinearLayout
         android:id="@+id/settingButtonsLL"
@@ -19,9 +20,10 @@
         <Button
             android:id="@+id/createClientButton"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
-            android:text="@string/create_client" />
+            android:text="@string/create_client"
+            style="@style/cloud_button" />
 
     </LinearLayout>
 
@@ -40,7 +42,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingRight="15dp"
-                android:weightSum="100">
+                android:weightSum="100"
+                android:background="@color/cloudy_white">
 
                 <TextView
                     android:id="@+id/textName"
@@ -68,7 +71,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingRight="15dp"
-                android:weightSum="100">
+                android:weightSum="100"
+                android:background="@color/cloudy_white">
 
                 <TextView
                     android:id="@+id/textPhone"
@@ -97,7 +101,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingRight="15dp"
-                android:weightSum="100">
+                android:weightSum="100"
+                android:background="@color/cloudy_white">
 
                 <TextView
                     android:id="@+id/textEmail"
@@ -126,7 +131,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingRight="15dp"
-                android:weightSum="100">
+                android:weightSum="100"
+                android:background="@color/cloudy_white">
 
                 <TextView
                     android:id="@+id/textAddress"
@@ -155,7 +161,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingRight="15dp"
-                android:weightSum="100">
+                android:weightSum="100"
+                android:background="@color/cloudy_white">
 
                 <TextView
                     android:id="@+id/policyFiller"
@@ -199,7 +206,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingRight="15dp"
-                android:weightSum="100">
+                android:weightSum="100"
+                android:background="@color/cloudy_white">
 
                 <TextView
                     android:id="@+id/textUsername"
@@ -227,7 +235,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingRight="15dp"
-                android:weightSum="100">
+                android:weightSum="100"
+                android:background="@color/cloudy_white">
 
                 <TextView
                     android:id="@+id/textPassword"

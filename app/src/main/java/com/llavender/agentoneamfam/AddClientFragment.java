@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.parse.ParseSession;
 import com.parse.ParseUser;
 
 /**
@@ -119,7 +120,11 @@ public class AddClientFragment extends Fragment {
             newClient.put("AgentID", ParseUser.getCurrentUser().getObjectId());
 
             try {
+                String sessionToken = ParseUser.getCurrentUser().getSessionToken();
                 newClient.signUp();
+                ParseUser.logOut();
+                ParseUser.become(sessionToken);
+                Toast.makeText(getActivity(), ParseUser.getCurrentUser().toString(), Toast.LENGTH_SHORT).show();
             } catch (com.parse.ParseException e){
                 Log.e("Signup Error", e.toString());
             }

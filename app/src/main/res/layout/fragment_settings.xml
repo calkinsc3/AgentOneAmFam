@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/padding_margin"
+    android:background="@drawable/clouds"
     tools:context="com.example.jaz020.oneamfamoffice.Settings">
 
     <ScrollView
@@ -11,6 +12,7 @@
         android:layout_height="wrap_content" >
 
         <RelativeLayout
+            android:background="@color/cloudy_white"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
@@ -112,15 +114,17 @@
     <Button
         android:id="@+id/logout_button"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:text="@string/logout" />
+        android:text="@string/logout"
+        style="@style/cloud_button" />
 
     <Button
         android:id="@+id/email_support_button"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_above="@id/logout_button"
-        android:text="@string/email_support" />
+        android:text="@string/email_support"
+        style="@style/cloud_button" />
 
 </RelativeLayout>

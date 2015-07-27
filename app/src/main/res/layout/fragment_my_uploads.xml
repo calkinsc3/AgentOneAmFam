@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cloudy_white"
     tools:context="com.example.jaz020.oneamfamoffice.MyUploads">
 
     <RelativeLayout
@@ -31,25 +32,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/header"
-        android:choiceMode="multipleChoice" />
-
-    <!--<Button-->
-    <!--android:id="@+id/save_button"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:text="@string/save_changes"-->
-    <!--/>-->
-
-    <!--<ImageButton-->
-    <!--android:id="@+id/fab_button"-->
-    <!--android:src="@android:drawable/ic_input_add"-->
-    <!--android:layout_width="72dp"-->
-    <!--android:layout_height="72dp"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_alignParentEnd="true"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:layout_marginEnd="16dp" />-->
+        android:choiceMode="multipleChoice"
+        android:background="@color/cloudy_white"/>
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab"

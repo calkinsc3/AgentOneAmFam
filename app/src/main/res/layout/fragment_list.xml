@@ -3,13 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/padding_margin"
+    android:background="@drawable/clouds"
     tools:context="com.example.jaz020.oneamfamoffice.ListFragment">
 
     <ListView
         android:id="@+id/policies_list_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:clickable="true">
+        android:clickable="true"
+        android:background="@color/cloudy_white">
 
     </ListView>
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="am_fam_blue" type="color">#003399</item>
+    <item name="am_fam_red" type="color">#CC0033</item>
+    <item name="dark_gray" type="color">#646461</item>
+    <item name="black" type="color">#000000</item>
+    <item name="light_gray" type="color">#B2B2B0</item>
+    <item name="light_blue" type="color">#9FBFFF</item>
+    <item name="light_red" type="color">#FF3333</item>
+    <item name="hint_of_red" type="color">#FAE6E6</item>
+    <item name="hint_of_blue" type="color">#D6EBFF</item>
+    <item name="cloudy_white" type="color">#a5ffffff</item>
+</resources>

@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class MainFragment extends Fragment {
 
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -49,4 +50,6 @@ public class MainFragment extends Fragment {
 
         return view;
     }
+
+
 }

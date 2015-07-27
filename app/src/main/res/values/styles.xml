@@ -9,4 +9,18 @@
 
     </style>
 
+    <style name="base_clouds" parent="Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="android:background">@drawable/clouds</item>
+
+    </style>
+
+    <style name="cloud_button" parent="AppTheme">
+
+        <item name="android:background">@drawable/cloud_3</item>
+        <item name="android:color">@android:color/transparent</item>
+        <item name="android:scaleType">fitXY</item>
+
+    </style>
+
 </resources>

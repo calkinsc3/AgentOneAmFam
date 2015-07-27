@@ -43,6 +43,7 @@ public class Claims extends Fragment {
     public  void onViewCreated(View view, Bundle savedInstanceState){
 
         mainView = view;
+        view.setBackground(getResources().getDrawable(R.drawable.clouds));
 
         final ListView pictureList = (ListView) view.findViewById(R.id.my_uploads_list_view);
         final TextView header = (TextView) view.findViewById(R.id.title);
