@@ -3,6 +3,7 @@ package com.llavender.agentoneamfam;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.parse.ParseSession;
 import com.parse.ParseUser;
+
 
 /**
  * Created by nsr009 on 7/6/2015.
@@ -42,6 +44,7 @@ public class AddClientFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_add_client, container, false);
         fm = getFragmentManager();
+
         initializeFields();
         setListViewSelections();
         setClientButtonClickListener();
@@ -55,7 +58,7 @@ public class AddClientFragment extends Fragment {
             public void onClick(View v) {
                 createClient();
                 Toast.makeText(getActivity(), "New client created successfully!", Toast.LENGTH_SHORT).show();
-                returnToMain();
+//                returnToMain();
             }
         });
     }
@@ -81,7 +84,6 @@ public class AddClientFragment extends Fragment {
     }
 
     private void initializeFields() {
-
         nameEdit = (EditText) rootView.findViewById(R.id.editName);
         phoneEdit = (EditText) rootView.findViewById(R.id.editPhone);
         emailEdit = (EditText) rootView.findViewById(R.id.editEmail);
@@ -92,6 +94,8 @@ public class AddClientFragment extends Fragment {
         passwordEdit = (EditText) rootView.findViewById(R.id.editPassword);
         stateSpinner = (Spinner) rootView.findViewById(R.id.spinnerState);
         createClientButton = (Button) rootView.findViewById(R.id.createClientButton);
+
+        phoneEdit.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         fm = getFragmentManager();
     }
@@ -110,8 +114,14 @@ public class AddClientFragment extends Fragment {
             newClient.setPassword(passwordEdit.getText().toString());
             newClient.setEmail(emailEdit.getText().toString());
 
+            String phoneNumber = phoneEdit.getText().toString();
+            phoneNumber = phoneNumber.replace("(", "");
+            phoneNumber = phoneNumber.replace(")", "");
+            phoneNumber = phoneNumber.replace("-", "");
+            phoneNumber = phoneNumber.replace(" ", "");
+
             newClient.put("Name", nameEdit.getText().toString());
-            newClient.put("phoneNumber", Double.valueOf(phoneEdit.getText().toString()));
+            newClient.put("phoneNumber", Double.valueOf(phoneNumber));
             newClient.put("Address", addressEdit.getText().toString());
             newClient.put("City", cityEdit.getText().toString());
             newClient.put("State", stateSpinner.getSelectedItem().toString());
@@ -124,6 +134,11 @@ public class AddClientFragment extends Fragment {
                 newClient.signUp();
                 ParseUser.logOut();
                 ParseUser.become(sessionToken);
+
+                fm.beginTransaction().replace(R.id.fragment_container, new ClientListFragment())
+                        .commit();
+
+                Toast.makeText(getActivity(), ParseUser.getCurrentUser().toString(), Toast.LENGTH_SHORT).show();
             } catch (com.parse.ParseException e){
                 Log.e("Signup Error", e.toString());
             }
