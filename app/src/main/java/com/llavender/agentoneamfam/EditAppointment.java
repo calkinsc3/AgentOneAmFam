@@ -116,6 +116,12 @@ public class EditAppointment extends Fragment {
 
         if (MeetingListFragment.selectedAppointment != null) {
             loadSelectedMeeting();
+        } else {
+            // Present date and time to current time if it is a new appointment.
+            Tools.updateDateEntry(start_date_entry, Calendar.getInstance());
+            Tools.updateDateEntry(end_date_entry, Calendar.getInstance());
+            Tools.updateTimeEntry(start_time_entry, Calendar.getInstance());
+            Tools.updateTimeEntry(end_time_entry, Calendar.getInstance());
         }
 
         editInvitees();
