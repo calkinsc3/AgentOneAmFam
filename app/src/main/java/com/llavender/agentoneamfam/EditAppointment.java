@@ -142,8 +142,6 @@ public class EditAppointment extends Fragment {
             public void onClick(View v) {
                 new DatePickerDialog(getActivity(),
                         new DatePickerDialog.OnDateSetListener() {
-
-
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 startDateCalendar.set(Calendar.YEAR, year);
@@ -163,7 +161,6 @@ public class EditAppointment extends Fragment {
             public void onClick(View v) {
                 new DatePickerDialog(getActivity(),
                         new DatePickerDialog.OnDateSetListener() {
-
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 endDateCalendar.set(Calendar.YEAR, year);
@@ -183,7 +180,6 @@ public class EditAppointment extends Fragment {
             public void onClick(View v) {
                 new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
-
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                                 startDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
@@ -201,7 +197,6 @@ public class EditAppointment extends Fragment {
             public void onClick(View v) {
                 new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
-
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                                 endDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
