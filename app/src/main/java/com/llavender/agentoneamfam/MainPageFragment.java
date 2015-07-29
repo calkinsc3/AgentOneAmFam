@@ -42,8 +42,8 @@ public class MainPageFragment extends Fragment {
     private static final long CLOUD_SPEED = 500;
 
     //PARSE KEYS
-    private static final String APPLICATION_ID = "4YBarCfwhDQKdD9w7edqe8fIazqWRXv8RhRbNgd7";
-    private static final String CLIENT_KEY = "zUguFYSgfxNkzTw6lQGkCWssT1VCMWBccWD44MFw";
+//    private static final String APPLICATION_ID = "4YBarCfwhDQKdD9w7edqe8fIazqWRXv8RhRbNgd7";
+//    private static final String CLIENT_KEY = "zUguFYSgfxNkzTw6lQGkCWssT1VCMWBccWD44MFw";
 
 
     @Override
@@ -59,18 +59,18 @@ public class MainPageFragment extends Fragment {
         display = getActivity().getWindowManager().getDefaultDisplay();
         display.getSize(size);
 
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("accountType", "Client");
-        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> objects, ParseException e) {
-                if (e == null) {
-                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
-                } else {
-                    Log.d("loadUser Exception", e.toString());
-                }
-            }
-        });
+//        ParseQuery<ParseUser> query = ParseUser.getQuery();
+//        query.whereEqualTo("accountType", "Client");
+//        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+//        query.findInBackground(new FindCallback<ParseUser>() {
+//            public void done(List<ParseUser> objects, ParseException e) {
+//                if (e == null) {
+//                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
+//                } else {
+//                    Log.d("loadUser Exception", e.toString());
+//                }
+//            }
+//        });
 
         buttonClickListeners();
 
@@ -86,13 +86,10 @@ public class MainPageFragment extends Fragment {
                 clients.startAnimation(anim);
 
                 new Handler().postDelayed(new Runnable() {
-
                     @Override
                     public void run() {
                         // This method will be executed once the timer is over
-                        // Start your app main activity
                         Tools.replaceFragment(new ClientListFragment(), getFragmentManager(), true);
-
                     }
                 }, CLOUD_SPEED);
             }
@@ -106,13 +103,10 @@ public class MainPageFragment extends Fragment {
                 claims.startAnimation(anim);
 
                 new Handler().postDelayed(new Runnable() {
-
                     @Override
                     public void run() {
                         // This method will be executed once the timer is over
-                        // Start your app main activity
                         Tools.replaceFragment(new Claims(), getFragmentManager(), true);
-
                     }
                 }, CLOUD_SPEED);
             }
@@ -126,13 +120,10 @@ public class MainPageFragment extends Fragment {
                 schedule.startAnimation(anim);
 
                 new Handler().postDelayed(new Runnable() {
-
                     @Override
                     public void run() {
                         // This method will be executed once the timer is over
-                        // Start your app main activity
                         Tools.replaceFragment(new MeetingListFragment(), getFragmentManager(), true);
-
                     }
                 }, CLOUD_SPEED);
 
@@ -148,13 +139,10 @@ public class MainPageFragment extends Fragment {
                 settings.startAnimation(anim);
 
                 new Handler().postDelayed(new Runnable() {
-
                     @Override
                     public void run() {
                         // This method will be executed once the timer is over
-                        // Start your app main activity
                         Tools.replaceFragment(new Settings(), getFragmentManager(), true);
-
                     }
                 }, CLOUD_SPEED);
             }
@@ -168,13 +156,10 @@ public class MainPageFragment extends Fragment {
                 uploads.startAnimation(anim);
 
                 new Handler().postDelayed(new Runnable() {
-
                     @Override
                     public void run() {
                         // This method will be executed once the timer is over
-                        // Start your app main activity
                         Tools.replaceFragment(new MyUploads(), getFragmentManager(), true);
-
                     }
                 }, CLOUD_SPEED);
             }

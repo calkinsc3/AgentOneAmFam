@@ -21,11 +21,6 @@ import java.util.List;
  */
 public class MainFragment extends Fragment {
 
-
-    public MainFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -35,6 +30,7 @@ public class MainFragment extends Fragment {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("accountType", "Client");
         query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> objects, ParseException e) {
                 if (e == null) {
@@ -49,6 +45,4 @@ public class MainFragment extends Fragment {
 
         return view;
     }
-
-
 }

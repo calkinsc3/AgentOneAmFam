@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             //loads the appropriate initial fragment
+//            Tools.replaceFragment(new MainFragment(), getFragmentManager(), true);
             Tools.replaceFragment(new MainPageFragment(), getFragmentManager(), true);
         }
     }
@@ -110,7 +111,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBackStackChanged() {
                 int stackHeight = getFragmentManager().getBackStackEntryCount();
-                if (stackHeight > 1) { // if we have something on the stack (doesn't include the current shown fragment). >0 removes initial frag and leave a blank space...use 1 instead.
+
+                // if we have something on the stack (doesn't include the current shown fragment).
+                // >0 removes initial frag and leave a blank space...use 1 instead.
+                if (stackHeight > 1) {
                     getSupportActionBar().setHomeButtonEnabled(true);
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 } else {
