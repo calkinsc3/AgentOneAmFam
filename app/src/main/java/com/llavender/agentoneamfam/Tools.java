@@ -60,20 +60,10 @@ public class Tools {
 
     public static void updateTimeEntry(EditText editText, Calendar calendar) {
 
-        String minutes = String.valueOf(calendar.get(Calendar.MINUTE));
-        String am_pm;
+        String timeFormat = "h:mm a";
+        SimpleDateFormat sdf = new SimpleDateFormat(timeFormat, Locale.US);
 
-        if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
-            am_pm = "am";
-        } else {
-            am_pm = "pm";
-        }
-
-        if (minutes.length() < 2) {
-            minutes += "0";
-        }
-
-        editText.setText(calendar.get(Calendar.HOUR) + ":" + minutes + " " + am_pm);
+        editText.setText(sdf.format(calendar.getTime()));
     }
 
     public static byte[] readBytes(Context context, Uri uri) throws IOException {

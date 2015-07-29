@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
@@ -33,7 +32,6 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,15 +57,21 @@ public class EditAppointment extends Fragment {
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
             CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
     };
+
     // The indices for the projection array above.
     private static final int PROJECTION_ID_INDEX = 0;
     private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
     private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
     private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
+
     static List<Integer> mSelectedUsers;
     static String[] attendeesList;
     static boolean[] checkedUserIDs;
+
     AlertDialog.Builder builder;
+
+    // Variables for edit invitees alert dialog.
+    private EditText attendees_entry;
     EditText meeting_entry;
     EditText location_entry;
     EditText start_time_entry;
@@ -75,15 +79,12 @@ public class EditAppointment extends Fragment {
     EditText end_time_entry;
     EditText end_date_entry;
     EditText comments_entry;
+
     Calendar startDateCalendar;
     Calendar endDateCalendar;
+
     //the current users calendarInfo
     String[] calendarInfo;
-    // Variables for edit invitees alert dialog.
-    private EditText attendees_entry;
-    public EditAppointment() {
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,59 +117,59 @@ public class EditAppointment extends Fragment {
 
         if (MeetingListFragment.selectedAppointment != null) {
             loadSelectedMeeting();
+        } else {
+            // Present date and time to current time if it is a new appointment.
+            Tools.updateDateEntry(start_date_entry, Calendar.getInstance());
+            Tools.updateDateEntry(end_date_entry, Calendar.getInstance());
+            Tools.updateTimeEntry(start_time_entry, Calendar.getInstance());
+            Tools.updateTimeEntry(end_time_entry, Calendar.getInstance());
+
+            attendeesList = new String[1];
+            attendeesList[0] = ParseUser.getCurrentUser().getObjectId();
+            attendees_entry.setText(ParseUser.getCurrentUser().getString("Name"));
         }
 
         editInvitees();
-
         setListeners();
-
     }
 
     /**
      * Sets all the Listeners for edittexts and datePickers
      */
     public void setListeners(){
-
         start_date_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new DatePickerDialog(getActivity(),
                         new DatePickerDialog.OnDateSetListener() {
 
 
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
                                 startDateCalendar.set(Calendar.YEAR, year);
                                 startDateCalendar.set(Calendar.MONTH, monthOfYear);
                                 startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                                 Tools.updateDateEntry(start_date_entry, startDateCalendar);
-
                             }
                         },
                         startDateCalendar.get(Calendar.YEAR),
                         startDateCalendar.get(Calendar.MONTH),
                         startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
-
             }
         });
 
         end_date_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new DatePickerDialog(getActivity(),
                         new DatePickerDialog.OnDateSetListener() {
 
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
                                 endDateCalendar.set(Calendar.YEAR, year);
                                 endDateCalendar.set(Calendar.MONTH, monthOfYear);
                                 endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                                 Tools.updateDateEntry(end_date_entry, endDateCalendar);
-
                             }
                         },
                         endDateCalendar.get(Calendar.YEAR),
@@ -180,46 +181,38 @@ public class EditAppointment extends Fragment {
         start_time_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
 
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-
-                                startDateCalendar.set(Calendar.HOUR, selectedHour);
+                                startDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
                                 startDateCalendar.set(Calendar.MINUTE, selectedMinute);
                                 Tools.updateTimeEntry(start_time_entry, startDateCalendar);
                             }
                         },
-
-                        startDateCalendar.get(Calendar.HOUR),
+                        startDateCalendar.get(Calendar.HOUR_OF_DAY),
                         startDateCalendar.get(Calendar.MINUTE), false).show();
-
             }
         });
 
         end_time_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
 
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-
-                                endDateCalendar.set(Calendar.HOUR, selectedHour);
+                                endDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
                                 endDateCalendar.set(Calendar.MINUTE, selectedMinute);
                                 Tools.updateTimeEntry(end_time_entry, endDateCalendar);
-
                             }
                         },
-                        endDateCalendar.get(Calendar.HOUR),
+                        endDateCalendar.get(Calendar.HOUR_OF_DAY),
                         endDateCalendar.get(Calendar.MINUTE), false).show();
             }
         });
-
     }
 
     /**
@@ -353,7 +346,6 @@ public class EditAppointment extends Fragment {
      *         it is put into the array in the format outlined by the google calendar fields
      */
     public String[] getCalendar(){
-
         // Run query
         Cursor cur;
         ContentResolver cr = getActivity().getContentResolver();
