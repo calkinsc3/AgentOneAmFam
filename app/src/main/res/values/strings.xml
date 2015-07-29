@@ -121,6 +121,7 @@
     <string name="schedule">Schedule</string>
     <string name="settings">Settings</string>
     <string name="uploads">Uploads</string>
+    <string name="title_activity_splash">Splash</string>
 
     <string-array name="all_abbreviations">
         <item>Select a State&#8230;</item>
