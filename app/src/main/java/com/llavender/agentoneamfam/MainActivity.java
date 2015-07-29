@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             //loads the appropriate initial fragment
-//            Tools.replaceFragment(new MainFragment(), getFragmentManager(), true);
             Tools.replaceFragment(new MainPageFragment(), getFragmentManager(), true);
         }
     }

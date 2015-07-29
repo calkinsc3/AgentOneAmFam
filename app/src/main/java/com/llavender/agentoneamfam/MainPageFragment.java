@@ -23,7 +23,6 @@ import java.util.List;
 
 
 /**
- *
  * Created by nsr009 on 6/16/2015.
  */
 public class MainPageFragment extends Fragment {
@@ -41,11 +40,6 @@ public class MainPageFragment extends Fragment {
 
     private static final long CLOUD_SPEED = 500;
 
-    //PARSE KEYS
-//    private static final String APPLICATION_ID = "4YBarCfwhDQKdD9w7edqe8fIazqWRXv8RhRbNgd7";
-//    private static final String CLIENT_KEY = "zUguFYSgfxNkzTw6lQGkCWssT1VCMWBccWD44MFw";
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main_page, container, false);
@@ -59,18 +53,18 @@ public class MainPageFragment extends Fragment {
         display = getActivity().getWindowManager().getDefaultDisplay();
         display.getSize(size);
 
-//        ParseQuery<ParseUser> query = ParseUser.getQuery();
-//        query.whereEqualTo("accountType", "Client");
-//        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
-//        query.findInBackground(new FindCallback<ParseUser>() {
-//            public void done(List<ParseUser> objects, ParseException e) {
-//                if (e == null) {
-//                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
-//                } else {
-//                    Log.d("loadUser Exception", e.toString());
-//                }
-//            }
-//        });
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("accountType", "Client");
+        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
+                } else {
+                    Log.d("loadUser Exception", e.toString());
+                }
+            }
+        });
 
         buttonClickListeners();
 
