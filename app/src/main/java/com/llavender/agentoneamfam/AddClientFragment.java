@@ -124,7 +124,6 @@ public class AddClientFragment extends Fragment {
                 newClient.signUp();
                 ParseUser.logOut();
                 ParseUser.become(sessionToken);
-                Toast.makeText(getActivity(), ParseUser.getCurrentUser().toString(), Toast.LENGTH_SHORT).show();
             } catch (com.parse.ParseException e){
                 Log.e("Signup Error", e.toString());
             }

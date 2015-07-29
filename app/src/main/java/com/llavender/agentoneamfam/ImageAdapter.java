@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -344,12 +345,8 @@ public class ImageAdapter extends BaseAdapter {
                     view.setTag(vh);
 
                 } else {
-
                     vh = (ViewHolder) convertView.getTag();
-                    curr = vh.parseObject;
-
                 }
-
 
                 String temp = Tools.buildMessage(objects.get(position), Singleton.MEETING);
                 vh.index = position;
@@ -362,26 +359,45 @@ public class ImageAdapter extends BaseAdapter {
 
                     @Override
                     public void onClick(View v) {
-
-                        final ProgressDialog progressDialog = ProgressDialog.show(context, "", "", true);
-
-                        vhf4.parseObject.deleteInBackground(new DeleteCallback() {
+                        DialogInterface.OnClickListener dialogClick = new DialogInterface.OnClickListener() {
                             @Override
-                            public void done(ParseException e) {
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                progressDialog.dismiss();
+                                switch (which) {
+                                    //CANCEL
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        dialog.dismiss();
+                                        break;
+                                    //DELETE MEETING
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        dialog.dismiss();
 
-                                if (e == null) {
-                                    Toast.makeText(context, "Appointment Deleted.", Toast.LENGTH_SHORT).show();
-                                    MeetingListFragment.updateList();
-                                } else {
-                                    Toast.makeText(context, "Unable to Delete Appointment.", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
+                                        //DELETE IN BACKGROUND
+                                        vhf4.parseObject.deleteInBackground(new DeleteCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+
+                                                if (e == null) {
+                                                    Toast.makeText(context, "Meeting Deleted", Toast.LENGTH_SHORT).show();
+                                                    MeetingListFragment.updateList();
+                                                }
+                                            }
+                                        });
+                                        break;
+                                    default:
+                                        dialog.dismiss();
+                                        Log.d("Error Deleting:", "Reached default");
                                 }
-
                             }
-                        });
+                        };
 
+                        //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
+                        AlertDialog confirmation = new AlertDialog.Builder(context)
+                                .setTitle("Are you sure you want to delete the image?")
+                                .setCancelable(true)
+                                .setNegativeButton("Cancel", dialogClick)
+                                .setPositiveButton("Delete", dialogClick)
+                                .show();
                     }
                 });
                 break;

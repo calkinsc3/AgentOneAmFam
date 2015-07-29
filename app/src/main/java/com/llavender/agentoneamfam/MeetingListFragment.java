@@ -59,8 +59,6 @@ public class MeetingListFragment extends Fragment {
         final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Retrieving data from Parse.com", true);
         final ListView listView = (ListView) view.findViewById(R.id.clientListView);
 
-
-        SharedPreferences prefs = context.getSharedPreferences(Singleton.PREFERENCES, 0);
         ParseQuery<ParseObject>  query = ParseQuery.getQuery("Meeting");
 
         //if this fragment is being inflated withing clientInformation, set the query to filter as such
