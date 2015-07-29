@@ -115,6 +115,12 @@
     <string name="create_client">Create Client</string>
     <string name="password_title_2">Password (Again):</string>
     <string name="zip_hint">99999</string>
+    <string name="amfam_logo">amfam logo</string>
+    <string name="clients">Clients</string>
+    <string name="claims">Claims</string>
+    <string name="schedule">Schedule</string>
+    <string name="settings">Settings</string>
+    <string name="uploads">Uploads</string>
 
     <string-array name="all_abbreviations">
         <item>Select a State&#8230;</item>
