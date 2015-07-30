@@ -328,6 +328,8 @@ public class MyUploads extends Fragment {
 
                 //HOLDS FINAL IMAGE BYTE ARRAY
                 List<byte[]> imageByte = new ArrayList<>();
+                //boolean true if running from policy
+                boolean isFromPolicy = args.getBoolean("FROMPOLICY", false);
 
                 try{
 
@@ -354,7 +356,9 @@ public class MyUploads extends Fragment {
                         image.saveInBackground();
 
                         obj.put("PolicyID", claimPolicyID);
-                        obj.put("ClaimID", ClaimInfo.selectedClaim.getObjectId());
+                        if(!isFromPolicy) {
+                            obj.put("ClaimID", ClaimInfo.selectedClaim.getObjectId());
+                        }
                         obj.put("UserID", ParseUser.getCurrentUser().getObjectId());
                         obj.put("Media", image);
 
@@ -401,7 +405,9 @@ public class MyUploads extends Fragment {
 
                         toSave.add(obj);
 
-                        uploadIDs.add(obj.getObjectId());
+                        if(!isFromPolicy) {
+                            uploadIDs.add(obj.getObjectId());
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
