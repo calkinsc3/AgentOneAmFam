@@ -19,8 +19,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +50,33 @@ public class ClientListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_client_list, container, false);
 
         clientListView = (ListView)view.findViewById(R.id.clientListView);
-        ObjectArrayAdapter adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getListOfClients());
-        clientListView.setAdapter(adapter);
+        queryParseForClients();
 
         return view;
+    }
+
+    private void setListAdapter(){
+        ObjectArrayAdapter adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getListOfClients());
+        clientListView.setAdapter(adapter);
+    }
+
+    private void queryParseForClients(){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+
+        query.whereEqualTo("accountType", "Client");
+        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
+                    setListAdapter();
+
+                } else {
+                    Log.d("loadUser Exception", e.toString());
+                }
+            }
+        });
     }
 
     @Override
