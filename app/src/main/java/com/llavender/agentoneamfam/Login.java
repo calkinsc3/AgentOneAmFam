@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,7 +40,7 @@ public class Login extends Activity {
         final CheckBox login_checkbox = (CheckBox) findViewById(R.id.stay_logged_in_checkbox);
         final SharedPreferences p = getSharedPreferences(Singleton.PREFERENCES, 0);
 
-        //NEEDED FOR ONCLICKLISTENER
+        //NEEDED FOR ON CLICK LISTENER
         context = this;
 
         //CHECK FOR LOGIN
@@ -93,7 +92,6 @@ public class Login extends Activity {
 
                         } else if (user == null) {
                             loginFail(1);
-
                         } else {
                             loginError(e);
                         }

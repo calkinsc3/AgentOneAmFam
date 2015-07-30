@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 
 /**
@@ -27,11 +25,6 @@ public class Claims extends Fragment {
     private static View mainView;
     public static ImageAdapter.ViewHolder selectedClaim;
 
-    public Claims() {
-        // Required empty public constructor
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,7 +34,6 @@ public class Claims extends Fragment {
 
     @Override
     public  void onViewCreated(View view, Bundle savedInstanceState){
-
         mainView = view;
         view.setBackground(getResources().getDrawable(R.drawable.clouds));
 
@@ -52,10 +44,9 @@ public class Claims extends Fragment {
 
         //set fab icon, set title, show fab
         //only set visible if on the claims screen
-        if(this.getArguments() == null) {
+        if (this.getArguments() == null) {
             fab.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             add_button.setVisibility(View.VISIBLE);
         }
 
@@ -64,12 +55,9 @@ public class Claims extends Fragment {
 
         refreshLocalClaimData(getActivity());
 
-
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
                 selectedClaim = (ImageAdapter.ViewHolder) view.getTag();
 
                 Bundle args = new Bundle();
@@ -79,23 +67,17 @@ public class Claims extends Fragment {
                 fragment.setArguments(args);
 
                 Tools.replaceFragment(fragment, getFragmentManager(), true);
-
             }
         });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //nullify selected claim for good measure
                 selectedClaim = null;
-
-
                 Tools.replaceFragment(new ClaimInfo(), getFragmentManager(), true);
             }
         });
-
-
     }
 
     /**
@@ -103,39 +85,28 @@ public class Claims extends Fragment {
      * Copies the uploads into a local datastore.
      */
     public static void refreshLocalClaimData(Context context) {
-
-        String userID = ParseUser.getCurrentUser().getString("AgentID");
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Claim");
-       // query.whereEqualTo("PolicyID", MainActivity.selectedPolicy);
 
         try {
             Singleton.setClaims(query.find());
 
             if (!Singleton.getClaims().isEmpty()) {
-
                 updateListView(context);
-
             } else {
-
                 Toast.makeText(context, "No Claims Found", Toast.LENGTH_LONG).show();
             }
 
         } catch (ParseException e) {
-
             Toast.makeText(context, "Parse.com Erro:" + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
     }
 
     /**
      * Updates the listview from the local datastore
      */
     public static void updateListView(Context context) {
-
         ListView pictureList = (ListView) mainView.findViewById(R.id.my_uploads_list_view);
         ImageAdapter adapter = new ImageAdapter(context, null, null, Singleton.getClaims(), Singleton.CLAIM);
         pictureList.setAdapter(adapter);
     }
-
 }

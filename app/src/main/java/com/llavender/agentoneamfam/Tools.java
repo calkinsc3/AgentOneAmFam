@@ -27,39 +27,35 @@ import java.util.Locale;
  */
 public class Tools {
 
-    public static void replaceFragment(Fragment fragment, FragmentManager fManager, boolean addToBackStack) {
-
+    public static void replaceFragment(Fragment fragment, FragmentManager fManager,
+                                       boolean addToBackStack) {
         FragmentTransaction fTransaction = fManager.beginTransaction();
         fTransaction.replace(R.id.fragment_container, fragment);
+
         if (addToBackStack) fTransaction.addToBackStack(null);
 
         fTransaction.commit();
-
-        //refresh options menu
     }
 
     public static void logout(Context context) {
-
-        SharedPreferences.Editor editor = context.getSharedPreferences(Singleton.PREFERENCES, 0).edit();
+        SharedPreferences.Editor editor =
+                context.getSharedPreferences(Singleton.PREFERENCES, 0).edit();
         editor.remove("OfficeUserID");
         editor.remove("OfficeStayLoggedIn");
         editor.apply();
 
         ParseUser.logOut();
         ((Activity) context).finish();
-
     }
 
     public static void updateDateEntry(EditText editText, Calendar calendar) {
-
-        String myFormat = "MM/dd/yy"; //In which you need put here
+        String myFormat = "MM/dd/yy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         editText.setText(sdf.format(calendar.getTime()));
     }
 
     public static void updateTimeEntry(EditText editText, Calendar calendar) {
-
         String timeFormat = "h:mm a";
         SimpleDateFormat sdf = new SimpleDateFormat(timeFormat, Locale.US);
 
@@ -92,19 +88,18 @@ public class Tools {
      *
      * @param object The object that is to be formatted(Client or Policy)
      * @param mode   ClIENT or POLICY
-     * @return
+     * @return message that was built
      */
     public static String buildMessage(ParseObject object, int mode) {
-
         String message = "";
 
         switch (mode) {
-
             case Singleton.CLIENT:
                 message = object.getString("FirstName");
                 message += " " + object.getString("LastName") + "\n";
                 message += object.getString("Address") + "\n";
-                message += object.getString("City") + ", " + object.getString("State") + " " + object.getNumber("ZIP");
+                message += object.getString("City") + ", " + object.getString("State") +
+                        " " + object.getNumber("ZIP");
                 break;
 
             case Singleton.POLICY:
@@ -125,7 +120,6 @@ public class Tools {
                         object.getDate("EndDate").toString() + "\n" +
                         object.getString("Comment");
                 break;
-
         }
 
         return message;

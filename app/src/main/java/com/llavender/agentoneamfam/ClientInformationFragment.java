@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -23,17 +22,14 @@ public class ClientInformationFragment extends Fragment {
     ImageButton phoneButton;
     ImageButton emailButton;
     ImageButton mapButton;
+
     TextView clientName;
     TextView phoneNumber;
     TextView email;
     TextView address1;
     TextView address2;
+
     ParseObject client;
-
-    public ClientInformationFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +50,8 @@ public class ClientInformationFragment extends Fragment {
         phoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + String.valueOf(client.getNumber("phoneNumber"))));
+                Intent intent = new Intent(Intent.ACTION_DIAL,
+                        Uri.parse("tel:" + String.valueOf(client.getNumber("phoneNumber"))));
                 startActivity(intent);
             }
         });
@@ -66,6 +63,7 @@ public class ClientInformationFragment extends Fragment {
                 emailIntent.setData(Uri.parse("mailto:"));
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{client.getString("email")});
                 emailIntent.setType("plain/text");
+
                 if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(Intent.createChooser(emailIntent, "Choose Mail Application"));
                 }
@@ -78,6 +76,7 @@ public class ClientInformationFragment extends Fragment {
                 String streetAddress = client.getString("Address").replaceAll(" ", "+") + "+"
                         + client.getString("City") + ",+" + client.getString("State") + "+"
                         + client.getInt("Zip");
+
                 // Create a Uri from an intent string. Use the result to create an Intent.
                 Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + streetAddress);
 
@@ -101,7 +100,6 @@ public class ClientInformationFragment extends Fragment {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.bottom_container, newFragment).commit();
-
     }
 
     private void initializeFields(View view){

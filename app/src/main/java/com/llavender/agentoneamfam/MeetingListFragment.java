@@ -1,11 +1,9 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,16 +44,11 @@ public class MeetingListFragment extends Fragment {
     private static Context context;
     private ListView listView;
 
-    public MeetingListFragment() {
-        // Required empty public constructor
-    }
-
     /**
      * Queries parse and populates the listview
      * NEEDS TO REMAIN STATIC: it is called from ImageAdapter
      */
     public static void updateList() {
-
         final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Retrieving data from Parse.com", true);
         final ListView listView = (ListView) view.findViewById(R.id.clientListView);
 
@@ -66,27 +59,19 @@ public class MeetingListFragment extends Fragment {
             query.whereEqualTo("InvitedIDs", selectedClient.getObjectId());
         }
 
-
-
         //TODO update to work only for this agent
         //query.whereEqualTo("AgentID" ,  prefs.getString("OfficeUserID", null));
 
-
         query.findInBackground(new FindCallback<ParseObject>() {
-
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-
                 progressDialog.dismiss();
 
                 if (e == null && !list.isEmpty()) {
-
                     meetings = list;
                     listView.setAdapter(new ImageAdapter(context, null, null, meetings, Singleton.MEETING));
-
                 } else if (e == null) {
                     switch (mode) {
-
                         case POLICIES:
                             Toast.makeText(context, "No Policies Found.", Toast.LENGTH_SHORT).show();
                             break;
@@ -98,10 +83,8 @@ public class MeetingListFragment extends Fragment {
                 } else {
                     Toast.makeText(context, "Error from parse:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-
     }
 
     @Override
@@ -114,7 +97,6 @@ public class MeetingListFragment extends Fragment {
         } else {
             selectedClient = null;
         }
-
     }
 
     @Override
@@ -125,10 +107,10 @@ public class MeetingListFragment extends Fragment {
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         final com.github.clans.fab.FloatingActionButton fab =
                 (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
         final ImageButton add_button = (ImageButton) view.findViewById(R.id.image_button);
+
         listView = (ListView) view.findViewById(R.id.clientListView);
 
         //Generate ListView
@@ -143,12 +125,10 @@ public class MeetingListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 ImageAdapter.ViewHolder vh = (ImageAdapter.ViewHolder) view.getTag();
 
                 selectedAppointment = meetings.get(vh.index);
                 Tools.replaceFragment(new EditAppointment(), getFragmentManager(), true);
-
             }
         });
 
@@ -156,26 +136,24 @@ public class MeetingListFragment extends Fragment {
             fab.setImageResource(android.R.drawable.ic_input_add);
             fab.setVisibility(View.VISIBLE);
 
-
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Tools.replaceFragment(new EditAppointment(), ((Activity) context).getFragmentManager(), true);
+                    Tools.replaceFragment(new EditAppointment(),
+                            ((Activity) context).getFragmentManager(), true);
                 }
             });
         } else {
-            //show imagebutton
+            // Show image button
             add_button.setVisibility(View.VISIBLE);
 
             add_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Tools.replaceFragment(new EditAppointment(), ((Activity) context).getFragmentManager(), true);
+                    Tools.replaceFragment(new EditAppointment(),
+                            ((Activity) context).getFragmentManager(), true);
                 }
             });
         }
-
-
     }
-
 }

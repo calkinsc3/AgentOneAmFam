@@ -100,7 +100,6 @@ public class EditAppointment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         meeting_entry = (EditText) view.findViewById(R.id.meeting_entry);
         location_entry = (EditText) view.findViewById(R.id.location_entry);
         start_time_entry = (EditText) view.findViewById(R.id.start_time_entry);
@@ -254,7 +253,7 @@ public class EditAppointment extends Fragment {
         Tools.updateDateEntry(start_date_entry, startDateCalendar);
         Tools.updateDateEntry(end_date_entry, endDateCalendar);
 
-        //Load invitees
+        // Load invitees
         try {
             ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
 
@@ -267,9 +266,8 @@ public class EditAppointment extends Fragment {
 
                 String attendeeName = userQuery.get(jArray.getString(i)).getString("Name");
 
-                if (attendeeName == null || attendeeName.equals("")) {
+                if (attendeeName == null || attendeeName.equals(""))
                     attendeeName = userQuery.get(jArray.getString(i)).getString("username");
-                }
 
                 if (i == 0)
                     attendees += attendeeName;
@@ -335,12 +333,14 @@ public class EditAppointment extends Fragment {
 
         ContentResolver cr = getActivity().getContentResolver();
         ContentValues values = new ContentValues();
+
         values.put(CalendarContract.Events.DTSTART, startDate.getTime());
         values.put(CalendarContract.Events.DTEND, endDate.getTime());
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.DESCRIPTION, comments);
         values.put(CalendarContract.Events.CALENDAR_ID, calID);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
+
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
         // get the event ID that is the last element in the Uri
@@ -551,6 +551,7 @@ public class EditAppointment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -560,6 +561,7 @@ public class EditAppointment extends Fragment {
             case R.id.action_save:
                 saveAppointment();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -1,11 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/padding_margin"
     android:background="@drawable/clouds"
-    tools:context="com.example.jaz020.oneamfamoffice.EditAppointment">
+    tools:context="com.example.jaz020.oneamfamoffice.EditAppointment" >
 
     <ScrollView
         android:background="@color/cloudy_white"
@@ -22,8 +23,7 @@
                 android:id="@+id/meeting_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/meeting_title"
-                />
+                android:text="@string/meeting_title" />
 
             <EditText
                 android:id="@+id/meeting_entry"
@@ -71,7 +71,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/start_time_title"
@@ -79,7 +79,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/start_time_title" />
-
 
                 <EditText
                     android:id="@+id/start_time_entry"
@@ -89,7 +88,6 @@
                     android:focusable="false"
                     android:gravity="center_horizontal"
                     android:inputType="datetime" />
-
 
                 <EditText
                     android:id="@+id/start_date_entry"
@@ -102,11 +100,10 @@
 
             </LinearLayout>
 
-
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal" >
 
                 <TextView
                     android:id="@+id/end_time_title"
@@ -124,7 +121,6 @@
                     android:gravity="center_horizontal"
                     android:inputType="datetime" />
 
-
                 <EditText
                     android:id="@+id/end_date_entry"
                     android:layout_width="fill_parent"
@@ -135,7 +131,6 @@
                     android:inputType="date" />
 
             </LinearLayout>
-
 
         </LinearLayout>
 

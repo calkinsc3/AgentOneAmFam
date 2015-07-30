@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ClipData;
@@ -34,31 +33,33 @@ import java.util.List;
  */
 public class MyUploads extends Fragment {
 
-
-
     //REQUEST CODES FOR GALLERY INTENT RETURN
     final public static int NEW_UPLOAD = 0;
     final public static int CHANGE_IMAGE = 1;
-    public static ParseObject tempObject = null; //Holds the Upload Object that the image is being changed on
+
+    //Holds the Upload Object that the image is being changed on
+    public static ParseObject tempObject = null;
     public static Fragment fragment;
-    private static View mainView = null; //This fragments main view
+
+    //This fragments main view
+    private static View mainView = null;
+
     /**
      * These fields are used for the MyUploads fragment, within the ClaimsInfo fragment
      * they will all be null unless this fragment is withing the ClaimsInfo fragment
      */
-    private static ArrayList<String> uploadIDs; //Holds uploadIDs of the Claim object that this fragment was called from
-    private static String claimPolicyID;//Holds the policyID of the claim that this fragment was called from
-    private static Bundle args;   //arguments passed to this fragment
-
-    public MyUploads() {
-    }
+    //Holds uploadIDs of the Claim object that this fragment was called from
+    private static ArrayList<String> uploadIDs;
+    //Holds the policyID of the claim that this fragment was called from
+    private static String claimPolicyID;
+    //Arguments passed to this fragment
+    private static Bundle args;
 
     /**
      * Calls parse.com and retrieves all photos upload for the current user (Agent).
      * Copies the uploads into a local datastore.
      */
     public static void refreshLocalData(Context context) {
-
         String userID = ParseUser.getCurrentUser().getObjectId();
 
         //USED FOR QUERYING UPLOADS SPECIFIC TO A CLAIM (null for creating a new claim)
@@ -66,7 +67,6 @@ public class MyUploads extends Fragment {
 
         //Build a query for each upload found in the uploadIDs of the Current Claim
         if(uploadIDs != null && args != null){
-
             //get list from arguments
             List<ParseQuery<ParseObject>> queries = new ArrayList<>();
 
@@ -87,31 +87,29 @@ public class MyUploads extends Fragment {
                     .whereEqualTo("UserID", userID);
         }
 
-
         //IF A QUERY WAS BUILT (wont enter this code of creating a new Claim)
         if(mainQuery != null) {
-
             //only get files that have media uploaded
             mainQuery.whereExists("Media");
 
-
             try {
-
                 //TODO this blocks the UI thread so we must add a loading dialog or take off the UI thread
                 //run the query and set the uploads List to the result
                 Singleton.setUploads(mainQuery.find());
 
                 //Build the local backend list with the uploads retrieved
                 if (!Singleton.getUploads().isEmpty()) {
-
                     Singleton.setImages(new ArrayList<>());
                     Singleton.setComments(new ArrayList<String>());
 
                     for (int i = 0; i < Singleton.getUploads().size(); i++) {
                         ParseObject object = Singleton.getUploads().get(i);
                         ParseFile parseFile = object.getParseFile("Media");
+
                         Object obj = parseFile.getUrl();
+
                         String comm = object.getString("Comment");
+
                         Singleton.getComments().add(comm);
                         Singleton.getImages().add(obj);
                     }
@@ -120,7 +118,6 @@ public class MyUploads extends Fragment {
                 } else {
                     Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
                 }
-
             } catch (ParseException e) {
                 Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
@@ -132,9 +129,9 @@ public class MyUploads extends Fragment {
      * Updates the listview from the singleton backend
      */
     public static void updateListView(Context context) {
-
         ListView pictureList = (ListView) MyUploads.mainView.findViewById(R.id.my_uploads_list_view);
-        ImageAdapter adapter = new ImageAdapter(context, Singleton.getImages(), Singleton.getComments(), null, Singleton.IMAGE);
+        ImageAdapter adapter = new ImageAdapter(context, Singleton.getImages(),
+                Singleton.getComments(), null, Singleton.IMAGE);
         pictureList.setAdapter(adapter);
     }
 
@@ -148,7 +145,6 @@ public class MyUploads extends Fragment {
      * @param context the activity that this fragment belongs to
      */
     public static void saveComments(final Context context){
-
         ParseObject photo;
 
         if(Singleton.getComments() != null) {
@@ -161,7 +157,6 @@ public class MyUploads extends Fragment {
             ParseObject.saveAllInBackground(Singleton.getUploads(), new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-
                     if (e == null) {
                         Toast.makeText(context, "Comments Saved.", Toast.LENGTH_SHORT).show();
                     } else {
@@ -170,7 +165,6 @@ public class MyUploads extends Fragment {
                 }
             });
         }
-
     }
 
     @Override
@@ -183,19 +177,15 @@ public class MyUploads extends Fragment {
          * ClaimsInfo
          * new Claim (ClaimsInfo)
          *
-         * and null for:
-         *
-         * MyUploads
-         *
+         * and null for: MyUploads
          */
         args = getArguments();
         fragment = this;
 
-        if(this.getArguments() == null){
+        if (this.getArguments() == null) {
             uploadIDs = null;
             claimPolicyID = null;
-        }
-        else{
+        } else {
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
         }
@@ -218,7 +208,8 @@ public class MyUploads extends Fragment {
 
         final TextView header = (TextView) view.findViewById(R.id.title);
         final ImageButton add_button = (ImageButton) view.findViewById(R.id.add_button);
-        final com.github.clans.fab.FloatingActionButton fab = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
+        final com.github.clans.fab.FloatingActionButton fab =
+                (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
 
         //set fab icon, set title, show fab
         if (args != null) {
@@ -252,7 +243,8 @@ public class MyUploads extends Fragment {
                         .setAction(Intent.ACTION_GET_CONTENT);
 
                 //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
-                MyUploads.fragment.startActivityForResult(Intent.createChooser(intent, "Select Picture(s)"), NEW_UPLOAD);
+                MyUploads.fragment.startActivityForResult(Intent
+                        .createChooser(intent, "Select Picture(s)"), NEW_UPLOAD);
             }
         });
 
@@ -260,7 +252,6 @@ public class MyUploads extends Fragment {
          * Save the comments.
          *
          * This button is only visible on the MyUploads screen.
-         *
          */
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -271,19 +262,15 @@ public class MyUploads extends Fragment {
     }
 
     /**
-     *Handles return from image selection.  Updates parse and refreshes the local datastore
-     *
+     *Handles return from image selection.  Updates parse and refreshes the local datastore.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         switch (requestCode) {
-
             //USER IS CHANGING A PREVIOUS UPLOAD
             case CHANGE_IMAGE:
                 //CHECK FOR VALID RESULT
                 if (resultCode == Activity.RESULT_OK) {
-
                     //HOLDS FINAL IMAGE BYTE ARRAY
                     byte[] imageByte = null;
 
@@ -295,7 +282,6 @@ public class MyUploads extends Fragment {
                     }
 
                     if (imageByte != null) {
-
                         //TODO do i need both the save and put + save
                         ParseFile image = new ParseFile("photo.jpeg", imageByte, "jpeg");
                         image.saveInBackground();
@@ -306,17 +292,18 @@ public class MyUploads extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null) {
-                                    Toast.makeText(getActivity(), "Photo Updated!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(),
+                                            "Photo Updated!", Toast.LENGTH_SHORT).show();
                                     refreshLocalData(getActivity());
                                 } else {
-                                    Toast.makeText(getActivity(), "Update Cancelled.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(),
+                                            "Update Cancelled.", Toast.LENGTH_LONG).show();
                                     e.printStackTrace();
                                 }
                             }
                         });
                     }
-
-                }else{
+                } else {
                     //TELLS THE USER IF THE IMAGE THEY SELECTED WAS NOT RETRIEVED
                     Toast.makeText(getActivity(), "Photo could not be accessed.", Toast.LENGTH_SHORT).show();
                 }
@@ -325,17 +312,14 @@ public class MyUploads extends Fragment {
 
             //USER IS ADDING A NEW UPLOAD
             case NEW_UPLOAD:
-
                 //HOLDS FINAL IMAGE BYTE ARRAY
                 List<byte[]> imageByte = new ArrayList<>();
                 //boolean true if running from policy
                 boolean isFromPolicy = args.getBoolean("FROMPOLICY", false);
 
                 try{
-
                     //BUILD LIST OF NEW IMAGES
                     if (data.getClipData() != null) {
-
                         ClipData clipData = data.getClipData();
 
                         for (int i = 0; i < clipData.getItemCount(); i++) {
@@ -349,16 +333,17 @@ public class MyUploads extends Fragment {
                     List<ParseObject> toSave = new ArrayList<>();
 
                     for(byte[] curr : imageByte){
-
                         final ParseObject obj = new ParseObject("Upload");
                         ParseFile image = new ParseFile("photo.jpeg", curr, "jpeg");
 
                         image.saveInBackground();
 
                         obj.put("PolicyID", claimPolicyID);
+
                         if(!isFromPolicy) {
                             obj.put("ClaimID", ClaimInfo.selectedClaim.getObjectId());
                         }
+
                         obj.put("UserID", ParseUser.getCurrentUser().getObjectId());
                         obj.put("Media", image);
 
@@ -384,7 +369,6 @@ public class MyUploads extends Fragment {
                                         ClaimInfo.selectedClaim.saveInBackground(new SaveCallback() {
                                             @Override
                                             public void done(ParseException e) {
-
                                                 if (e == null) {
                                                     Toast.makeText(getActivity(),
                                                             "Upload " + objectID + " saved.",
@@ -398,7 +382,8 @@ public class MyUploads extends Fragment {
                                         });
                                     }
                                 } else {
-                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), e.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

@@ -27,7 +27,6 @@ public class Splash extends Activity implements Runnable {
             e.printStackTrace();
         } finally {
             startActivity(new Intent(Splash.this, MainActivity.class));
-
             finish();
         }
     }

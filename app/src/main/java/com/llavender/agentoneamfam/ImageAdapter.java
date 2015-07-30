@@ -347,7 +347,7 @@ public class ImageAdapter extends BaseAdapter {
                         };
 
                         //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
-                        AlertDialog confirmation = new AlertDialog.Builder(context)
+                        new AlertDialog.Builder(context)
                                 .setTitle("Are you sure you want to delete the image?")
                                 .setCancelable(true)
                                 .setNegativeButton("Cancel", dialogClick)
@@ -355,6 +355,7 @@ public class ImageAdapter extends BaseAdapter {
                                 .show();
                     }
                 });
+
                 break;
 
             default:
@@ -374,11 +375,12 @@ public class ImageAdapter extends BaseAdapter {
      * Custom ViewHolder class
      */
     static class ViewHolder {
-        ImageButton imageButton;
-        EditText editText;
-        TextView textView;
-        int index;
-        ImageButton delete_button;
         ParseObject parseObject;
+        TextView textView;
+        EditText editText;
+        ImageButton imageButton;
+        ImageButton delete_button;
+
+        int index;
     }
 }

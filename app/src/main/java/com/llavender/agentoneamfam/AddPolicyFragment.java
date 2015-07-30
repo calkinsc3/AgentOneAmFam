@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
@@ -49,10 +48,6 @@ public class AddPolicyFragment extends Fragment {
     String[] states;
     FragmentManager fm;
 
-    public AddPolicyFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,22 +67,27 @@ public class AddPolicyFragment extends Fragment {
 
         setCostTextChangedListener();
 
-
         return view;
     }
 
     private void initializeVariables(View view){
         client = (TextView)view.findViewById(R.id.clientID);
+
         description = (EditText)view.findViewById(R.id.description);
         cost = (EditText)view.findViewById(R.id.cost);
         address = (EditText)view.findViewById(R.id.address);
         city = (EditText)view.findViewById(R.id.city);
-        stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
         zip = (EditText)view.findViewById(R.id.zip);
+
+        stateSpinner = (Spinner)view.findViewById(R.id.stateSpinner);
+
         policy = Singleton.getCurrentPolicy();
+
         accepted = (CheckBox)view.findViewById(R.id.accepted);
         address2 = (LinearLayout)view.findViewById(R.id.address2Layout);
+
         states = getResources().getStringArray(R.array.states);
+
         fm = getFragmentManager();
     }
 
@@ -96,8 +96,7 @@ public class AddPolicyFragment extends Fragment {
             private String current = "";
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -121,14 +120,14 @@ public class AddPolicyFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
     public void checkOrientationSetLayoutOrientation(){
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             address2.setOrientation(LinearLayout.VERTICAL);
+
             city.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
             zip.getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
         }
@@ -138,11 +137,11 @@ public class AddPolicyFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void createPolicy(){
-
+    private void createPolicy() {
         String costFormatted = cost.getText().toString();
         costFormatted = costFormatted.replace("$","");
         costFormatted = costFormatted.replace(",","");
@@ -171,13 +170,13 @@ public class AddPolicyFragment extends Fragment {
                 }
             }
         });
-
     }
 
-    private void startPolicyInformationFragment(){
-        while (fm.getBackStackEntryCount() > 1){
+    private void startPolicyInformationFragment() {
+        while (fm.getBackStackEntryCount() > 1) {
             fm.popBackStackImmediate();
         }
+
         //Start the policyInformation Fragment
         fm.beginTransaction().replace(R.id.fragment_container, new PolicyInformationFragment())
                 .addToBackStack(null)
@@ -186,16 +185,14 @@ public class AddPolicyFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        Log.d("onOptionsItemSelected", "yes");
         switch (item.getItemId()) {
             //is actually a call to create a new Policy
             case R.id.action_save:
                 createPolicy();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }

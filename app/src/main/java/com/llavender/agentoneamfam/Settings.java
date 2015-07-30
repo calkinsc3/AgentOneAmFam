@@ -1,13 +1,10 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
-import android.telephony.PhoneNumberUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +27,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class Settings extends Fragment {
+
     public static String user_email = ParseUser.getCurrentUser().getEmail();
 
     private ParseUser curUser;
@@ -46,10 +44,6 @@ public class Settings extends Fragment {
     private EditText zip_entry;
     private Spinner state_spinner;
 
-    public Settings() {
-        // Required empty public constructor
-    }
-    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,10 +70,12 @@ public class Settings extends Fragment {
         Button email_support_button = (Button) view.findViewById(R.id.email_support_button);
         Button logout_button = (Button) view.findViewById(R.id.logout_button);
 
-        List<String> states = Arrays.asList(getResources().getStringArray(R.array.all_abbreviations));
+        List<String> states = Arrays.asList(getResources().getStringArray(R.array.states));
 
         //POPULATE STATE DROPDOWN
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.all_abbreviations, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter
+                .createFromResource(getActivity(), R.array.states,
+                        android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         state_spinner.setAdapter(adapter);
 
@@ -153,6 +149,7 @@ public class Settings extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
