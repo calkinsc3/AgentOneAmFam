@@ -348,7 +348,7 @@ public class ImageAdapter extends BaseAdapter {
 
                         //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
                         new AlertDialog.Builder(context)
-                                .setTitle("Are you sure you want to delete the image?")
+                                .setTitle("Are you sure you want to remove the appointment?")
                                 .setCancelable(true)
                                 .setNegativeButton("Cancel", dialogClick)
                                 .setPositiveButton("Delete", dialogClick)
