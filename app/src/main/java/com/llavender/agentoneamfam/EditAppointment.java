@@ -156,7 +156,7 @@ public class EditAppointment extends Fragment {
                 startDateCalendar.get(Calendar.MONTH),
                 startDateCalendar.get(Calendar.DAY_OF_MONTH));
 
-        final DatePickerDialog end_date_picker =new DatePickerDialog(getActivity(),
+        final DatePickerDialog end_date_picker = new DatePickerDialog(getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -316,7 +316,6 @@ public class EditAppointment extends Fragment {
         appointmentToSave.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-
                 progressDialog.dismiss();
 
                 if (e == null) {
