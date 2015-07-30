@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.parse.ParseSession;
 import com.parse.ParseUser;
 
 
@@ -58,7 +57,6 @@ public class AddClientFragment extends Fragment {
             public void onClick(View v) {
                 createClient();
                 Toast.makeText(getActivity(), "New client created successfully!", Toast.LENGTH_SHORT).show();
-//                returnToMain();
             }
         });
     }
@@ -72,15 +70,6 @@ public class AddClientFragment extends Fragment {
         stateSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         stateSpinner.setAdapter(stateSpinnerAdapter);
-    }
-
-    private void returnToMain(){
-        while (fm.getBackStackEntryCount() > 1){
-            fm.popBackStackImmediate();
-        }
-        //Restart the Login fragment
-        fm.beginTransaction().replace(R.id.fragment_container, new MainFragment())
-                .commit();
     }
 
     private void initializeFields() {
