@@ -158,9 +158,9 @@
             <FrameLayout
                 android:id="@+id/bottom_container"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:layout_margin="10dp"
-                android:layout_weight="3.38" />
+                android:background="@color/cloudy_white" />
 
         </LinearLayout>
 

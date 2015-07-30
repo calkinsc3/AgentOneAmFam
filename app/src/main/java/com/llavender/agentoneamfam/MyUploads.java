@@ -400,6 +400,7 @@ public class MyUploads extends Fragment {
                         });
 
                         toSave.add(obj);
+
                         uploadIDs.add(obj.getObjectId());
                     }
                 } catch (Exception e) {
