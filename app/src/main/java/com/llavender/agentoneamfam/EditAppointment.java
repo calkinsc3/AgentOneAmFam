@@ -316,7 +316,6 @@ public class EditAppointment extends Fragment {
         appointmentToSave.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-
                 progressDialog.dismiss();
 
                 if (e == null) {
