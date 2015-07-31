@@ -253,8 +253,6 @@ public class ImageAdapter extends BaseAdapter {
                                 .setPositiveButton("Delete", dialogClick)
                                 .show();
                     }
-
-
                 });
 
                 /**
