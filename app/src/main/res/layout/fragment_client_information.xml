@@ -170,6 +170,8 @@
         </LinearLayout>
 
         <FrameLayout
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:id="@+id/bottom_container"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />

@@ -103,7 +103,13 @@ public class MeetingListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_client_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_client_list, container, false);
+
+        if(getArguments() != null) {
+            view.setBackgroundColor(getResources().getColor(R.color.cloudy_white));
+        }
+
+        return view;
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
