@@ -77,6 +77,7 @@ public class MainPageFragment extends Fragment {
         clients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clients.setEnabled(false);
                 Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_to_right);
                 anim.setDuration(CLOUD_SPEED + 500);
                 clients.startAnimation(anim);
@@ -94,6 +95,7 @@ public class MainPageFragment extends Fragment {
         claims.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                claims.setEnabled(false);
                 Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_to_right);
                 anim.setDuration(CLOUD_SPEED + 500);
                 claims.startAnimation(anim);
@@ -111,6 +113,7 @@ public class MainPageFragment extends Fragment {
         schedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                schedule.setEnabled(false);
                 Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_to_right);
                 anim.setDuration(CLOUD_SPEED + 500);
                 schedule.startAnimation(anim);
@@ -130,6 +133,7 @@ public class MainPageFragment extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                settings.setEnabled(false);
                 Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_to_right);
                 anim.setDuration(CLOUD_SPEED + 500);
                 settings.startAnimation(anim);
@@ -147,6 +151,7 @@ public class MainPageFragment extends Fragment {
         uploads.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                uploads.setEnabled(false);
                 Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_to_right);
                 anim.setDuration(CLOUD_SPEED + 500);
                 uploads.startAnimation(anim);
@@ -165,5 +170,11 @@ public class MainPageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onCreate(null);
+
+        uploads.setEnabled(true);
+        settings.setEnabled(true);
+        schedule.setEnabled(true);
+        claims.setEnabled(true);
+        clients.setEnabled(true);
     }
 }
