@@ -190,8 +190,6 @@ public class MyUploads extends Fragment {
         } else {
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
-
-
         }
     }
 
@@ -210,7 +208,8 @@ public class MyUploads extends Fragment {
         mainView = view;
 
         //set the background properly
-        if(uploadIDs == null){
+        if(args == null){
+
             mainView.setBackground(getResources().getDrawable(R.drawable.clouds));
         }
         else{
@@ -328,7 +327,6 @@ public class MyUploads extends Fragment {
                 List<byte[]> imageByte = new ArrayList<>();
                 //boolean true if running from policy
 
-
                 try{
                     //BUILD LIST OF NEW IMAGES
                     if (data.getClipData() != null) {
@@ -352,7 +350,7 @@ public class MyUploads extends Fragment {
 
                         obj.put("PolicyID", claimPolicyID);
 
-                        if(args != null) {
+                        if(!args.getBoolean("FROMPOLICY")) {
                             obj.put("ClaimID", ClaimInfo.selectedClaim.getObjectId());
                         }
 
@@ -402,7 +400,7 @@ public class MyUploads extends Fragment {
 
                         toSave.add(obj);
 
-                        if(args != null) {
+                        if(!args.getBoolean("FROMPOLICY")) {
                             uploadIDs.add(obj.getObjectId());
                         }
                     }
