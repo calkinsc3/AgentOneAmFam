@@ -191,9 +191,8 @@ public class ClaimInfo extends Fragment {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     uploadIds.add(jsonArray.getString(i));
                 }
-            } catch (JSONException e) {
-                Toast.makeText(getActivity(), "Uploads not retrieved:" + e.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "No Uploads!", Toast.LENGTH_SHORT).show();
             }
 
             bundle.putStringArrayList("UploadIDs", uploadIds);

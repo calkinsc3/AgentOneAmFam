@@ -187,6 +187,7 @@ public class ImageAdapter extends BaseAdapter {
                 Picasso.with(context)
                         .load(imageUri)
                         .resize(500, 500)
+                        .centerInside()
                         .into(vh.imageButton);
 
                 //TEXT LISTENER THAT HANDLES LOCAL COMMENT UPDATES
@@ -230,11 +231,13 @@ public class ImageAdapter extends BaseAdapter {
                                             @Override
                                             public void done(ParseException e) {
                                                 if (e == null) {
-                                                    Toast.makeText(context, "Photo deleted!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Photo deleted!",
+                                                            Toast.LENGTH_SHORT).show();
                                                     MyUploads.refreshLocalData(context);
                                                 } else {
                                                     e.printStackTrace();
-                                                    Toast.makeText(context, "Photo not deleted.", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Photo not deleted.",
+                                                            Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
@@ -243,15 +246,13 @@ public class ImageAdapter extends BaseAdapter {
                         };
 
                         //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
-                        AlertDialog confirmation = new AlertDialog.Builder(context)
+                        new AlertDialog.Builder(context)
                                 .setTitle("Are you sure you want to delete the image?")
                                 .setCancelable(true)
                                 .setNegativeButton("Cancel", dialogClick)
                                 .setPositiveButton("Delete", dialogClick)
                                 .show();
                     }
-
-
                 });
 
                 /**
@@ -273,7 +274,8 @@ public class ImageAdapter extends BaseAdapter {
                                 .setAction(Intent.ACTION_GET_CONTENT);
 
                         //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
-                        MyUploads.fragment.startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
+                        MyUploads.fragment.startActivityForResult(Intent
+                                .createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
 
                         return true;
                     }
@@ -291,7 +293,8 @@ public class ImageAdapter extends BaseAdapter {
 
                 //INFLATE VIEWS AND SET UP VIEW HOLDER
                 if (convertView == null) {
-                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater inflater = (LayoutInflater)
+                            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.info_list_item, null);
 
                     vh = new ViewHolder();
@@ -299,7 +302,6 @@ public class ImageAdapter extends BaseAdapter {
                     vh.delete_button = (ImageButton) view.findViewById(R.id.delete_button);
                     vh.parseObject = curr;
                     view.setTag(vh);
-
                 } else {
                     vh = (ViewHolder) convertView.getTag();
                 }
@@ -332,7 +334,8 @@ public class ImageAdapter extends BaseAdapter {
                                             @Override
                                             public void done(ParseException e) {
                                                 if (e == null) {
-                                                    Toast.makeText(context, "Meeting Deleted", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Meeting Deleted",
+                                                            Toast.LENGTH_SHORT).show();
                                                     MeetingListFragment.updateList();
                                                 }
                                             }
