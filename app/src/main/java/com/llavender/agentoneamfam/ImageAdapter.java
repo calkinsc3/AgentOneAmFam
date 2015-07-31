@@ -246,7 +246,7 @@ public class ImageAdapter extends BaseAdapter {
                         };
 
                         //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
-                        AlertDialog confirmation = new AlertDialog.Builder(context)
+                        new AlertDialog.Builder(context)
                                 .setTitle("Are you sure you want to delete the image?")
                                 .setCancelable(true)
                                 .setNegativeButton("Cancel", dialogClick)
