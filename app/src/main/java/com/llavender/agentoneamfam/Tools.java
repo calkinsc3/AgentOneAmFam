@@ -115,9 +115,16 @@ public class Tools {
                 break;
 
             case Singleton.MEETING:
+
+                String myFormat = "MM/dd/yy h:mm a";
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                String timeFormat = "h:mm a";
+                SimpleDateFormat sdf2 = new SimpleDateFormat(timeFormat, Locale.US);
+
                 message = object.getString("Title") + "\n" + object.getString("Location") + "\n" +
-                        object.getDate("StartDate").toString() +  "\n" +
-                        object.getDate("EndDate").toString() + "\n" +
+                        sdf.format(object.getDate("StartDate")) + "\n" +
+                        sdf.format(object.getDate("EndDate")) + "\n" +
                         object.getString("Comment");
                 break;
         }
