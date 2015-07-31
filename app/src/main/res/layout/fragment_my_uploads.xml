@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cloudy_white"
     tools:context="com.example.jaz020.oneamfamoffice.MyUploads" >
 
     <RelativeLayout
@@ -16,7 +15,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:background="@color/cloudy_white"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ImageButton
@@ -35,7 +33,7 @@
         android:layout_height="fill_parent"
         android:layout_below="@id/header"
         android:choiceMode="multipleChoice"
-        android:background="@color/cloudy_white" />
+         />
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab"

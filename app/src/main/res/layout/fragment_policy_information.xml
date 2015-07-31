@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding_margin"
     android:background="@drawable/clouds"
     tools:context="com.llavender.agentoneamfam.PolicyInformationFragment" >
 
@@ -16,12 +15,17 @@
         android:layout_centerVertical="true" >
 
         <LinearLayout
-            android:background="@color/cloudy_white"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="1" >
 
+            <LinearLayout
+                style="@style/cloud_view"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
@@ -157,13 +161,13 @@
                     android:text="Accepted" />
 
             </LinearLayout>
+            </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/bottom_container"
                 android:layout_width="fill_parent"
                 android:layout_height="200dp"
-                android:layout_margin="10dp"
-                android:background="@color/cloudy_white" />
+                />
 
         </LinearLayout>
 

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    style="@style/cloud_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical"
-    android:padding="@dimen/padding_margin" >
+     >
 
     <ImageButton
         android:id="@+id/delete_button"
@@ -15,7 +16,7 @@
         android:layout_centerVertical="true"
         android:focusable="false"
         android:src="@android:drawable/ic_menu_delete"
-        android:background="#00ffffff" />
+        android:background="#00000000" />
 
     <TextView
         android:id="@+id/info_list_item_text"

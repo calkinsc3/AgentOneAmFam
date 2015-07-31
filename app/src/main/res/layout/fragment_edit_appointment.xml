@@ -9,7 +9,7 @@
     tools:context="com.example.jaz020.oneamfamoffice.EditAppointment" >
 
     <ScrollView
-        android:background="@color/cloudy_white"
+        style="@style/cloud_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:paddingTop="@dimen/activity_vertical_margin" >

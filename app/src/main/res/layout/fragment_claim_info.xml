@@ -8,6 +8,7 @@
     android:background="@drawable/clouds" >
 
     <ScrollView
+        style="@style/cloud_view"
         android:id="@+id/info_scroll"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
@@ -16,7 +17,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/cloudy_white" >
+             >
 
             <TextView
                 android:id="@+id/client_title"
@@ -75,6 +76,6 @@
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/info_scroll"
-        android:layout_margin="10dp" />
+        />
 
 </RelativeLayout>

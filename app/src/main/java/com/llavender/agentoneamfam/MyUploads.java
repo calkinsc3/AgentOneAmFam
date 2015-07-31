@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -185,9 +186,12 @@ public class MyUploads extends Fragment {
         if (this.getArguments() == null) {
             uploadIDs = null;
             claimPolicyID = null;
+
         } else {
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
+
+
         }
     }
 
@@ -204,7 +208,15 @@ public class MyUploads extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //Set mainView
         mainView = view;
-        view.setBackground(getResources().getDrawable(R.drawable.clouds));
+
+        //set the background properly
+        if(uploadIDs == null){
+            mainView.setBackground(getResources().getDrawable(R.drawable.clouds));
+        }
+        else{
+            mainView.setBackgroundColor(getResources().getColor(R.color.cloudy_white));
+
+        }
 
         final TextView header = (TextView) view.findViewById(R.id.title);
         final ImageButton add_button = (ImageButton) view.findViewById(R.id.add_button);
@@ -315,7 +327,7 @@ public class MyUploads extends Fragment {
                 //HOLDS FINAL IMAGE BYTE ARRAY
                 List<byte[]> imageByte = new ArrayList<>();
                 //boolean true if running from policy
-                boolean isFromPolicy = args.getBoolean("FROMPOLICY", false);
+
 
                 try{
                     //BUILD LIST OF NEW IMAGES
@@ -340,7 +352,7 @@ public class MyUploads extends Fragment {
 
                         obj.put("PolicyID", claimPolicyID);
 
-                        if(!isFromPolicy) {
+                        if(args != null) {
                             obj.put("ClaimID", ClaimInfo.selectedClaim.getObjectId());
                         }
 
@@ -390,7 +402,7 @@ public class MyUploads extends Fragment {
 
                         toSave.add(obj);
 
-                        if(!isFromPolicy) {
+                        if(args != null) {
                             uploadIDs.add(obj.getObjectId());
                         }
                     }

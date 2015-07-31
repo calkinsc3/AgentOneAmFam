@@ -17,4 +17,9 @@
         <item name="android:scaleType">fitXY</item>
     </style>
 
+    <style name="cloud_view" parent="AppTheme">
+        <item name="android:background">@color/cloudy_white</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
 </resources>
