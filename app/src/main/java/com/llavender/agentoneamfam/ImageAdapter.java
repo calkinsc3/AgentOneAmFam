@@ -1,7 +1,6 @@
 package com.llavender.agentoneamfam;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,24 +56,19 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-
-
         if (mode >= Singleton.CLIENT) {
             return objects.size();
         } else {
             return images.size();
         }
-
     }
 
     public Object getItem(int position) {
-
         if (mode >= Singleton.CLIENT) {
             return objects.get(position);
         } else {
             return images.get(position);
         }
-
     }
 
     public long getItemId(int position) {
@@ -82,21 +76,16 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-
         ViewHolder vh;
         View view = convertView;
 
         switch (mode) {
-
-
             /**
              * CLAIM MODE
              */
             case Singleton.CLAIM:
-
                 //INFLATE VIEWS AND SET UP VIEW HOLDER
                 if (view == null) {
-
                     LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.info_list_item, null);
 
@@ -105,8 +94,6 @@ public class ImageAdapter extends BaseAdapter {
                     vh.delete_button = (ImageButton) view.findViewById(R.id.delete_button);
 
                     view.setTag(vh);
-
-
                 } else {
                     vh = (ViewHolder) convertView.getTag();
                 }
@@ -118,7 +105,6 @@ public class ImageAdapter extends BaseAdapter {
 
                 final ViewHolder vhf2 = vh;
 
-
                 //SET THE TEXT
                 vh.textView.setText(info);
 
@@ -126,20 +112,15 @@ public class ImageAdapter extends BaseAdapter {
                  * DELETE object
                  */
                 vh.delete_button.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View v) {
-
                         DialogInterface.OnClickListener dialogClick = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 switch (which) {
-
                                     //CANCEL
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         dialog.dismiss();
-
                                         break;
 
                                     //DELETE IMAGE
@@ -147,22 +128,20 @@ public class ImageAdapter extends BaseAdapter {
                                         dialog.dismiss();
 
                                         ParseObject obj = Singleton.getClaims().get(vhf2.index);
+
                                         //DELETE IN BACKGROUND
                                         obj.deleteInBackground(new DeleteCallback() {
                                             @Override
                                             public void done(ParseException e) {
-
                                                 if (e == null) {
                                                     Toast.makeText(context, "Claim deleted!", Toast.LENGTH_SHORT).show();
                                                     Claims.refreshLocalClaimData(context);
                                                 } else {
                                                     Toast.makeText(context, "Claim not deleted:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
-
                                             }
                                         });
                                 }
-
                             }
                         };
 
@@ -178,15 +157,12 @@ public class ImageAdapter extends BaseAdapter {
 
                 break;
 
-
             //CASE OF UPLOAD PHOTOS or MY UPLOADS
             case Singleton.IMAGE:
-
                 view = convertView;
 
                 //INFLATE VIEWS AND SET UP VIEW HOLDER
                 if (view == null) {
-
                     LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.photo_list_item, null);
 
@@ -196,8 +172,6 @@ public class ImageAdapter extends BaseAdapter {
                     vh.delete_button = (ImageButton) view.findViewById(R.id.delete_button);
 
                     view.setTag(vh);
-
-
                 } else {
                     vh = (ViewHolder) convertView.getTag();
                 }
@@ -213,20 +187,16 @@ public class ImageAdapter extends BaseAdapter {
                 Picasso.with(context)
                         .load(imageUri)
                         .resize(500, 500)
+                        .centerInside()
                         .into(vh.imageButton);
 
                 //TEXT LISTENER THAT HANDLES LOCAL COMMENT UPDATES
                 vh.editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    }
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
                     @Override
                     public void afterTextChanged(Editable s) {
@@ -241,20 +211,15 @@ public class ImageAdapter extends BaseAdapter {
 
                     @Override
                     public void onClick(View v) {
-
                         //TODO move to class
                         DialogInterface.OnClickListener dialogClick = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 ParseObject obj = Singleton.getUploads().get(vhf.index);
-
                                 switch (which) {
-
                                     //CANCEL
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         dialog.dismiss();
-
                                         break;
 
                                     //DELETE IMAGE
@@ -265,35 +230,30 @@ public class ImageAdapter extends BaseAdapter {
                                         obj.deleteInBackground(new DeleteCallback() {
                                             @Override
                                             public void done(ParseException e) {
-
                                                 if (e == null) {
-                                                    Toast.makeText(context, "Photo deleted!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Photo deleted!",
+                                                            Toast.LENGTH_SHORT).show();
                                                     MyUploads.refreshLocalData(context);
                                                 } else {
                                                     e.printStackTrace();
-                                                    Toast.makeText(context, "Photo not deleted.", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Photo not deleted.",
+                                                            Toast.LENGTH_SHORT).show();
                                                 }
-
                                             }
                                         });
                                 }
-
                             }
                         };
 
                         //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
-                        AlertDialog confirmation = new AlertDialog.Builder(context)
+                        new AlertDialog.Builder(context)
                                 .setTitle("Are you sure you want to delete the image?")
                                 .setCancelable(true)
                                 .setNegativeButton("Cancel", dialogClick)
                                 .setPositiveButton("Delete", dialogClick)
                                 .show();
-
                     }
-
-
                 });
-
 
                 /**
                  * CHANGE IMAGE
@@ -301,7 +261,6 @@ public class ImageAdapter extends BaseAdapter {
                 vh.imageButton.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-
                         MyUploads.tempObject = null;
 
                         //TODO
@@ -315,7 +274,8 @@ public class ImageAdapter extends BaseAdapter {
                                 .setAction(Intent.ACTION_GET_CONTENT);
 
                         //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
-                        MyUploads.fragment.startActivityForResult(Intent.createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
+                        MyUploads.fragment.startActivityForResult(Intent
+                                .createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
 
                         return true;
                     }
@@ -329,13 +289,12 @@ public class ImageAdapter extends BaseAdapter {
                 break;
 
             case Singleton.MEETING:
-
                 ParseObject curr = objects.get(position);
 
                 //INFLATE VIEWS AND SET UP VIEW HOLDER
                 if (convertView == null) {
-
-                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater inflater = (LayoutInflater)
+                            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.info_list_item, null);
 
                     vh = new ViewHolder();
@@ -343,7 +302,6 @@ public class ImageAdapter extends BaseAdapter {
                     vh.delete_button = (ImageButton) view.findViewById(R.id.delete_button);
                     vh.parseObject = curr;
                     view.setTag(vh);
-
                 } else {
                     vh = (ViewHolder) convertView.getTag();
                 }
@@ -356,18 +314,17 @@ public class ImageAdapter extends BaseAdapter {
                 //DELETE CLICK LISTENER
                 final ViewHolder vhf4 = vh;
                 vh.delete_button.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View v) {
                         DialogInterface.OnClickListener dialogClick = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 switch (which) {
                                     //CANCEL
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         dialog.dismiss();
                                         break;
+
                                     //DELETE MEETING
                                     case DialogInterface.BUTTON_POSITIVE:
                                         dialog.dismiss();
@@ -376,14 +333,15 @@ public class ImageAdapter extends BaseAdapter {
                                         vhf4.parseObject.deleteInBackground(new DeleteCallback() {
                                             @Override
                                             public void done(ParseException e) {
-
                                                 if (e == null) {
-                                                    Toast.makeText(context, "Meeting Deleted", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Meeting Deleted",
+                                                            Toast.LENGTH_SHORT).show();
                                                     MeetingListFragment.updateList();
                                                 }
                                             }
                                         });
                                         break;
+
                                     default:
                                         dialog.dismiss();
                                         Log.d("Error Deleting:", "Reached default");
@@ -392,43 +350,40 @@ public class ImageAdapter extends BaseAdapter {
                         };
 
                         //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
-                        AlertDialog confirmation = new AlertDialog.Builder(context)
-                                .setTitle("Are you sure you want to delete the image?")
+                        new AlertDialog.Builder(context)
+                                .setTitle("Are you sure you want to remove the appointment?")
                                 .setCancelable(true)
                                 .setNegativeButton("Cancel", dialogClick)
                                 .setPositiveButton("Delete", dialogClick)
                                 .show();
                     }
                 });
+
                 break;
 
             default:
                 //INFLATE VIEWS
                 if (convertView == null) {
-
                     LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.info_list_item, null);
                 }
+
                 break;
         }
 
         return view;
-
     }
-
 
     /**
      * Custom ViewHolder class
      */
     static class ViewHolder {
-
-        ImageButton imageButton;
-        EditText editText;
-        TextView textView;
-        int index;
-        ImageButton delete_button;
         ParseObject parseObject;
+        TextView textView;
+        EditText editText;
+        ImageButton imageButton;
+        ImageButton delete_button;
 
+        int index;
     }
-
 }

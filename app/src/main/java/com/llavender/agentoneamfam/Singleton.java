@@ -6,6 +6,7 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by lsl017 on 7/6/2015.
  */
@@ -16,20 +17,21 @@ public class Singleton {
     public static final int POLICY = 2;
     public static final int CLAIM = 3;
     public static final int MEETING = 4;
-    public static List<ParseObject> uploads;
+
     public static String PREFERENCES = "AmFam";
+
     private static Singleton ourInstance;
+
+    public static List<ParseObject> uploads;
+    private static List<ParseObject> claims;
     private static ArrayList<ParseUser> listOfClients;
     private static ParseObject currentClient;
     private static ParseObject currentPolicy;
-    private static ArrayList<ParseObject> mediaFiles;
-    private static List<ParseObject> claims;
+
     private static List<String> comments;
     private static List<Object> images;
 
-    protected Singleton() {
-
-    }
+    protected Singleton() {}
 
     public static Singleton getInstance() {
         if(ourInstance == null){
@@ -63,14 +65,6 @@ public class Singleton {
 
     public static void setCurrentPolicy(ParseObject currentPolicy) {
         Singleton.currentPolicy = currentPolicy;
-    }
-
-    public static ArrayList<ParseObject> getMediaFiles() {
-        return mediaFiles;
-    }
-
-    public static void setMediaFiles(ArrayList<ParseObject> images) {
-        Singleton.mediaFiles = images;
     }
 
     public static List<ParseObject> getClaims() {

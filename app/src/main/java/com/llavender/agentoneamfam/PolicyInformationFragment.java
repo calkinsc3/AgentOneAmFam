@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,10 +50,6 @@ public class PolicyInformationFragment extends Fragment {
 
     String[] states;
 
-    public PolicyInformationFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,8 +74,8 @@ public class PolicyInformationFragment extends Fragment {
         zip.setText(String.valueOf(policy.getNumber("Zip")));
         accepted.setChecked(policy.getBoolean("Accepted"));
 
-        stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, states));
-
+        stateSpinner.setAdapter(new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, states));
         stateSpinner.setSelection(Arrays.asList(states).indexOf(policy.getString("State")));
 
         checkOrientationSetLayoutOrientation();
@@ -89,8 +84,7 @@ public class PolicyInformationFragment extends Fragment {
             private String current = "";
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -114,8 +108,7 @@ public class PolicyInformationFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         return view;
@@ -123,15 +116,20 @@ public class PolicyInformationFragment extends Fragment {
 
     private void initializeFields(View view) {
         client = (TextView) view.findViewById(R.id.clientID);
+
         description = (EditText) view.findViewById(R.id.description);
         cost = (EditText) view.findViewById(R.id.cost);
         address = (EditText) view.findViewById(R.id.address);
         city = (EditText) view.findViewById(R.id.city);
-        stateSpinner = (Spinner) view.findViewById(R.id.stateSpinner);
         zip = (EditText) view.findViewById(R.id.zip);
+
+        stateSpinner = (Spinner) view.findViewById(R.id.stateSpinner);
+
         policy = Singleton.getCurrentPolicy();
+
         accepted = (CheckBox) view.findViewById(R.id.accepted);
         address2 = (LinearLayout) view.findViewById(R.id.address2Layout);
+
         states = getResources().getStringArray(R.array.states);
     }
 
@@ -151,13 +149,12 @@ public class PolicyInformationFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        Log.d("onOptionsItemSelected", "yes");
         switch (item.getItemId()) {
             //is actually a call to create a new Policy
             case R.id.action_save:
@@ -179,7 +176,6 @@ public class PolicyInformationFragment extends Fragment {
     }
 
     private void savePolicy() {
-
         ParseObject policyToSave = Singleton.getCurrentPolicy();
 
         policyToSave.put("Address", address.getText().toString());
@@ -196,8 +192,5 @@ public class PolicyInformationFragment extends Fragment {
 
         policyToSave.saveInBackground();
         Toast.makeText(getActivity(), "Policy Information Saved", Toast.LENGTH_SHORT).show();
-
     }
-
-
 }

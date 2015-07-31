@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.GetCallback;
@@ -33,6 +32,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,12 +56,9 @@ public class ClaimInfo extends Fragment {
 
     Spinner clientSpinner;
     Spinner policySpinner;
+
     EditText damages_entry;
     EditText comments_entry;
-
-    public ClaimInfo() {
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,7 +76,6 @@ public class ClaimInfo extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         damages_entry = (EditText) view.findViewById(R.id.damages_entry);
         comments_entry = (EditText) view.findViewById(R.id.comments_entry);
 
@@ -108,11 +104,12 @@ public class ClaimInfo extends Fragment {
             private String current = "";
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!s.toString().equals(current)){
+                if (!s.toString().equals(current)) {
                     damages_entry.removeTextChangedListener(this);
 
                     String cleanString = s.toString().replaceAll("[$,.]", "");
@@ -133,7 +130,6 @@ public class ClaimInfo extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
     }
@@ -145,7 +141,8 @@ public class ClaimInfo extends Fragment {
         final ParseObject obj;
 
         String comments = comments_entry.getText().toString();
-        String policyID = policyList.get(policyNames.indexOf(policySpinnerText)).getObjectId();
+        String policyID = policyList.get(policyNames
+                .indexOf(policySpinner.getSelectedItem().toString())).getObjectId();
 
         String damages = damages_entry.getText().toString();
         damages = damages.replace("$","");
@@ -190,12 +187,12 @@ public class ClaimInfo extends Fragment {
             JSONArray jsonArray = selectedClaim.getJSONArray("UploadIDs");
 
             // Convert jsonArray to array list.
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
+            try {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     uploadIds.add(jsonArray.getString(i));
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "Uploads not retrieved:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "No Uploads!", Toast.LENGTH_SHORT).show();
             }
 
             bundle.putStringArrayList("UploadIDs", uploadIds);
@@ -247,6 +244,7 @@ public class ClaimInfo extends Fragment {
             query.getInBackground(selectedClaim.getString("PolicyID"), new GetCallback<ParseObject>() {
                 public void done(ParseObject policy, ParseException e) {
                     if (e == null) {
+                        policyList.add(policy);
                         policyNames.add(policy.getString("Description"));
 
                         // Populate the policy spinner.
@@ -275,7 +273,6 @@ public class ClaimInfo extends Fragment {
                     }
                 }
             });
-
         } else {
             // New claim case.
             clientSpinner.setClickable(true);
@@ -352,8 +349,7 @@ public class ClaimInfo extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         // User changes the selected policy.
@@ -364,8 +360,7 @@ public class ClaimInfo extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
@@ -373,6 +368,7 @@ public class ClaimInfo extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -380,7 +376,6 @@ public class ClaimInfo extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-
                 if(policyNames.isEmpty()){
                     Toast.makeText(getActivity(), clientSpinnerText + " doesn't have any policies!",
                             Toast.LENGTH_SHORT).show();

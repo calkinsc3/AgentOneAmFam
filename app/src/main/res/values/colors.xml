@@ -9,5 +9,5 @@
     <item name="light_red" type="color">#FF3333</item>
     <item name="hint_of_red" type="color">#FAE6E6</item>
     <item name="hint_of_blue" type="color">#D6EBFF</item>
-    <item name="cloudy_white" type="color">#a5ffffff</item>
+    <item name="cloudy_white" type="color">#d5ffffff</item>
 </resources>

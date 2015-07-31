@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/base_clouds"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:padding="30dp"
+        android:id="@+id/amfamlogo"
+        android:layout_width="fill_parent"
+        android:layout_height="130dp"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/amfam_logo"
+        android:src="@drawable/oneamfamlogo"
+        android:icon="@drawable/amfam3" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <Button
+                style="@style/cloud_button"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="@string/clients"
+                android:id="@+id/clientsButton"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="@string/claims"
+                android:id="@+id/claimsButton"
+                android:layout_gravity="center_horizontal"
+                style="@style/cloud_button" />
+
+            <Button
+                style="@style/cloud_button"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="@string/schedule"
+                android:id="@+id/scheduleButton"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                style="@style/cloud_button"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="@string/settings"
+                android:id="@+id/settingsButton"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                style="@style/cloud_button"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="@string/uploads"
+                android:id="@+id/uploadsButton"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

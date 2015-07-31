@@ -1,21 +1,22 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/padding_margin"
     tools:context="com.example.jaz020.oneamfamoffice.ClaimInfo"
-    android:background="@drawable/clouds">
+    android:background="@drawable/clouds" >
 
     <ScrollView
         android:id="@+id/info_scroll"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/cloudy_white">
+            android:background="@color/cloudy_white" >
 
             <TextView
                 android:id="@+id/client_title"
@@ -39,7 +40,7 @@
                 android:id="@+id/policy_spinner"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:clickable="false"/>
+                android:clickable="false" />
 
             <TextView
                 android:id="@+id/damages_title"

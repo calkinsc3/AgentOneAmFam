@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -19,8 +18,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +35,6 @@ public class ClientListFragment extends Fragment {
 
     private ListView clientListView;
 
-
-    public ClientListFragment() {
-        // Required empty public constructor
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,10 +43,32 @@ public class ClientListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_client_list, container, false);
 
         clientListView = (ListView)view.findViewById(R.id.clientListView);
-        ObjectArrayAdapter adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getListOfClients());
-        clientListView.setAdapter(adapter);
+        queryParseForClients();
 
         return view;
+    }
+
+    private void setListAdapter(){
+        ObjectArrayAdapter adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getListOfClients());
+        clientListView.setAdapter(adapter);
+    }
+
+    private void queryParseForClients(){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+
+        query.whereEqualTo("accountType", "Client");
+        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
+                    setListAdapter();
+                } else {
+                    Log.d("loadUser Exception", e.toString());
+                }
+            }
+        });
     }
 
     @Override
@@ -59,13 +77,12 @@ public class ClientListFragment extends Fragment {
         menu.findItem(R.id.action_save).setTitle("Add Client");
         menu.findItem(R.id.action_save).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        Log.d("onOptionsItemSelected", "yes");
         switch (item.getItemId()) {
             //is actually a call to create a new Client
             case R.id.action_save:
@@ -73,6 +90,7 @@ public class ClientListFragment extends Fragment {
                         .addToBackStack(null)
                         .commit();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -85,14 +103,12 @@ public class ClientListFragment extends Fragment {
      * @return true if the listView is successfully resized, false otherwise
      */
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
-
         ListAdapter listAdapter = listView.getAdapter();
+
         if (listAdapter != null) {
-
             int numberOfItems = listAdapter.getCount();
-
-            // Get total height of all items.
             int totalItemsHeight = 0;
+
             for (int i = 0; i < numberOfItems; i++) {
                 View item = listAdapter.getView(i, null, listView);
                 item.measure(0, 0);
@@ -100,8 +116,7 @@ public class ClientListFragment extends Fragment {
             }
 
             // Get total height of all item dividers.
-            int totalDividersHeight = listView.getDividerHeight() *
-                    (numberOfItems - 1);
+            int totalDividersHeight = listView.getDividerHeight() * (numberOfItems - 1);
 
             // Set list height.
             ViewGroup.LayoutParams params = listView.getLayoutParams();
@@ -110,17 +125,12 @@ public class ClientListFragment extends Fragment {
             listView.requestLayout();
 
             return true;
-
         } else {
             return false;
         }
-
     }
 
-
     public class ObjectArrayAdapter extends ArrayAdapter<ParseObject> {
-
-        //declare Array List of items we create
         private ArrayList<ParseObject> clients;
 
         /**
@@ -155,11 +165,12 @@ public class ClientListFragment extends Fragment {
              * Checking to see if the view is null. If it is we must inflate the view
              * "inflate" means to render/show the view
              */
-
             if (view == null) {
                 vHolder = new ViewHolder();
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater)
+                        getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.client_list_item, null);
+
                 vHolder.clientName = (TextView)view.findViewById(R.id.clientName);
                 vHolder.addPolicyButton = (ImageView)view.findViewById(R.id.addPolicyButton);
                 vHolder.policyListView = (ListView)view.findViewById(R.id.policyList);
@@ -171,6 +182,7 @@ public class ClientListFragment extends Fragment {
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Policy");
             query.whereEqualTo("ClientID", Singleton.getListOfClients().get(position).getObjectId());
+
             vHolder.policies = new ArrayList<>();
             vHolder.policyDescriptions = new ArrayList<>();
             List<ParseObject> policyObjects = new ArrayList<>();
@@ -181,9 +193,11 @@ public class ClientListFragment extends Fragment {
             } catch (com.parse.ParseException e){
                 Log.d("parse e: ", e.toString());
             }
+
             for(int i = 0; policyObjects.size() > i; i++){
                 vHolder.policyDescriptions.add(policyObjects.get(i).getString("Description"));
             }
+
             vHolder.index = position;
 
             /**
@@ -197,8 +211,10 @@ public class ClientListFragment extends Fragment {
                 // obtain a reference to the widgets in the defined layout
                 TextView clientName = vHolder.clientName;
                 ImageView addPolicyButton = vHolder.addPolicyButton;
+
                 ListView policyList = vHolder.policyListView;
-                ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, vHolder.policyDescriptions);
+                ArrayAdapter adapter = new ArrayAdapter(getActivity(),
+                        android.R.layout.simple_list_item_1, vHolder.policyDescriptions);
 
                 if(clientName != null){
                     clientName.setText(client.getString("Name"));
@@ -206,35 +222,40 @@ public class ClientListFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             Singleton.setCurrentClient(client);
-                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, new ClientInformationFragment())
+                            getFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container,
+                                            new ClientInformationFragment())
                                     .addToBackStack(null)
                                     .commit();
                         }
                     });
                 }
+
                 if(policyList != null){
                     policyList.setAdapter(adapter);
-
                     setListViewHeightBasedOnItems(policyList);
 
                     policyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            //start the Policy Information Fragment
+                            // Start the Policy Information Fragment
                             Singleton.setCurrentPolicy(vHolder.policies.get(position));
-                            fm.beginTransaction().replace(R.id.fragment_container, new PolicyInformationFragment())
+                            fm.beginTransaction().replace(R.id.fragment_container,
+                                    new PolicyInformationFragment())
                                 .addToBackStack(null)
                                 .commit();
                         }
                     });
                 }
+
                 if (addPolicyButton != null) {
                     addPolicyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //Start add client fragment
+                            // Start add client fragment
                             Singleton.setCurrentClient(client);
-                            fm.beginTransaction().replace(R.id.fragment_container, new AddPolicyFragment())
+                            fm.beginTransaction().replace(R.id.fragment_container,
+                                    new AddPolicyFragment())
                                     .addToBackStack(null)
                                     .commit();
                         }
@@ -242,7 +263,6 @@ public class ClientListFragment extends Fragment {
                 }
             }
 
-            // view must be returned to our current activity
             return view;
         }
 
@@ -250,10 +270,11 @@ public class ClientListFragment extends Fragment {
             TextView clientName;
             ImageView addPolicyButton;
             ListView policyListView;
+
             ArrayList<String> policyDescriptions;
             ArrayList<ParseObject> policies;
+
             int index;
         }
     }
-
 }

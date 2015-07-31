@@ -22,22 +22,26 @@ import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SharedPreferences sharedPref;
+
     private DrawerLayout drawerLayout;
     private ListView drawerList;
-    private ParseUser currentUser;
-    private SharedPreferences sharedPref;
     private String[] drawerItems;
+
+    private ParseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerItems = getResources().getStringArray(R.array.drawerItems);
         drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setAdapter(new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, drawerItems));
+        drawerList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_list_item_1, drawerItems));
 
         //sets the Up Navigation enabled only if fragments are on backStack
         enableUpAction();
@@ -48,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         checkLoginStatus();
 
         if (savedInstanceState == null) {
-            //loads the appropriate initial fragment
-            Tools.replaceFragment(new MainFragment(), getFragmentManager(), true);
+            Tools.replaceFragment(new MainPageFragment(), getFragmentManager(), true);
         }
     }
 
@@ -70,13 +73,18 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
 
-                final int CLIENTS = 0;
-                final int CLAIMS = 1;
-                final int SCHEDULE = 2;
-                final int SETTINGS = 3;
-                final int UPLOADS = 4;
+                final int HOME = 0;
+                final int CLIENTS = 1;
+                final int CLAIMS = 2;
+                final int SCHEDULE = 3;
+                final int SETTINGS = 4;
+                final int UPLOADS = 5;
 
                 switch (position) {
+                    case HOME:
+                        Tools.replaceFragment(new MainPageFragment(), getFragmentManager(), true);
+                        break;
+
                     case CLIENTS:
                         Tools.replaceFragment(new ClientListFragment(), getFragmentManager(), true);
                         break;
@@ -110,7 +118,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBackStackChanged() {
                 int stackHeight = getFragmentManager().getBackStackEntryCount();
-                if (stackHeight > 1) { // if we have something on the stack (doesn't include the current shown fragment). >0 removes initial frag and leave a blank space...use 1 instead.
+
+                // if we have something on the stack (doesn't include the current shown fragment).
+                // >0 removes initial frag and leave a blank space...use 1 instead.
+                if (stackHeight > 1) {
                     getSupportActionBar().setHomeButtonEnabled(true);
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 } else {
@@ -148,13 +159,16 @@ public class MainActivity extends AppCompatActivity {
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@amfam.com"});
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "OneAmFamOffice Problem");
                 emailIntent.setType("plain/text");
+
                 if (emailIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(Intent.createChooser(emailIntent, "Choose Mail Application"));
                 }
+
                 break;
 
             case R.id.action_settings:
-                Toast.makeText(this, "One AmFam Office Application. Made By the IS Division Interns", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "One AmFam Office Application. Made By the IS Division Interns",
+                        Toast.LENGTH_SHORT).show();
                 Tools.replaceFragment(new Settings(), getFragmentManager(), true);
                 break;
 
@@ -172,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         FragmentManager fm = getFragmentManager();
+
         if (fm.getBackStackEntryCount() >= 1) {
             fm.popBackStackImmediate();
         } else {

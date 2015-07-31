@@ -1,6 +1,5 @@
 package com.llavender.agentoneamfam;
 
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,7 +40,7 @@ public class Login extends Activity {
         final CheckBox login_checkbox = (CheckBox) findViewById(R.id.stay_logged_in_checkbox);
         final SharedPreferences p = getSharedPreferences(Singleton.PREFERENCES, 0);
 
-        //NEEDED FOR ONCLICKLISTENER
+        //NEEDED FOR ON CLICK LISTENER
         context = this;
 
         //CHECK FOR LOGIN
@@ -58,39 +57,33 @@ public class Login extends Activity {
 
         //LOGIN CLICK
         login_button.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
                 final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Signing in to Parse.com", true);
 
                 final String username = username_entry.getText().toString();
                 String password = password_entry.getText().toString();
 
-
                 ParseUser.logInInBackground(username, password, new LogInCallback() {
                     @Override
                     public void done(ParseUser user, ParseException e) {
-
                         progressDialog.dismiss();
 
                         if (e == null && user != null) {
-
                             if (!user.getString("accountType").equals("Agent")) {
-
                                 loginFail(0);
-
                             } else {
-
                                 //UPDATE SHARED PREFERENCES
                                 SharedPreferences.Editor editor = p.edit();
                                 editor.putString("UserID", user.getObjectId());
                                 editor.putBoolean("StayLoggedIn", login_checkbox.isChecked());
+
                                 if (username_checkbox.isChecked()) {
                                     editor.putString("Username", username);
                                 } else {
                                     editor.remove("Username");
                                 }
+
                                 editor.apply();
 
                                 //login successful
@@ -99,33 +92,27 @@ public class Login extends Activity {
 
                         } else if (user == null) {
                             loginFail(1);
-
                         } else {
                             loginError(e);
                         }
                     }
                 });
-
             }
         });
     }
 
-
     public void loginSuccess() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, Splash.class);
         startActivity(intent);
     }
 
-
     public void loginFail(int mode) {
-
         if (mode == 1) {
             Toast.makeText(this, "Wrong Username or Password", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "You must be an Agent to use this app.", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     public void loginError(ParseException e) {
         Toast.makeText(this, "Login Error: " + e.getMessage(), Toast.LENGTH_LONG).show();

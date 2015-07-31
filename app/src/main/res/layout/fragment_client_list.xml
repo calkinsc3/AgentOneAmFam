@@ -1,15 +1,16 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/padding_margin"
     android:background="@drawable/clouds"
-    tools:context="com.llavender.agentoneamfam.ClientListFragment">
+    tools:context="com.llavender.agentoneamfam.ClientListFragment" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
         <ImageButton
             android:id="@+id/image_button"
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants"
             android:focusable="false"
-            android:clickable="true"/>
+            android:clickable="true" />
 
     </LinearLayout>
 

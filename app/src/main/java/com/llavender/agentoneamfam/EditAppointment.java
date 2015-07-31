@@ -86,6 +86,9 @@ public class EditAppointment extends Fragment {
     //the current users calendarInfo
     String[] calendarInfo;
 
+    // Flag to prevent the alertdialog builder from showing twice on a double click.
+    private int alertdialogFlag;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,7 +100,6 @@ public class EditAppointment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         meeting_entry = (EditText) view.findViewById(R.id.meeting_entry);
         location_entry = (EditText) view.findViewById(R.id.location_entry);
         start_time_entry = (EditText) view.findViewById(R.id.start_time_entry);
@@ -114,6 +116,8 @@ public class EditAppointment extends Fragment {
         mSelectedUsers = new ArrayList<>();
         checkedUserIDs = new boolean[0];
         builder = new AlertDialog.Builder(getActivity());
+
+        alertdialogFlag = 0;
 
         if (MeetingListFragment.selectedAppointment != null) {
             loadSelectedMeeting();
@@ -137,75 +141,91 @@ public class EditAppointment extends Fragment {
      * Sets all the Listeners for edittexts and datePickers
      */
     public void setListeners(){
+        final DatePickerDialog start_date_picker = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        startDateCalendar.set(Calendar.YEAR, year);
+                        startDateCalendar.set(Calendar.MONTH, monthOfYear);
+                        startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        Tools.updateDateEntry(start_date_entry, startDateCalendar);
+                    }
+                },
+                startDateCalendar.get(Calendar.YEAR),
+                startDateCalendar.get(Calendar.MONTH),
+                startDateCalendar.get(Calendar.DAY_OF_MONTH));
+
+        final DatePickerDialog end_date_picker = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        endDateCalendar.set(Calendar.YEAR, year);
+                        endDateCalendar.set(Calendar.MONTH, monthOfYear);
+                        endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        Tools.updateDateEntry(end_date_entry, endDateCalendar);
+                    }
+                },
+                endDateCalendar.get(Calendar.YEAR),
+                endDateCalendar.get(Calendar.MONTH),
+                endDateCalendar.get(Calendar.DAY_OF_MONTH));
+
+        final TimePickerDialog start_time_picker = new TimePickerDialog(getActivity(),
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        startDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        startDateCalendar.set(Calendar.MINUTE, selectedMinute);
+                        Tools.updateTimeEntry(start_time_entry, startDateCalendar);
+                    }
+                },
+                startDateCalendar.get(Calendar.HOUR_OF_DAY),
+                startDateCalendar.get(Calendar.MINUTE), false);
+
+        final TimePickerDialog end_time_picker = new TimePickerDialog(getActivity(),
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        endDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        endDateCalendar.set(Calendar.MINUTE, selectedMinute);
+                        Tools.updateTimeEntry(end_time_entry, endDateCalendar);
+                    }
+                },
+                endDateCalendar.get(Calendar.HOUR_OF_DAY),
+                endDateCalendar.get(Calendar.MINUTE), false);
+
         start_date_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(getActivity(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                startDateCalendar.set(Calendar.YEAR, year);
-                                startDateCalendar.set(Calendar.MONTH, monthOfYear);
-                                startDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                Tools.updateDateEntry(start_date_entry, startDateCalendar);
-                            }
-                        },
-                        startDateCalendar.get(Calendar.YEAR),
-                        startDateCalendar.get(Calendar.MONTH),
-                        startDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                if (!start_date_picker.isShowing()) {
+                    start_date_picker.show();
+                }
             }
         });
 
         end_date_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(getActivity(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                endDateCalendar.set(Calendar.YEAR, year);
-                                endDateCalendar.set(Calendar.MONTH, monthOfYear);
-                                endDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                Tools.updateDateEntry(end_date_entry, endDateCalendar);
-                            }
-                        },
-                        endDateCalendar.get(Calendar.YEAR),
-                        endDateCalendar.get(Calendar.MONTH),
-                        endDateCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                if (!end_date_picker.isShowing()) {
+                    end_date_picker.show();
+                }
             }
         });
 
         start_time_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(getActivity(),
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                                startDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
-                                startDateCalendar.set(Calendar.MINUTE, selectedMinute);
-                                Tools.updateTimeEntry(start_time_entry, startDateCalendar);
-                            }
-                        },
-                        startDateCalendar.get(Calendar.HOUR_OF_DAY),
-                        startDateCalendar.get(Calendar.MINUTE), false).show();
+                if (!start_time_picker.isShowing()) {
+                    start_time_picker.show();
+                }
             }
         });
 
         end_time_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(getActivity(),
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                                endDateCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
-                                endDateCalendar.set(Calendar.MINUTE, selectedMinute);
-                                Tools.updateTimeEntry(end_time_entry, endDateCalendar);
-                            }
-                        },
-                        endDateCalendar.get(Calendar.HOUR_OF_DAY),
-                        endDateCalendar.get(Calendar.MINUTE), false).show();
+                if (!end_time_picker.isShowing()) {
+                    end_time_picker.show();
+                }
             }
         });
     }
@@ -233,7 +253,7 @@ public class EditAppointment extends Fragment {
         Tools.updateDateEntry(start_date_entry, startDateCalendar);
         Tools.updateDateEntry(end_date_entry, endDateCalendar);
 
-        //Load invitees
+        // Load invitees
         try {
             ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
 
@@ -246,9 +266,8 @@ public class EditAppointment extends Fragment {
 
                 String attendeeName = userQuery.get(jArray.getString(i)).getString("Name");
 
-                if (attendeeName == null || attendeeName.equals("")) {
+                if (attendeeName == null || attendeeName.equals(""))
                     attendeeName = userQuery.get(jArray.getString(i)).getString("username");
-                }
 
                 if (i == 0)
                     attendees += attendeeName;
@@ -295,7 +314,6 @@ public class EditAppointment extends Fragment {
         appointmentToSave.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-
                 progressDialog.dismiss();
 
                 if (e == null) {
@@ -315,12 +333,14 @@ public class EditAppointment extends Fragment {
 
         ContentResolver cr = getActivity().getContentResolver();
         ContentValues values = new ContentValues();
+
         values.put(CalendarContract.Events.DTSTART, startDate.getTime());
         values.put(CalendarContract.Events.DTEND, endDate.getTime());
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.DESCRIPTION, comments);
         values.put(CalendarContract.Events.CALENDAR_ID, calID);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
+
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
         // get the event ID that is the last element in the Uri
@@ -378,7 +398,10 @@ public class EditAppointment extends Fragment {
         attendees_entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPossibleAttendees();
+                if (alertdialogFlag == 0) {
+                    getPossibleAttendees();
+                    alertdialogFlag = 1;
+                }
             }
         });
     }
@@ -495,6 +518,7 @@ public class EditAppointment extends Fragment {
 
                 attendees_entry.setText(attendees);
                 mSelectedUsers = new ArrayList<>();
+                alertdialogFlag = 0;
             }
         });
 
@@ -502,6 +526,7 @@ public class EditAppointment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 mSelectedUsers = new ArrayList<>();
+                alertdialogFlag = 0;
             }
         });
 
@@ -526,6 +551,7 @@ public class EditAppointment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -535,6 +561,7 @@ public class EditAppointment extends Fragment {
             case R.id.action_save:
                 saveAppointment();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
