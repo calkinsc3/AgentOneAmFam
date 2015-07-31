@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
 
     private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
     private ListView drawerList;
     private String[] drawerItems;
 
@@ -38,13 +40,9 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerItems = getResources().getStringArray(R.array.drawerItems);
-        drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_list_item_1, drawerItems));
 
-        //sets the Up Navigation enabled only if fragments are on backStack
-        enableUpAction();
+        setupDrawer();
+
         //Set the navigation drawer navigation
         setDrawerItemClickListener();
         //Enables Parse on startup
@@ -113,24 +111,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void enableUpAction(){
-        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                int stackHeight = getFragmentManager().getBackStackEntryCount();
+    public void setupDrawer(){
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-                // if we have something on the stack (doesn't include the current shown fragment).
-                // >0 removes initial frag and leave a blank space...use 1 instead.
-                if (stackHeight > 1) {
-                    getSupportActionBar().setHomeButtonEnabled(true);
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                } else {
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                    getSupportActionBar().setHomeButtonEnabled(false);
-                }
+        drawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                drawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_launcher,
+                R.string.app_name,  /* "open drawer" description */
+                R.string.app_name  /* "close drawer" description */
+        ) {
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
             }
 
-        });
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerItems = getResources().getStringArray(R.array.drawerItems);
+        drawerList = (ListView) findViewById(R.id.left_drawer);
+        drawerList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
+                R.layout.basic_list_item, drawerItems));
     }
 
     @Override
@@ -146,6 +153,10 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
 
         //noinspection SimplifiableIfStatement
         switch (id) {
