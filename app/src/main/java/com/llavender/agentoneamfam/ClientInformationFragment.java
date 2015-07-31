@@ -118,7 +118,8 @@ public class ClientInformationFragment extends Fragment {
         clientName.setText(client.getString("Name"));
         email.setText(client.getString("email"));
         address1.setText(client.getString("Address"));
-        address2.setText(client.getString("City") + client.getString("State") + client.getInt("Zip"));
+        address2.setText(client.getString("City") + ", " + client.getString("State")  + " " +
+                client.getInt("Zip"));
 
         String phoneText = String.valueOf(client.getNumber("phoneNumber"));
         phoneText = ("(" + phoneText.substring(0,3) + ")" + " " +
