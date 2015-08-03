@@ -146,7 +146,7 @@ public class ImageAdapter extends BaseAdapter {
                         };
 
                         //DIALOG USED FOR DELETE/IMAGE CHANGE SELECTION
-                        AlertDialog confirmation = new AlertDialog.Builder(context)
+                        new AlertDialog.Builder(context)
                                 .setTitle("Are you sure you want to delete this Claim?")
                                 .setCancelable(true)
                                 .setNegativeButton("Cancel", dialogClick)
@@ -234,6 +234,9 @@ public class ImageAdapter extends BaseAdapter {
                                                     Toast.makeText(context, "Photo deleted!",
                                                             Toast.LENGTH_SHORT).show();
                                                     MyUploads.refreshLocalData(context);
+
+                                                    System.out.println(getCount());
+
                                                 } else {
                                                     e.printStackTrace();
                                                     Toast.makeText(context, "Photo not deleted.",
