@@ -45,8 +45,8 @@ public class Settings extends Fragment {
     private EditText zip_entry;
     private Spinner state_spinner;
 
-    Button email_support_button;
-    Button logout_button;
+    private Button email_support_button;
+    private Button logout_button;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +74,7 @@ public class Settings extends Fragment {
         email_support_button = (Button) view.findViewById(R.id.email_support_button);
         logout_button = (Button) view.findViewById(R.id.logout_button);
 
-        buttonVisiblities();
+        buttonVisibilities();
 
         List<String> states = Arrays.asList(getResources().getStringArray(R.array.states));
 
@@ -123,10 +123,10 @@ public class Settings extends Fragment {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        buttonVisiblities();
+        buttonVisibilities();
     }
 
-    private void buttonVisiblities() {
+    private void buttonVisibilities() {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             email_support_button.setVisibility(View.GONE);
             logout_button.setVisibility(View.GONE);

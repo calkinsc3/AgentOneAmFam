@@ -3,6 +3,7 @@ package com.llavender.agentoneamfam;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -34,67 +37,7 @@ import java.util.List;
 public class ClientListFragment extends Fragment {
 
     private ListView clientListView;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_client_list, container, false);
-
-        clientListView = (ListView)view.findViewById(R.id.clientListView);
-        queryParseForClients();
-
-        return view;
-    }
-
-    private void setListAdapter(){
-        ObjectArrayAdapter adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getListOfClients());
-        clientListView.setAdapter(adapter);
-    }
-
-    private void queryParseForClients(){
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-
-        query.whereEqualTo("accountType", "Client");
-        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
-
-        query.findInBackground(new FindCallback<ParseUser>() {
-            public void done(List<ParseUser> objects, ParseException e) {
-                if (e == null) {
-                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
-                    setListAdapter();
-                } else {
-                    Log.d("loadUser Exception", e.toString());
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.findItem(R.id.action_save).setVisible(true);
-        menu.findItem(R.id.action_save).setTitle("Add Client");
-        menu.findItem(R.id.action_save).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            //is actually a call to create a new Client
-            case R.id.action_save:
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddClientFragment())
-                        .addToBackStack(null)
-                        .commit();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+    private FrameLayout frameLayout;
 
     /**
      * Sets ListView height dynamically based on the height of the items.
@@ -127,6 +70,76 @@ public class ClientListFragment extends Fragment {
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_client_list, container, false);
+
+        clientListView = (ListView)view.findViewById(R.id.clientListView);
+
+        frameLayout = (FrameLayout) view.findViewById(R.id.progress_frame);
+
+        frameLayout.setVisibility(View.VISIBLE);
+        frameLayout.setBackgroundColor(Color.argb(160, 0, 0, 0));
+        queryParseForClients();
+
+        return view;
+    }
+
+    private void setListAdapter(){
+        ObjectArrayAdapter adapter = new ObjectArrayAdapter(getActivity(), R.layout.client_list_item, Singleton.getListOfClients());
+        clientListView.setAdapter(adapter);
+    }
+
+    private void queryParseForClients(){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+
+        query.whereEqualTo("accountType", "Client");
+        query.whereEqualTo("AgentID", ParseUser.getCurrentUser().getObjectId());
+
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    Singleton.setListOfClients((ArrayList<ParseUser>) objects);
+                    setListAdapter();
+                    frameLayout.setVisibility(View.GONE);
+                } else {
+                    Log.d("loadUser Exception", e.toString());
+                    frameLayout.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "Error from Parse", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.findItem(R.id.action_save).setVisible(true);
+        menu.findItem(R.id.action_save).setTitle("Add Client");
+        menu.findItem(R.id.action_save).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_input_add);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //is actually a call to create a new Client
+            case R.id.action_save:
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, new AddClientFragment())
+                        .addToBackStack(null)
+                        .commit();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
