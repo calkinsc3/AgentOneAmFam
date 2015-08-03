@@ -45,8 +45,8 @@ public class Settings extends Fragment {
     private EditText zip_entry;
     private Spinner state_spinner;
 
-    Button email_support_button;
-    Button logout_button;
+    private Button email_support_button;
+    private Button logout_button;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
