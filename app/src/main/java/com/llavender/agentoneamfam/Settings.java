@@ -2,6 +2,7 @@ package com.llavender.agentoneamfam;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.PhoneNumberFormattingTextWatcher;
@@ -44,6 +45,9 @@ public class Settings extends Fragment {
     private EditText zip_entry;
     private Spinner state_spinner;
 
+    Button email_support_button;
+    Button logout_button;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,8 +71,10 @@ public class Settings extends Fragment {
         zip_entry = (EditText) view.findViewById(R.id.zip_code);
 
         state_spinner = (Spinner) view.findViewById(R.id.state_spinner);
-        Button email_support_button = (Button) view.findViewById(R.id.email_support_button);
-        Button logout_button = (Button) view.findViewById(R.id.logout_button);
+        email_support_button = (Button) view.findViewById(R.id.email_support_button);
+        logout_button = (Button) view.findViewById(R.id.logout_button);
+
+        buttonVisiblities();
 
         List<String> states = Arrays.asList(getResources().getStringArray(R.array.states));
 
@@ -114,6 +120,22 @@ public class Settings extends Fragment {
         });
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        buttonVisiblities();
+    }
+
+    private void buttonVisiblities() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            email_support_button.setVisibility(View.GONE);
+            logout_button.setVisibility(View.GONE);
+        } else {
+            email_support_button.setVisibility(View.VISIBLE);
+            logout_button.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void saveSettings() {
         if (!password_entry.getText().toString().equals(password_reentry.getText().toString())) {
             password_entry.setError("Passwords are not equal!");
@@ -149,6 +171,7 @@ public class Settings extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.action_save).setVisible(true);
         menu.findItem(R.id.action_save).setIcon(android.R.drawable.ic_menu_save);
+        menu.findItem(R.id.action_save).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         super.onCreateOptionsMenu(menu, inflater);
     }

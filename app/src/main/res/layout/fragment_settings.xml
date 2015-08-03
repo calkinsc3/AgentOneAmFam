@@ -8,9 +8,27 @@
     android:background="@drawable/clouds"
     tools:context="com.example.jaz020.oneamfamoffice.Settings" >
 
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:text="@string/logout"
+        style="@style/cloud_button" />
+
+    <Button
+        android:id="@+id/email_support_button"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_above="@id/logout_button"
+        android:text="@string/email_support"
+        style="@style/cloud_button" />
+
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/email_support_button">
 
         <RelativeLayout
             style="@style/cloud_view"
@@ -112,21 +130,5 @@
         </RelativeLayout>
 
     </ScrollView>
-
-    <Button
-        android:id="@+id/logout_button"
-        android:layout_width="fill_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:text="@string/logout"
-        style="@style/cloud_button" />
-
-    <Button
-        android:id="@+id/email_support_button"
-        android:layout_width="fill_parent"
-        android:layout_height="60dp"
-        android:layout_above="@id/logout_button"
-        android:text="@string/email_support"
-        style="@style/cloud_button" />
 
 </RelativeLayout>
