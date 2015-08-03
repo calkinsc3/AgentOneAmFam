@@ -9,73 +9,78 @@
 
     <ScrollView
         style="@style/cloud_view"
-        android:id="@+id/info_scroll"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-             >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/client_title"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Client:" />
+                android:orientation="vertical"
+                android:id="@+id/info_scroll" >
 
-            <Spinner
-                android:id="@+id/client_spinner"
+                <TextView
+                    android:id="@+id/client_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Client:" />
+
+                <Spinner
+                    android:id="@+id/client_spinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"/>
+
+                <TextView
+                    android:id="@+id/policy_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Policy:" />
+
+                <Spinner
+                    android:id="@+id/policy_spinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false" />
+
+                <TextView
+                    android:id="@+id/damages_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Damages:" />
+
+                <EditText
+                    android:id="@+id/damages_entry"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    android:id="@+id/Comments_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Comment:" />
+
+                <EditText
+                    android:id="@+id/comments_entry"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+
+            <FrameLayout
+                android:id="@+id/bottom_container"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false"/>
-
-            <TextView
-                android:id="@+id/policy_title"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Policy:" />
-
-            <Spinner
-                android:id="@+id/policy_spinner"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false" />
-
-            <TextView
-                android:id="@+id/damages_title"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Damages:" />
-
-            <EditText
-                android:id="@+id/damages_entry"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-
-            <TextView
-                android:id="@+id/Comments_title"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Comment:" />
-
-            <EditText
-                android:id="@+id/comments_entry"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
+                android:layout_height="200dp"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@id/info_scroll"
+                />
+        </RelativeLayout>
     </ScrollView>
-
-    <FrameLayout
-        android:id="@+id/bottom_container"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/info_scroll"
-        />
 
 </RelativeLayout>
