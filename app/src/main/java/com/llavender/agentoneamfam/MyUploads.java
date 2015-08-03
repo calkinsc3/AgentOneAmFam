@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +45,8 @@ public class MyUploads extends Fragment {
     //This fragments main view
     private static View mainView = null;
 
+    private static ListView pictureList;
+
     /**
      * These fields are used for the MyUploads fragment, within the ClaimsInfo fragment
      * they will all be null unless this fragment is withing the ClaimsInfo fragment
@@ -73,7 +74,8 @@ public class MyUploads extends Fragment {
             List<ParseQuery<ParseObject>> queries = new ArrayList<>();
 
             for(int i = 0; i < MyUploads.uploadIDs.size(); i++){
-                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId", MyUploads.uploadIDs.get(i)));
+                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId",
+                        MyUploads.uploadIDs.get(i)));
             }
 
             if(!queries.isEmpty()) {
@@ -81,7 +83,8 @@ public class MyUploads extends Fragment {
             }
 
         } else if (uploadIDs == null && args != null){
-            mainQuery = new ParseQuery<>("Upload").whereEqualTo("PolicyID", Singleton.getCurrentPolicy().getObjectId());
+            mainQuery = new ParseQuery<>("Upload").whereEqualTo("PolicyID",
+                    Singleton.getCurrentPolicy().getObjectId());
         }
         //MY UPLOADS: add a single query to mainQuery
         else{
@@ -121,12 +124,11 @@ public class MyUploads extends Fragment {
                         } else if (e == null) {
                             Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Parse.com Uploads retrieval failed.",
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
                 });
-
-
         }
     }
 
@@ -134,7 +136,6 @@ public class MyUploads extends Fragment {
      * Updates the listview from the singleton backend
      */
     public static void updateListView(Context context) {
-        ListView pictureList = (ListView) MyUploads.mainView.findViewById(R.id.my_uploads_list_view);
         ImageAdapter adapter = new ImageAdapter(context, Singleton.getImages(),
                 Singleton.getComments(), null, Singleton.IMAGE);
         pictureList.setAdapter(adapter);
@@ -165,7 +166,8 @@ public class MyUploads extends Fragment {
                     if (e == null) {
                         Toast.makeText(context, "Comments Saved.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(context, "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Error:" + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -190,7 +192,6 @@ public class MyUploads extends Fragment {
         if (this.getArguments() == null) {
             uploadIDs = null;
             claimPolicyID = null;
-
         } else {
             uploadIDs = args.getStringArrayList("UploadIDs");
             claimPolicyID = args.getString("claimPolicyID");
@@ -213,18 +214,17 @@ public class MyUploads extends Fragment {
 
         //set the background properly
         if(args == null){
-
             mainView.setBackground(getResources().getDrawable(R.drawable.clouds));
-        }
-        else{
+        } else{
             mainView.setBackgroundColor(getResources().getColor(R.color.cloudy_white));
-
         }
 
         final TextView header = (TextView) view.findViewById(R.id.title);
         final ImageButton add_button = (ImageButton) view.findViewById(R.id.add_button);
         final com.github.clans.fab.FloatingActionButton fab =
                 (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
+
+        pictureList = (ListView) MyUploads.mainView.findViewById(R.id.my_uploads_list_view);
 
         //set fab icon, set title, show fab
         if (args != null) {
@@ -319,7 +319,8 @@ public class MyUploads extends Fragment {
                     }
                 } else {
                     //TELLS THE USER IF THE IMAGE THEY SELECTED WAS NOT RETRIEVED
-                    Toast.makeText(getActivity(), "Photo could not be accessed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Photo could not be accessed.",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 break;
@@ -336,7 +337,8 @@ public class MyUploads extends Fragment {
                         ClipData clipData = data.getClipData();
 
                         for (int i = 0; i < clipData.getItemCount(); i++) {
-                            imageByte.add(Tools.readBytes(getActivity(), clipData.getItemAt(i).getUri()));
+                            imageByte.add(Tools.readBytes(getActivity(),
+                                    clipData.getItemAt(i).getUri()));
                         }
                     } else {
                         imageByte.add(Tools.readBytes(getActivity(), data.getData()));
@@ -410,6 +412,7 @@ public class MyUploads extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 break;
         }
     }
