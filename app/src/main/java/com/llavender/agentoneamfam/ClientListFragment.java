@@ -14,12 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.FrameLayout;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -105,12 +105,12 @@ public class ClientListFragment extends Fragment {
 
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> objects, ParseException e) {
+                frameLayout.setVisibility(View.GONE);
                 if (e == null) {
                     Singleton.setListOfClients((ArrayList<ParseUser>) objects);
                     setListAdapter();
                 } else {
                     Log.d("loadUser Exception", e.toString());
-                    frameLayout.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), "Error from Parse", Toast.LENGTH_SHORT).show();
 
                 }
@@ -210,11 +210,11 @@ public class ClientListFragment extends Fragment {
                     public void done(List<ParseObject> list, ParseException e) {
                         vHolder.policies.clear();
                         if (list != null) {
-                            Log.d("DIB", "!Null list");
                             vHolder.policies.addAll(list);
 
-                        } else
+                        } else {
                             Log.d("DIB", "Null list");
+                        }
 
                         for(int i = 0; vHolder.policies.size() > i; i++){
                             vHolder.policyDescriptions.add(vHolder.policies.get(i).getString("Description"));
