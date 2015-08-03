@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -97,39 +98,38 @@ public class MyUploads extends Fragment {
             //only get files that have media uploaded
             mainQuery.whereExists("Media");
 
-            mainQuery.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> list, ParseException e) {
 
-                    if (e == null && !list.isEmpty()) {
-                        Singleton.setUploads(list);
+                mainQuery.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null && !list.isEmpty()) {
 
-                        //Build the local backend list with the uploads retrieved
-                        Singleton.setImages(new ArrayList<>());
-                        Singleton.setComments(new ArrayList<String>());
+                            Singleton.setUploads(list);
 
-                        for (int i = 0; i < Singleton.getUploads().size(); i++) {
-                            ParseObject object = Singleton.getUploads().get(i);
-                            ParseFile parseFile = object.getParseFile("Media");
+                            Singleton.setImages(new ArrayList<>());
+                            Singleton.setComments(new ArrayList<String>());
 
-                            Object obj = parseFile.getUrl();
+                            for (int i = 0; i < Singleton.getUploads().size(); i++) {
+                                ParseObject object = Singleton.getUploads().get(i);
+                                ParseFile parseFile = object.getParseFile("Media");
 
-                            String comm = object.getString("Comment");
+                                Object obj = parseFile.getUrl();
 
-                            Singleton.getComments().add(comm);
-                            Singleton.getImages().add(obj);
+                                String comm = object.getString("Comment");
+
+                                Singleton.getComments().add(comm);
+                                Singleton.getImages().add(obj);
+                            }
+
+                            updateListView(context);
+                        } else if (e == null) {
+                            Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
                         }
-
-                        updateListView(context);
-
-                    } else if (e == null) {
-                        Toast.makeText(context, "No Media Found", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
+                });
 
-                }
-            });
 
         }
     }
@@ -298,7 +298,6 @@ public class MyUploads extends Fragment {
                     }
 
                     if (imageByte != null) {
-                        //TODO do i need both the save and put + save
                         ParseFile image = new ParseFile("photo.jpeg", imageByte, "jpeg");
                         image.saveInBackground();
 
