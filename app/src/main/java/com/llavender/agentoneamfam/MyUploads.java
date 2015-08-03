@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -60,7 +61,7 @@ public class MyUploads extends Fragment {
      * Calls parse.com and retrieves all photos upload for the current user (Agent).
      * Copies the uploads into a local datastore.
      */
-    public static void refreshLocalData(Context context) {
+    public static void refreshLocalData(final Context context) {
         String userID = ParseUser.getCurrentUser().getObjectId();
 
         //USED FOR QUERYING UPLOADS SPECIFIC TO A CLAIM (null for creating a new claim)
@@ -93,36 +94,39 @@ public class MyUploads extends Fragment {
             //only get files that have media uploaded
             mainQuery.whereExists("Media");
 
-            try {
-                //TODO this blocks the UI thread so we must add a loading dialog or take off the UI thread
-                //run the query and set the uploads List to the result
-                Singleton.setUploads(mainQuery.find());
 
-                //Build the local backend list with the uploads retrieved
-                if (!Singleton.getUploads().isEmpty()) {
-                    Singleton.setImages(new ArrayList<>());
-                    Singleton.setComments(new ArrayList<String>());
+                mainQuery.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> list, ParseException e) {
+                        if (e == null && !list.isEmpty()) {
 
-                    for (int i = 0; i < Singleton.getUploads().size(); i++) {
-                        ParseObject object = Singleton.getUploads().get(i);
-                        ParseFile parseFile = object.getParseFile("Media");
+                            Singleton.setUploads(list);
 
-                        Object obj = parseFile.getUrl();
+                            Singleton.setImages(new ArrayList<>());
+                            Singleton.setComments(new ArrayList<String>());
 
-                        String comm = object.getString("Comment");
+                            for (int i = 0; i < Singleton.getUploads().size(); i++) {
+                                ParseObject object = Singleton.getUploads().get(i);
+                                ParseFile parseFile = object.getParseFile("Media");
 
-                        Singleton.getComments().add(comm);
-                        Singleton.getImages().add(obj);
+                                Object obj = parseFile.getUrl();
+
+                                String comm = object.getString("Comment");
+
+                                Singleton.getComments().add(comm);
+                                Singleton.getImages().add(obj);
+                            }
+
+                            updateListView(context);
+                        } else if (e == null) {
+                            Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
+                        }
                     }
+                });
 
-                    updateListView(context);
-                } else {
-                    Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
-                }
-            } catch (ParseException e) {
-                Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
+
         }
     }
 
@@ -293,7 +297,6 @@ public class MyUploads extends Fragment {
                     }
 
                     if (imageByte != null) {
-                        //TODO do i need both the save and put + save
                         ParseFile image = new ParseFile("photo.jpeg", imageByte, "jpeg");
                         image.saveInBackground();
 

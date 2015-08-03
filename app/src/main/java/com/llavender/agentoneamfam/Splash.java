@@ -26,6 +26,7 @@ public class Splash extends Activity implements Runnable {
         frameLayout = (FrameLayout) findViewById(R.id.progress_frame);
 
         frameLayout.setVisibility(View.VISIBLE);
+        setProgressBarIndeterminate(true);
         frameLayout.setBackgroundColor(Color.argb(160, 0, 0, 0));
 
         mThread = new Thread(this);
