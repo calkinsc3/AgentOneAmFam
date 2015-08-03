@@ -33,7 +33,7 @@ public class ImageAdapter extends BaseAdapter {
 
     //CLASS VARIABLES
     private Context context;
-    private java.util.List<Object> images;
+    private List<Object> images;
     private List<String> comments;
     private List<ParseObject> objects;
     private int mode;
@@ -47,7 +47,8 @@ public class ImageAdapter extends BaseAdapter {
      * @param objects  list of objects (either clients or policies) **CLIENT and POlICY only**
      * @param mode     IMAGE, CLIENT, POLICY
      */
-    public ImageAdapter(Context context, List<Object> images, List<String> comments, List<ParseObject> objects, int mode) {
+    public ImageAdapter(Context context, List<Object> images, List<String> comments,
+                        List<ParseObject> objects, int mode) {
         this.context = context;
         this.images = images;
         this.mode = mode;
@@ -86,7 +87,8 @@ public class ImageAdapter extends BaseAdapter {
             case Singleton.CLAIM:
                 //INFLATE VIEWS AND SET UP VIEW HOLDER
                 if (view == null) {
-                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater inflater = (LayoutInflater)
+                            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.info_list_item, null);
 
                     vh = new ViewHolder();
@@ -134,10 +136,17 @@ public class ImageAdapter extends BaseAdapter {
                                             @Override
                                             public void done(ParseException e) {
                                                 if (e == null) {
-                                                    Toast.makeText(context, "Claim deleted!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context,
+                                                            "Claim deleted!",
+                                                            Toast.LENGTH_SHORT).show();
+
+                                                    objects.remove(position);
+                                                    notifyDataSetChanged();
                                                     Claims.refreshLocalClaimData(context);
                                                 } else {
-                                                    Toast.makeText(context, "Claim not deleted:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context,
+                                                            "Claim not deleted:" + e.getMessage(),
+                                                            Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
@@ -163,7 +172,8 @@ public class ImageAdapter extends BaseAdapter {
 
                 //INFLATE VIEWS AND SET UP VIEW HOLDER
                 if (view == null) {
-                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater inflater = (LayoutInflater)
+                            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.photo_list_item, null);
 
                     vh = new ViewHolder();
@@ -212,7 +222,8 @@ public class ImageAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         //TODO move to class
-                        DialogInterface.OnClickListener dialogClick = new DialogInterface.OnClickListener() {
+                        DialogInterface.OnClickListener dialogClick =
+                                new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ParseObject obj = Singleton.getUploads().get(vhf.index);
@@ -233,10 +244,10 @@ public class ImageAdapter extends BaseAdapter {
                                                 if (e == null) {
                                                     Toast.makeText(context, "Photo deleted!",
                                                             Toast.LENGTH_SHORT).show();
+
+                                                    images.remove(position);
+                                                    notifyDataSetChanged();
                                                     MyUploads.refreshLocalData(context);
-
-                                                    System.out.println(getCount());
-
                                                 } else {
                                                     e.printStackTrace();
                                                     Toast.makeText(context, "Photo not deleted.",
@@ -278,7 +289,8 @@ public class ImageAdapter extends BaseAdapter {
 
                         //WILL START A CHOOSER ACTIVITY WITH GALLERY AND OTHER OPTIONS IN IT
                         MyUploads.fragment.startActivityForResult(Intent
-                                .createChooser(intent, "Select new picture."), MyUploads.CHANGE_IMAGE);
+                                .createChooser(intent, "Select new picture."),
+                                MyUploads.CHANGE_IMAGE);
 
                         return true;
                     }
@@ -310,9 +322,8 @@ public class ImageAdapter extends BaseAdapter {
                 }
 
                 String temp = Tools.buildMessage(objects.get(position), Singleton.MEETING);
-                vh.index = position;
-                //SET THE TEXT
                 vh.textView.setText(temp);
+                vh.index = position;
 
                 //DELETE CLICK LISTENER
                 final ViewHolder vhf4 = vh;
@@ -339,6 +350,9 @@ public class ImageAdapter extends BaseAdapter {
                                                 if (e == null) {
                                                     Toast.makeText(context, "Meeting Deleted",
                                                             Toast.LENGTH_SHORT).show();
+
+                                                    objects.remove(position);
+                                                    notifyDataSetChanged();
                                                     MeetingListFragment.updateList();
                                                 }
                                             }
@@ -367,7 +381,8 @@ public class ImageAdapter extends BaseAdapter {
             default:
                 //INFLATE VIEWS
                 if (convertView == null) {
-                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater inflater = (LayoutInflater)
+                            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     view = inflater.inflate(R.layout.info_list_item, null);
                 }
 
@@ -382,8 +397,10 @@ public class ImageAdapter extends BaseAdapter {
      */
     static class ViewHolder {
         ParseObject parseObject;
+
         TextView textView;
         EditText editText;
+
         ImageButton imageButton;
         ImageButton delete_button;
 

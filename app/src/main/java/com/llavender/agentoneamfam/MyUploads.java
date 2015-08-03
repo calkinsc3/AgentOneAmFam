@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,8 +63,6 @@ public class MyUploads extends Fragment {
      * Copies the uploads into a local datastore.
      */
     public static void refreshLocalData(final Context context) {
-        pictureList.invalidate();
-
         String userID = ParseUser.getCurrentUser().getObjectId();
 
         //USED FOR QUERYING UPLOADS SPECIFIC TO A CLAIM (null for creating a new claim)
@@ -77,7 +74,8 @@ public class MyUploads extends Fragment {
             List<ParseQuery<ParseObject>> queries = new ArrayList<>();
 
             for(int i = 0; i < MyUploads.uploadIDs.size(); i++){
-                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId", MyUploads.uploadIDs.get(i)));
+                queries.add(new ParseQuery<>("Upload").whereEqualTo("objectId",
+                        MyUploads.uploadIDs.get(i)));
             }
 
             if(!queries.isEmpty()) {
@@ -85,7 +83,8 @@ public class MyUploads extends Fragment {
             }
 
         } else if (uploadIDs == null && args != null){
-            mainQuery = new ParseQuery<>("Upload").whereEqualTo("PolicyID", Singleton.getCurrentPolicy().getObjectId());
+            mainQuery = new ParseQuery<>("Upload").whereEqualTo("PolicyID",
+                    Singleton.getCurrentPolicy().getObjectId());
         }
         //MY UPLOADS: add a single query to mainQuery
         else{
@@ -125,12 +124,11 @@ public class MyUploads extends Fragment {
                         } else if (e == null) {
                             Toast.makeText(context, "No Uploads Found.", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(context, "Parse.com Uploads retrieval failed.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Parse.com Uploads retrieval failed.",
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
                 });
-
-
         }
     }
 
@@ -168,7 +166,8 @@ public class MyUploads extends Fragment {
                     if (e == null) {
                         Toast.makeText(context, "Comments Saved.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(context, "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Error:" + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -320,7 +319,8 @@ public class MyUploads extends Fragment {
                     }
                 } else {
                     //TELLS THE USER IF THE IMAGE THEY SELECTED WAS NOT RETRIEVED
-                    Toast.makeText(getActivity(), "Photo could not be accessed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Photo could not be accessed.",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 break;
@@ -337,7 +337,8 @@ public class MyUploads extends Fragment {
                         ClipData clipData = data.getClipData();
 
                         for (int i = 0; i < clipData.getItemCount(); i++) {
-                            imageByte.add(Tools.readBytes(getActivity(), clipData.getItemAt(i).getUri()));
+                            imageByte.add(Tools.readBytes(getActivity(),
+                                    clipData.getItemAt(i).getUri()));
                         }
                     } else {
                         imageByte.add(Tools.readBytes(getActivity(), data.getData()));
