@@ -104,6 +104,7 @@ public class Login extends Activity {
     public void loginSuccess() {
         Intent intent = new Intent(this, Splash.class);
         startActivity(intent);
+        finish();
     }
 
     public void loginFail(int mode) {
