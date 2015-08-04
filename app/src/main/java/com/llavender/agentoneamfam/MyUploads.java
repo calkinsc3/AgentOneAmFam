@@ -97,7 +97,6 @@ public class MyUploads extends Fragment {
             //only get files that have media uploaded
             mainQuery.whereExists("Media");
 
-
                 mainQuery.findInBackground(new FindCallback<ParseObject>() {
                     @Override
                     public void done(List<ParseObject> list, ParseException e) {

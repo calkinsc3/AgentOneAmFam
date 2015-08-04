@@ -297,7 +297,6 @@ public class ClientListFragment extends Fragment {
             ImageView addPolicyButton;
             ListView policyListView;
             boolean hasCheckedPolicies = true;
-            ArrayAdapter innerAdapter;
 
             ArrayList<String> policyDescriptions;
             ArrayList<ParseObject> policies;

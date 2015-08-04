@@ -44,6 +44,9 @@ public class MeetingListFragment extends Fragment {
     private static Context context;
     private ListView listView;
 
+    private com.github.clans.fab.FloatingActionButton fab;
+    private ImageButton add_button;
+
     /**
      * Queries parse and populates the listview
      * NEEDS TO REMAIN STATIC: it is called from ImageAdapter
@@ -112,10 +115,10 @@ public class MeetingListFragment extends Fragment {
         return view;
     }
 
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        final com.github.clans.fab.FloatingActionButton fab =
-                (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
-        final ImageButton add_button = (ImageButton) view.findViewById(R.id.image_button);
+        fab = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.fab);
+        add_button = (ImageButton) view.findViewById(R.id.image_button);
 
         listView = (ListView) view.findViewById(R.id.clientListView);
 
@@ -145,6 +148,8 @@ public class MeetingListFragment extends Fragment {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    fab.setEnabled(false);
+
                     Tools.replaceFragment(new EditAppointment(),
                             ((Activity) context).getFragmentManager(), true);
                 }
@@ -156,10 +161,20 @@ public class MeetingListFragment extends Fragment {
             add_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    add_button.setEnabled(false);
+
                     Tools.replaceFragment(new EditAppointment(),
                             ((Activity) context).getFragmentManager(), true);
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onCreate(null);
+
+        fab.setEnabled(true);
+        add_button.setEnabled(true);
     }
 }

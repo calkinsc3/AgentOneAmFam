@@ -46,10 +46,21 @@ public class ClientInformationFragment extends Fragment {
         showMeetings();
     }
 
+    @Override
+    public void onResume() {
+        super.onCreate(null);
+
+        phoneButton.setEnabled(true);
+        emailButton.setEnabled(true);
+        mapButton.setEnabled(true);
+    }
+
     private void setOnClickListeners(){
         phoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                phoneButton.setEnabled(false);
+
                 Intent intent = new Intent(Intent.ACTION_DIAL,
                         Uri.parse("tel:" + String.valueOf(client.getNumber("phoneNumber"))));
                 startActivity(intent);
@@ -59,6 +70,8 @@ public class ClientInformationFragment extends Fragment {
         emailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                emailButton.setEnabled(false);
+
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.setData(Uri.parse("mailto:"));
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{client.getString("email")});
@@ -73,6 +86,8 @@ public class ClientInformationFragment extends Fragment {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mapButton.setEnabled(false);
+
                 String streetAddress = client.getString("Address").replaceAll(" ", "+") + "+"
                         + client.getString("City") + ",+" + client.getString("State") + "+"
                         + client.getInt("Zip");
