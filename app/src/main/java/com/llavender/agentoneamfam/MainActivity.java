@@ -1,6 +1,7 @@
 package com.llavender.agentoneamfam;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -80,28 +81,28 @@ public class MainActivity extends Activity {
 
                 switch (position) {
                     case HOME:
-                        Tools.replaceFragment(new MainPageFragment(), getFragmentManager(), true);
+                        replaceIfNew(new MainPageFragment());
                         break;
 
                     case CLIENTS:
-                        Tools.replaceFragment(new ClientListFragment(), getFragmentManager(), true);
+                        replaceIfNew(new ClientListFragment());
                         break;
 
                     case CLAIMS:
-                        Tools.replaceFragment(new Claims(), getFragmentManager(), true);
+                        replaceIfNew(new Claims());
                         break;
 
                     case SCHEDULE:
-                        Tools.replaceFragment(new MeetingListFragment(), getFragmentManager(), true);
+                        replaceIfNew(new MeetingListFragment());
                         MeetingListFragment.mode = MeetingListFragment.APPOINTMENTS;
                         break;
 
                     case SETTINGS:
-                        Tools.replaceFragment(new Settings(), getFragmentManager(), true);
+                        replaceIfNew(new Settings());
                         break;
 
                     case UPLOADS:
-                        Tools.replaceFragment(new MyUploads(), getFragmentManager(), true);
+                        replaceIfNew(new MyUploads());
                         break;
                     
                     default:
@@ -138,6 +139,15 @@ public class MainActivity extends Activity {
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
                 R.layout.basic_list_item, drawerItems));
+    }
+
+    private void replaceIfNew(Fragment fragment){
+        FragmentManager fm = getFragmentManager();
+        if(!fragment.getClass().toString().equals(fm.findFragmentById(R.id.fragment_container)
+                .getClass().toString())){
+
+            Tools.replaceFragment(fragment, fm, true);
+        }
     }
 
     @Override
