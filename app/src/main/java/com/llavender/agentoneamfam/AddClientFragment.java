@@ -51,10 +51,18 @@ public class AddClientFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onCreate(null);
+
+        createClientButton.setEnabled(true);
+    }
+
     private void setClientButtonClickListener(){
         createClientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                createClientButton.setEnabled(false);
                 createClient();
                 Toast.makeText(getActivity(), "New client created successfully!", Toast.LENGTH_SHORT).show();
             }

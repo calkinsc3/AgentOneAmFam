@@ -106,6 +106,8 @@ public class Settings extends Fragment {
         email_support_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                email_support_button.setEnabled(false);
+
                 Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support.intern@amfam.com"));
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Support Question");
                 startActivity(Intent.createChooser(intent, "Send Email"));
@@ -115,6 +117,8 @@ public class Settings extends Fragment {
         logout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                logout_button.setEnabled(false);
+
                 Tools.logout(getActivity());
             }
         });
@@ -186,5 +190,13 @@ public class Settings extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onCreate(null);
+
+        email_support_button.setEnabled(true);
+        logout_button.setEnabled(true);
     }
 }
